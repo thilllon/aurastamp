@@ -1,0 +1,22 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "yarn.lock": true
+  },
+  "git.ignoreLimitWarning": true,
+  "sqlite.setupDatabase": {
+    "mysqlOptions": {
+      "authProtocol": "default"
+    },
+    "previewLimit": 50,
+    "server": "mysql-dev-carillon.mysql.database.azure.com",
+    "port": 3306,
+    "askForPassword": true,
+    "driver": "MySQL",
+    "name": "provedapp",
+    "database": "provedapp",
+    "username": "carillon@mysql-dev-carillon"
+  }
+}

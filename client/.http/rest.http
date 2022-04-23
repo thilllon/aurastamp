@@ -1,0 +1,25 @@
+# https://api-dev.carillon.ai/docs/#/labeling-results/LabelingResultsController_updateStatus
+
+
+@base = https://api-dev.carillon.ai
+@projectId = 2c7d45d4-6c6e-4054-9b86-16fc13fb3dca
+@taskId = 2476fbc9-0854-429c-86a0-46f681f6a62e
+
+
+###
+GET {{base}}/projects/{{projectId}}/tasks/{{taskId}}
+  
+
+
+###
+GET {{base}}/projects/{{projectId}}
+  
+
+### 
+POST {{base}}/account/signin
+Content-Type: application/json
+
+{
+  "username":"harry",
+  "password":""
+}
