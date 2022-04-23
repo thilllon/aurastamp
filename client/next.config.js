@@ -97,6 +97,13 @@ let nextConfig = {
     skipWaiting: true,
     disable: !isProduction,
   },
+  api: {
+    // https://nextjs.org/docs/api-routes/api-middlewares#custom-config
+    externalResolver: true,
+    // bodyParser: {
+    //   sizeLimit: '500kb',
+    // },
+  },
 };
 
 // NOTE: gif, png, svg 등 이용시 필요

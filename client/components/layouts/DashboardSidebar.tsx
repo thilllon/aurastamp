@@ -8,12 +8,6 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-// TODO: 메뉴 보이는 방식 수정
-// 사람마다 보이는 메뉴가 달라야함
-// 로그인 유무로 보이는 메뉴가 달라야함
-
-const isProduction = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
-
 type DashboardSidebarProps = {
   open: boolean;
   onClose: () => void;
@@ -22,14 +16,10 @@ type DashboardSidebarProps = {
 
 export const DashboardSidebar = ({ open, onClose, navData = [] }: DashboardSidebarProps) => {
   const router = useRouter();
-  const [session] = useCustomSession();
   const isWide = useMediaQuery<Theme>((theme) => theme.breakpoints.up(defaultBreakpoint), {
     defaultMatches: true,
     noSsr: false,
   });
-
-  // console.info('side bar session', session);
-  // console.info('side bar user', session?.user);
 
   const orgName = 'Carillon AI';
   const tier = 'Premium';
@@ -89,60 +79,10 @@ export const DashboardSidebar = ({ open, onClose, navData = [] }: DashboardSideb
         <Divider sx={{ borderColor: '#2D3748', my: 3 }} />
 
         <Box sx={{ flexGrow: 1 }}>
-          {navData
-            .filter((elem) => {
-              if (session && elem.id === 'signOut') {
-                return true;
-              } else if (!session && elem.id === 'signOut') {
-                return false;
-              } else if (session?.user.roles?.includes('admin') && elem.id === 'stats') {
-                return true;
-              } else {
-                return elem.visible;
-              }
-            })
-            .map((item) => (
-              <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
-            ))}
+          {navData.map((item) => (
+            <NavItem key={item.title} icon={item.icon} href={item.href} title={item.title} />
+          ))}
         </Box>
-
-        {/* <Divider
-          sx={{
-            borderColor: '#2D3748',
-            my: 3,
-          }} 
-        /> */}
-
-        {/* <Box sx={{ px: 2, py: 3 }}>
-          <Typography color='neutral.100' variant='subtitle2'>
-            Need more features?
-          </Typography>
-          <Typography color='neutral.500' variant='body2'>
-            Contact us. 02-0000-0000
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              mt: 2,
-              mx: 'auto',
-              width: '160px',
-              '& img': { width: '100%' },
-            }}
-          >
-            <Image alt='Go to pro' src='/static/images/pro_sample_image.png' />
-          </Box>
-          <Link href='https://material-kit-pro-react.devias.io/'>
-            <Button
-              color='secondary'
-              endIcon={<OpenInNew />}
-              fullWidth
-              sx={{ mt: 2 }}
-              variant='contained'
-            >
-              Pro Live Preview
-            </Button>
-          </Link>
-        </Box> */}
       </Box>
     </>
   );
@@ -163,8 +103,6 @@ export const DashboardSidebar = ({ open, onClose, navData = [] }: DashboardSideb
       </Box>
     );
   }
-
-  console.info('narrow', 'open', open);
 
   return (
     <Box component='nav'>

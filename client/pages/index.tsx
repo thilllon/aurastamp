@@ -14,6 +14,7 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
+import { useSession } from 'next-auth/react';
 import getConfig from 'next/config';
 import React, { ReactNode } from 'react';
 
@@ -22,21 +23,20 @@ const { publicRuntimeConfig } = getConfig();
 type IndexPageProps = {};
 
 export default function IndexPage({}: IndexPageProps) {
-  const crumbs: Crumb[] = [{ label: 'Home', href: '/' }];
-
+  const { data: session } = useSession();
   return (
-    <>
+    <Container maxWidth='sm'>
       <Box>
-        <Container maxWidth={false}>
-          <Box>
-            <CustomBreadcrumbs crumbs={crumbs} />
-            <Box sx={{ height: 50, display: 'flex', alignItems: 'center' }}>
-              <Typography variant='h5'>{'홈'}</Typography>
-            </Box>
+        {/* <Container maxWidth={false}> */}
+        <Typography>user: {JSON.stringify(session?.user ?? {})}</Typography>
+        <Box>
+          <Box sx={{ height: 50, display: 'flex', alignItems: 'center' }}>
+            <Typography variant='h5'>{'홈'}</Typography>
           </Box>
-        </Container>
+        </Box>
+        {/* </Container> */}
       </Box>
-    </>
+    </Container>
   );
 }
 
