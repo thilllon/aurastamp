@@ -1,15 +1,9 @@
-import { UserCircleIcon } from '@/components/icons/UserCircleIcon';
 import { useCustomSession } from '@/utils/next-auth-react-query';
-import {
-  Logout as LogoutIcon,
-  PersonAdd as PersonAddIcon,
-  Settings as SettingsIcon,
-} from '@mui/icons-material';
+import { Logout as LogoutIcon, Person } from '@mui/icons-material';
 import {
   Avatar,
   Box,
   CircularProgress,
-  Divider,
   IconButton,
   ListItemIcon,
   Menu,
@@ -63,7 +57,7 @@ export const IconButtonMenu = () => {
           <Avatar
           // src='/static/images/avatars/avatar_1234.png' sx={{ width: 32, height: 32 }}
           >
-            <UserCircleIcon />
+            <Person />
           </Avatar>
         </IconButton>
       </Box>

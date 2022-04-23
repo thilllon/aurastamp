@@ -1,5 +1,4 @@
 import { Footer } from '@/components/Footer';
-import { ChartBarIcon } from '@/components/icons/ChartBarIcon';
 import { DashboardSidebar } from '@/components/layouts/DashboardSidebar';
 import { DashboardTopNavbar } from '@/components/layouts/DashboardTopNavbar';
 import { defaultBreakpoint, sidebarWidth } from '@/contexts/MuiThemeContext';
@@ -38,20 +37,6 @@ const navData: NavData[] = [
     icon: <WorkOutlineOutlined fontSize='small' />,
     title: '프로젝트',
     visible: true,
-  },
-  {
-    id: 'stats',
-    href: '/stats',
-    icon: <ChartBarIcon fontSize='small' />,
-    title: '통계',
-    visible: false,
-  },
-  {
-    id: 'newProject',
-    href: '/admin/projects/new',
-    icon: <ChartBarIcon fontSize='small' />,
-    title: '(Dev Only) 새 프로젝트',
-    visible: !isProduction,
   },
   // {
   //   href: '/',

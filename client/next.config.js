@@ -11,22 +11,10 @@ const isLocal = typeof process.env.NEXT_PUBLIC_VERCEL_ENV === 'undefined';
 
 const essentialEnvVars = [
   // ******************************
-  // SENTRY
-  // ******************************
-  'SENTRY_AUTH_TOKEN',
-  // ******************************
   // NEXTAUTH
   // ******************************
   'NEXTAUTH_URL',
   'NEXTAUTH_SECRET',
-  // ******************************
-  // GITHUB BOT
-  // ******************************
-  'APP_ID',
-  'WEBHOOK_SECRET',
-  'PRIVATE_KEY',
-  'GITHUB_CLIENT_ID',
-  'GITHUB_CLIENT_SECRET',
 ];
 
 essentialEnvVars.forEach((envVar) => {
