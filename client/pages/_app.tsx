@@ -1,5 +1,4 @@
 import { createEmotionCache } from '@/styles/emotion';
-import { CarillonAI } from '@/utils/stamp';
 import { useGoogleAnalytics } from '@/utils/useGoogleAnalytics';
 import { EmotionCache } from '@emotion/cache';
 import { CacheProvider as EmotionCacheProvider } from '@emotion/react';
@@ -24,10 +23,6 @@ const MyApp = ({
   emotionCache = clientSideEmotionCache,
 }: MyAppProps) => {
   useGoogleAnalytics();
-
-  useEffect(() => {
-    CarillonAI();
-  }, []);
 
   const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
   return (
