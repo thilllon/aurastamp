@@ -6,7 +6,7 @@ import {
   IconButton,
   ListItemIcon,
   Menu,
-  MenuItem
+  MenuItem,
 } from '@mui/material';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -48,14 +48,12 @@ export const IconButtonMenu = () => {
   const onClickSettings = useCallback(() => {
     router.push('/account/settings');
   }, [router]);
-
+  // https://avatars.githubusercontent.com/u/44559468
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
         <IconButton onClick={handleClick} size='small' sx={{ ml: 2 }}>
-          <Avatar
-          // src='/static/images/avatars/avatar_1234.png' sx={{ width: 32, height: 32 }}
-          >
+          <Avatar src={session?.user?.image??undefined  } sx={{ width: 32, height: 32 }}>
             <Person />
           </Avatar>
         </IconButton>

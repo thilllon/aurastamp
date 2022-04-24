@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import getConfig from 'next/config';
 import React, { ReactNode, ChangeEventHandler, useState } from 'react';
 import axios from 'axios';
+import { download, downloadBuffer } from '@/utils/common';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -14,19 +15,37 @@ export default function IndexPage({}: IndexPageProps) {
   const { data: session } = useSession();
   const [files, setFiles] = useState<File[]>([]);
   const [modelName, setModelName] = useState('BTS');
+
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     console.info(ev.target.files);
-    debugger;
+    setFiles(ev.target.files ?? []);
   };
+
   const onClick = async () => {
-    const baseURL = '';
+    // const baseUrl = 'http://localhost:3333';
+    // const url = baseUrl + '/api/encode';
+    const baseUrl = 'http://20.41.116.194:8000';
+    const url = baseUrl + '/encode_stamp';
+
     const formData = new FormData();
-    formData.append('file', files[0]);
+    if (files.length === 0) {
+      return;
+    }
+    const file = files[0];
+
+    formData.append('file', file);
     formData.append('model_name', modelName);
     formData.append('text', '안녕하세요');
+    const res = await axios.post(url, formData, {
+      // responseType: 'blob', // Important
+      responseType: 'arraybuffer',
+    });
     debugger;
-    const res = await axios.post('http://20.41.116.194:8000', formData);
-    console.info(res.data);
+    console.info(typeof res.data);
+    // const buf = Buffer.from(res.data, 'utf8');
+
+    downloadBuffer(res.data, 'arraybuffer.png', file.type);
+    // download(res.data, 'donload.png');
   };
 
   return (

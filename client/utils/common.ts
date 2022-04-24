@@ -64,3 +64,15 @@ export const download = (blob: Blob | MediaSource, fileName: string) => {
   setTimeout(() => window?.URL?.revokeObjectURL?.(previewUrl), 0);
   window?.URL?.revokeObjectURL?.(previewUrl);
 };
+export const downloadBuffer = (
+  arrayBuffer: any,
+  fileName: string,
+  mimetype: string = 'application/octet-stream'
+) => {
+  const anchor = document.createElement('a');
+  // const previewUrl = URL.createObjectURL(new Blob([arrayBuffer], { type: mimetype }));
+  const previewUrl = URL.createObjectURL(new Blob([arrayBuffer]));
+  anchor.href = previewUrl;
+  anchor.download = fileName;
+  anchor.click();
+};

@@ -24,7 +24,6 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <DocumentHead>
-          <link rel='manifest' href='/manifest.json' />
           <GoogleAnalysisScript />
           <DisableInternetExplorer />
           <link rel='preconnect' href='https://fonts.googleapis.com' />

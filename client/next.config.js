@@ -77,6 +77,7 @@ let nextConfig = {
       // https://picsum.photos/200/300
       'via.placeholder.com',
       'images.unsplash.com',
+      'avatars.githubusercontent.com',
     ],
   },
   i18n, // (중요) next-i18next.config.js로 설정 파일을 반드시 분리해야함

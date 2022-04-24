@@ -20,7 +20,7 @@ export const DashboardSidebar = ({ open, onClose, navData = [] }: DashboardSideb
     noSsr: false,
   });
 
-  const orgName = 'Carillon AI';
+  const orgName = 'Aura Stamp';
   const tier = 'Premium';
 
   useEffect(() => {
