@@ -1,19 +1,6 @@
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { Crumb, CustomBreadcrumbs } from '@/components/shared/CustomBreadcrumbs';
-import { Link } from '@/components/shared/Link';
-import { useCustomSession } from '@/utils/next-auth-react-query';
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Container,
-  Divider,
-  Grid,
-  Typography,
-} from '@mui/material';
+import { PhotoCamera } from '@mui/icons-material';
+import { Box, Button, Container, IconButton, Input, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import getConfig from 'next/config';
 import React, { ReactNode } from 'react';
@@ -27,28 +14,14 @@ export default function IndexPage({}: IndexPageProps) {
   return (
     <Container maxWidth='sm'>
       <Box>
-        {/* <Container maxWidth={false}> */}
         <Typography>user: {JSON.stringify(session?.user ?? {})}</Typography>
-        <Box>
-          <Box sx={{ height: 50, display: 'flex', alignItems: 'center' }}>
-            <Typography variant='h5'>{'홈'}</Typography>
-          </Box>
-        </Box>
-        {/* </Container> */}
-        <Button
-          onClick={() => {
-            throw new Error('sentry error');
-          }}
-        >
-          error test
-        </Button>
-        <Button
-          onClick={() => {
-            throw new Error('sentry error2');
-          }}
-        >
-          error test
-        </Button>
+
+        <label htmlFor='icon-button-file'>
+          <Input inputProps={{ accept: 'image/*' }} id='icon-button-file' type='file' />
+          <IconButton color='primary' aria-label='upload picture' component='span'>
+            <PhotoCamera />
+          </IconButton>
+        </label>
       </Box>
     </Container>
   );

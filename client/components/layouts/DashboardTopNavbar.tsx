@@ -1,7 +1,6 @@
 import { IconButtonMenu } from '@/components/shared/IconButtonMenu';
 import { Link } from '@/components/shared/Link';
 import { sidebarWidth } from '@/contexts/MuiThemeContext';
-import { useCustomSession } from '@/utils/next-auth-react-query';
 import styled from '@emotion/styled';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
@@ -9,12 +8,13 @@ import {
   AppBarProps,
   Box,
   Button,
+  CircularProgress,
   IconButton,
   NoSsr,
-  CircularProgress,
   Toolbar,
   Typography,
 } from '@mui/material';
+import { useSession } from 'next-auth/react';
 
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
@@ -28,7 +28,8 @@ type DashboardTopNavbarProps = AppBarProps & {
 };
 
 export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTopNavbarProps) => {
-  const [session, isLoading] = useCustomSession();
+  const { data: session, status } = useSession();
+  const isLoading = status === 'loading';
 
   return (
     <>

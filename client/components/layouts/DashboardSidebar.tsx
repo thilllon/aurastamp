@@ -2,7 +2,6 @@ import { NavData } from '@/components/layouts/DashboardLayout';
 import { NavItem } from '@/components/layouts/NavItem';
 import { Logo } from '@/components/shared/Logo';
 import { defaultBreakpoint, sidebarWidth } from '@/contexts/MuiThemeContext';
-import { useCustomSession } from '@/utils/next-auth-react-query';
 import { Box, Chip, Divider, Drawer, Theme, Typography, useMediaQuery } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';

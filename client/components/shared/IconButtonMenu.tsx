@@ -1,4 +1,3 @@
-import { useCustomSession } from '@/utils/next-auth-react-query';
 import { Logout as LogoutIcon, Person } from '@mui/icons-material';
 import {
   Avatar,
@@ -7,15 +6,15 @@ import {
   IconButton,
   ListItemIcon,
   Menu,
-  MenuItem,
+  MenuItem
 } from '@mui/material';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { MouseEvent, useCallback, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 export const IconButtonMenu = () => {
-  const [session] = useCustomSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
