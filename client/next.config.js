@@ -5,9 +5,10 @@ const { i18n } = require('./next-i18next.config');
 const { withSentryConfig } = require('@sentry/nextjs');
 const withImages = require('next-images');
 
-const sentryDsn = 'https://3e72dc8d1ca947b0b2dd5a5de04136e1@o992574.ingest.sentry.io/6247885';
 const isProduction = process.env.NODE_ENV === 'production';
 const isLocal = typeof process.env.NEXT_PUBLIC_VERCEL_ENV === 'undefined';
+const sentryDsn = 'https://b24dc675d1984f0d9a139ec1635897f8@o1216080.ingest.sentry.io/6358027';
+const sentryEnv = isLocal ? 'local' : process.env.NEXT_PUBLIC_VERCEL_ENV;
 
 const essentialEnvVars = [
   // ******************************
@@ -52,9 +53,11 @@ let nextConfig = {
     // ******************************
     // sentry
     // ******************************
+    // eslint-disable-next-line no-dupe-keys
     NEXT_PUBLIC_SENTRY_DSN: sentryDsn,
     SENTRY_DSN: sentryDsn,
-    SENTRY_ENVIRONMENT: isLocal ? 'local' : process.env.NEXT_PUBLIC_VERCEL_ENV,
+    NEXT_PUBLIC_SENTRY_ENV: sentryEnv,
+    SENTRY_ENV: sentryEnv,
     // ******************************
     // middleware
     // ******************************
@@ -74,16 +77,6 @@ let nextConfig = {
       // https://picsum.photos/200/300
       'via.placeholder.com',
       'images.unsplash.com',
-      'source.unsplash.com',
-      // 'a-platform.co.kr',
-      // 'www.archdaily.com',
-      // 'images.adsttc.com',
-      // 's3.us-west-2.amazonaws.com',
-      // 'yoap.kr',
-      // 'image.legalengine.co.kr',
-      // 'ipfs.io',
-      // 'googlecontents.com',
-      // 'windows.net',
     ],
   },
   i18n, // (중요) next-i18next.config.js로 설정 파일을 반드시 분리해야함
@@ -97,13 +90,6 @@ let nextConfig = {
     skipWaiting: true,
     disable: !isProduction,
   },
-  api: {
-    // https://nextjs.org/docs/api-routes/api-middlewares#custom-config
-    externalResolver: true,
-    // bodyParser: {
-    //   sizeLimit: '500kb',
-    // },
-  },
 };
 
 // NOTE: gif, png, svg 등 이용시 필요
@@ -114,11 +100,9 @@ let nextConfig = {
 // nextConfig = withPwa(nextConfig);
 
 const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that the following options are set automatically, and overriding them is not recommended: release, url, org, project, authToken, configFile, stripPrefix, urlPrefix, include, ignore
-  silent: true, // sentry CLI log during Next build
-  // For all available options, see: https://github.com/getsentry/sentry-webpack-plugin#options.
+  silent: true,
 };
 
 // Make sure adding Sentry options is the last code to run before exporting, to ensure that your source maps include changes from all other Webpack plugins
-module.exports = isLocal ? nextConfig : withSentryConfig(nextConfig, sentryWebpackPluginOptions);
-// module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+// module.exports = isLocal ? nextConfig : withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);

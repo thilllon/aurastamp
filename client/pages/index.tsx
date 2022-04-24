@@ -35,6 +35,20 @@ export default function IndexPage({}: IndexPageProps) {
           </Box>
         </Box>
         {/* </Container> */}
+        <Button
+          onClick={() => {
+            throw new Error('sentry error');
+          }}
+        >
+          error test
+        </Button>
+        <Button
+          onClick={() => {
+            throw new Error('sentry error2');
+          }}
+        >
+          error test
+        </Button>
       </Box>
     </Container>
   );

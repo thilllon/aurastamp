@@ -64,3 +64,6 @@ dist
 **/public/worker-*.js.map
 
 .vercel
+
+# Sentry
+.sentryclirc

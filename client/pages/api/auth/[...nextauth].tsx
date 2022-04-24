@@ -27,9 +27,10 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
 export default handler;
 
 // export default withSentry(handler);
+// export default withSentry(nextAuth);
 
-// export const config = {
-//   api: {
-//     externalResolver: true,
-//   },
-// };
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+};
