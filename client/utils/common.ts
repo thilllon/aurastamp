@@ -67,7 +67,7 @@ export const download = (blob: Blob | MediaSource, fileName: string) => {
 export const downloadBuffer = (
   arrayBuffer: any,
   fileName: string,
-  mimetype: string = 'application/octet-stream'
+  mimetype = 'application/octet-stream'
 ) => {
   const anchor = document.createElement('a');
   // const previewUrl = URL.createObjectURL(new Blob([arrayBuffer], { type: mimetype }));

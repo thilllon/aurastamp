@@ -89,7 +89,7 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
               <Typography
                 sx={{ color: '#000000' }}
                 variant='h6'
-              >{`${session?.user?.name} 님`}</Typography>
+              >{`Hi, ${session?.user?.name}!`}</Typography>
             )}
           </NoSsr>
 

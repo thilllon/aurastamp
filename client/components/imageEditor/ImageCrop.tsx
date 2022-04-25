@@ -137,6 +137,9 @@ export function ImageCrop({
             htmlFor={htmlId}
             disableRipple={false}
             sx={{ mt: 2, mb: 2 }}
+            // onClick={(ev: any) => {
+            //   ev.preventDefault();
+            // }}
           >
             <Input
               inputProps={{ accept: 'image/*' }}
@@ -147,6 +150,20 @@ export function ImageCrop({
             />
             <>{`Upload`}</>
           </Button>
+        )}
+
+        {!imgSrc && (
+          <Box component='label' htmlFor='contained-button-file' sx={{ width: '100%' }}>
+            <Input
+              inputProps={{ accept: 'image/*' }}
+              id='contained-button-file'
+              type='file'
+              sx={{ display: 'none' }}
+            />
+            <Button fullWidth variant='contained' component='span'>
+              Upload
+            </Button>
+          </Box>
         )}
 
         {false && (
