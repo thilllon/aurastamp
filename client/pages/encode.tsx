@@ -105,7 +105,7 @@ export default function EncodePage({}: EncodePageProps) {
           />
 
           <Box sx={{ width: '100%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            <Button sx={{ flex: 1 }} variant={'contained'} onClick={onClickEmbed}>
+            <Button sx={{ flex: 1 }} variant={'contained'} onClick={onClickEmbed} disabled={!file}>
               Embed
             </Button>
           </Box>

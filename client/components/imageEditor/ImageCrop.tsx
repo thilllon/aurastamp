@@ -129,7 +129,7 @@ export function ImageCrop({
           alignItems: 'center',
         }}
       >
-        {!imgSrc && (
+        {/* {!imgSrc && (
           <Button
             fullWidth
             variant='outlined'
@@ -149,8 +149,8 @@ export function ImageCrop({
               sx={{ display: 'none' }}
             />
             <>{`Upload`}</>
-          </Button>
-        )}
+          </Button> 
+        )} */}
 
         {!imgSrc && (
           <Box component='label' htmlFor='contained-button-file' sx={{ width: '100%' }}>
