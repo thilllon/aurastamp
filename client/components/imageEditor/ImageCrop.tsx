@@ -1,31 +1,37 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState, useRef } from 'react';
-
-import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from 'react-image-crop';
-import { canvasPreview } from './CanvasPreview';
-import { useDebounceEffect } from './useDebounceEffect';
-
+import { download } from '@/utils/common';
+import { Box, Button, Card, CardActionArea, Input } from '@mui/material';
+import React, { ChangeEventHandler, ReactNode, useEffect, useRef, useState } from 'react';
+import ReactCrop, { centerCrop, Crop, makeAspectCrop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { useDebounce } from 'react-use';
+import { canvasPreview } from './CanvasPreview';
 
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
 function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
   return centerCrop(
-    makeAspectCrop(
-      {
-        unit: '%',
-        width: 90,
-      },
-      aspect,
-      mediaWidth,
-      mediaHeight
-    ),
+    makeAspectCrop({ unit: '%', width: 90 }, aspect, mediaWidth, mediaHeight),
     mediaWidth,
     mediaHeight
   );
 }
 
-export default function ImageCrop() {
+export type ImageCrop = {
+  children?: ReactNode;
+  onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
+  onCropEnd?: (crop?: PixelCrop) => void;
+  onCrop?: () => {};
+  type?: 'encode' | 'decode';
+};
+
+export function ImageCrop({
+  children,
+  onChange: onChangeProps,
+  onCropEnd,
+  onCrop,
+  type,
+}: ImageCrop) {
   const [imgSrc, setImgSrc] = useState('');
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -33,18 +39,22 @@ export default function ImageCrop() {
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
-  const [aspect, setAspect] = useState<number | undefined>(16 / 9);
+  const [aspect, setAspect] = useState<number | undefined>(undefined);
 
-  function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files && e.target.files.length > 0) {
+  function onSelectFile(ev: React.ChangeEvent<HTMLInputElement>) {
+    if (ev.target.files && ev.target.files.length > 0) {
       setCrop(undefined); // Makes crop preview update between images.
       const reader = new FileReader();
       reader.addEventListener('load', () => {
         setImgSrc(reader?.result?.toString() || '');
       });
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(ev.target.files[0]);
     }
+    onChangeProps?.(ev);
   }
+  useEffect(() => {
+    onCropEnd?.(completedCrop);
+  }, [completedCrop, onCropEnd]);
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     if (aspect) {
@@ -53,7 +63,7 @@ export default function ImageCrop() {
     }
   }
 
-  useDebounceEffect(
+  useDebounce(
     async () => {
       if (
         completedCrop?.width &&
@@ -69,6 +79,27 @@ export default function ImageCrop() {
     [completedCrop, scale, rotate]
   );
 
+  const onClickCrop = (ev: any) => {
+    if (previewCanvasRef.current) {
+      const data = previewCanvasRef.current.toDataURL('image/jpeg');
+      console.info(data);
+      setImgSrc(data);
+      // download(new Blob([data]), 'image.jpg');
+      setCrop(undefined);
+      setCompletedCrop(undefined);
+    }
+  };
+
+  const onClickCancel = () => {
+    setImgSrc('');
+    setCrop(undefined);
+    setScale(1);
+    setRotate(0);
+    // TODO:
+    // setAspect(16 / 9);
+    setCompletedCrop(undefined);
+  };
+
   function handleToggleAspectClick() {
     if (aspect) {
       setAspect(undefined);
@@ -79,11 +110,76 @@ export default function ImageCrop() {
     }
   }
 
+  const htmlId = 'image-uploader';
+
   return (
-    <div className='App'>
-      <div className='Crop-Controls'>
-        <input type='file' accept='image/*' onChange={onSelectFile} />
-        <div>
+    <Box
+      sx={{
+        width: '100%',
+        // border: '2px solid'
+        pt: 3,
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          flexFlow: 'column nowrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {!imgSrc && (
+          <Button
+            fullWidth
+            variant='outlined'
+            component='label'
+            htmlFor={htmlId}
+            disableRipple={false}
+            sx={{ mt: 2, mb: 2 }}
+          >
+            <Input
+              inputProps={{ accept: 'image/*' }}
+              id={htmlId}
+              type='file'
+              onChange={onSelectFile}
+              sx={{ display: 'none' }}
+            />
+            <>{`Upload`}</>
+          </Button>
+        )}
+
+        {false && (
+          <Card sx={{ backgroundColor: '#dddddd', p: 1, borderRadius: 2 }}>
+            <CardActionArea
+              component='label'
+              htmlFor='tmp'
+              disableRipple={false}
+              sx={{
+                // minHeight: 200,
+                // borderRadius: 2,
+                // backgroundColor: '#dddddd',
+                // border: '2px dashed black',
+                display: 'flex',
+                flexFlow: 'column nowrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Input
+                inputProps={{ accept: 'image/*' }}
+                id={htmlId}
+                type='file'
+                onChange={onSelectFile}
+                sx={{ display: 'none' }}
+              />
+              <>{`Upload`}</>
+            </CardActionArea>
+          </Card>
+        )}
+
+        {/* <input type='file' accept='image/*' onChange={onSelectFile} /> */}
+        {/* <div>
           <label htmlFor='scale-input'>Scale: </label>
           <input
             id='scale-input'
@@ -93,8 +189,9 @@ export default function ImageCrop() {
             disabled={!imgSrc}
             onChange={(e) => setScale(Number(e.target.value))}
           />
-        </div>
-        <div>
+        </div> */}
+
+        {/* <div>
           <label htmlFor='rotate-input'>Rotate: </label>
           <input
             id='rotate-input'
@@ -103,11 +200,13 @@ export default function ImageCrop() {
             disabled={!imgSrc}
             onChange={(e) => setRotate(Math.min(180, Math.max(-180, Number(e.target.value))))}
           />
-        </div>
-        <div>
+        </div> */}
+
+        {/* <div>
           <button onClick={handleToggleAspectClick}>Toggle aspect {aspect ? 'off' : 'on'}</button>
-        </div>
-      </div>
+        </div> */}
+      </Box>
+
       {Boolean(imgSrc) && (
         <ReactCrop
           crop={crop}
@@ -124,7 +223,8 @@ export default function ImageCrop() {
           />
         </ReactCrop>
       )}
-      <div>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {Boolean(completedCrop) && (
           <canvas
             ref={previewCanvasRef}
@@ -136,7 +236,27 @@ export default function ImageCrop() {
             }}
           />
         )}
-      </div>
-    </div>
+      </Box>
+
+      {imgSrc && (
+        <Box sx={{ width: '100%', display: 'flex', gap: 1, mt: 2 }}>
+          {type === 'encode' && (
+            <Button
+              sx={{ flex: 1 }}
+              variant={'outlined'}
+              onClick={onClickCrop}
+              disabled={!completedCrop}
+            >
+              Crop
+            </Button>
+          )}
+          <Button sx={{ flex: 1 }} variant={'outlined'} onClick={onClickCancel}>
+            Cancel
+          </Button>
+        </Box>
+      )}
+
+      {/* <img src={imgSrc} alt='dd' /> */}
+    </Box>
   );
 }

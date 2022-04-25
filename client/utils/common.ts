@@ -75,4 +75,5 @@ export const downloadBuffer = (
   anchor.href = previewUrl;
   anchor.download = fileName;
   anchor.click();
+  URL.revokeObjectURL(previewUrl);
 };

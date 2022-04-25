@@ -112,7 +112,7 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
             {!isLoading && session && <IconButtonMenu />}
             {!isLoading && !session && (
               <Link href='/api/auth/signin' underline='none'>
-                <Button>로그인</Button>
+                <Button>Login</Button>
               </Link>
             )}
           </NoSsr>

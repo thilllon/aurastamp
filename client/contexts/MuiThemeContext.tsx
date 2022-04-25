@@ -75,7 +75,7 @@ export const theme = createTheme(
       },
       MuiButtonBase: {
         defaultProps: {
-          disableRipple: true,
+          // disableRipple: true,
         },
       },
       MuiCheckbox: {
@@ -188,9 +188,6 @@ export const theme = createTheme(
           },
         },
       },
-
-      // .MuiTooltip-popper[data-popper-placement*="bottom"]
-      // .carillon-dev-1bjzm3s-MuiTooltip-tooltip
       MuiTooltip: {
         styleOverrides: {
           popper: {

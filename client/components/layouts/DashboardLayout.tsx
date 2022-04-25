@@ -31,19 +31,27 @@ export type NavData = {
 };
 
 const navData: NavData[] = [
+  // {
+  //   id: 'home',
+  //   href: '/',
+  //   icon: <WorkOutlineOutlined fontSize='small' />,
+  //   title: 'Home',
+  //   visible: true,
+  // },
   {
-    id: 'projects',
-    href: '/projects',
+    id: 'encode',
+    href: '/encode',
     icon: <WorkOutlineOutlined fontSize='small' />,
-    title: '프로젝트',
+    title: 'Hide your message',
     visible: true,
   },
-  // {
-  //   href: '/',
-  //   icon: <ChartBarIcon fontSize='small' />,
-  //   title: '(Dev Only) Dashboard',
-  //   visible: !isProduction,
-  // },
+  {
+    id: 'decode',
+    href: '/decode',
+    icon: <WorkOutlineOutlined fontSize='small' />,
+    title: 'Find your secret message',
+    visible: true,
+  },
   // {
   //   href: '/customers',
   //   icon: <UsersIcon fontSize='small' />,

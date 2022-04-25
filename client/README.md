@@ -56,9 +56,6 @@
 
 # deployment
 
-- dev: https://label-dev.carillon.ai
-- production: https://label.carillon.ai
-
 # mui datatables 사용하기위해
 
 ```

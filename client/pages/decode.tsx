@@ -1,39 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { PhotoCamera } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Card,
-  CardActionArea,
-  Container,
-  IconButton,
-  Input,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { useSession } from 'next-auth/react';
-import getConfig from 'next/config';
-import React, { ReactNode, ChangeEventHandler, useState, useCallback } from 'react';
-import axios from 'axios';
-import { download, downloadBuffer } from '@/utils/common';
+import { Firework2 } from '@/components/Firework';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
-import { PixelCrop } from 'react-image-crop';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { Link } from '@/components/shared/Link';
+import { Box, Button, Container, Typography } from '@mui/material';
+import axios from 'axios';
+import getConfig from 'next/config';
+import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
+import { PixelCrop } from 'react-image-crop';
+import { useTimeout, useTimeoutFn } from 'react-use';
 
 const { publicRuntimeConfig } = getConfig();
 
-type EncodePageProps = {};
+type DecodePageProps = {};
 
 const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
 
-export default function EncodePage({}: EncodePageProps) {
+export default function DecodePage({}: DecodePageProps) {
   const [file, setFile] = useState<File>();
   const [cropped, setCropped] = useState<PixelCrop>();
   const [modelName, setModelName] = useState('BTS');
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
+  const [secret, setSecret] = useState('');
+  const [showCongrats, setShowCongrats] = useState(false);
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
@@ -43,14 +34,6 @@ export default function EncodePage({}: EncodePageProps) {
     console.info(img);
     setCropped(img);
   }, []);
-
-  const onChangeMessage = (ev: any) => {
-    let msg = ev.target.value;
-    if (msg.length > MAX_MESSAGE_LENGTH) {
-      msg = msg.slice(0, MAX_MESSAGE_LENGTH);
-    }
-    setMessage(msg);
-  };
 
   const onClickEmbed = async () => {
     const baseUrl = 'http://20.41.116.194:8000';
@@ -66,6 +49,22 @@ export default function EncodePage({}: EncodePageProps) {
     setResultImgSrc(res.data);
   };
 
+  const onClickExtract = async () => {
+    const baseUrl = 'http://20.41.116.194:8000';
+    const url = baseUrl + '/decode_stamp';
+    const formData = new FormData();
+    if (!file) {
+      return;
+    }
+    formData.append('file', file);
+    formData.append('model_name', modelName);
+    // formData.append('text', message);
+    const res = await axios.post(url, formData);
+    console.info(res.data);
+    setSecret(res.data.secret);
+    setShowCongrats(true);
+  };
+
   return (
     <>
       <Container
@@ -73,13 +72,21 @@ export default function EncodePage({}: EncodePageProps) {
           display: 'flex',
           flexFlow: 'column',
           justifyContent: 'space-between',
-          // justifyContent: 'center',
-          alignItems: 'space-between',
           minHeight: (theme) =>
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
+        <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
+        <Box sx={{ display: 'flex', flexFlow: 'column nowrap' }}>
+          {secret.startsWith('http://') ? (
+            <Link href={secret}>
+              <Typography>{secret}</Typography>
+            </Link>
+          ) : (
+            <Typography>{secret}</Typography>
+          )}
+          {showCongrats && <Firework2 />}
+        </Box>
         <Box
           sx={{
             width: '100%',
@@ -89,52 +96,23 @@ export default function EncodePage({}: EncodePageProps) {
             flexFlow: 'column nowrap',
             alignItems: 'center',
             gap: 1,
-            // mt: 2,
+            mt: 2,
           }}
         >
-          <TextField
-            fullWidth
-            sx={{
-              // mt: 2,
-              mb: 2,
-            }}
-            // size='small'
-            value={message}
-            onChange={onChangeMessage}
-            placeholder={'Type message to hide :)'}
-          />
-
           <Box sx={{ width: '100%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            <Button sx={{ flex: 1 }} variant={'contained'} onClick={onClickEmbed}>
-              Embed
+            <Button
+              sx={{ flex: 1 }}
+              variant={'contained'}
+              onClick={onClickExtract}
+              disabled={!file}
+            >
+              Extract
             </Button>
           </Box>
-
-          {resultImgSrc && (
-            <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
-              <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} />
-            </a>
-          )}
-
-          {resultImgSrc && (
-            <Button
-              variant='outlined'
-              sx={{ width: '100%' }}
-              onClick={() => {
-                const fileName = 'aurastamp_' + Date.now() + '.png';
-                const downloadLink = document.createElement('a');
-                downloadLink.download = fileName;
-                downloadLink.innerHTML = 'Download File';
-                downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
-                downloadLink.click();
-              }}
-            >
-              Download
-            </Button>
-          )}
-          <Link href='/decode'>{`Let's go find the hidden message!`}</Link>
+          <Link href='/encode'>{`Hide your secret message!`}</Link>
         </Box>
       </Container>
+
       <Box
         sx={{
           background: (theme) => theme.palette.primary.main,
@@ -152,6 +130,6 @@ export default function EncodePage({}: EncodePageProps) {
   );
 }
 
-EncodePage.getLayout = (page: ReactNode) => {
+DecodePage.getLayout = (page: ReactNode) => {
   return <DashboardLayout>{page}</DashboardLayout>;
 };

@@ -1,5 +1,6 @@
 import { NavData } from '@/components/layouts/DashboardLayout';
 import { NavItem } from '@/components/layouts/NavItem';
+import { Link } from '@/components/shared/Link';
 import { Logo } from '@/components/shared/Logo';
 import { defaultBreakpoint, sidebarWidth } from '@/contexts/MuiThemeContext';
 import { Box, Chip, Divider, Drawer, Theme, Typography, useMediaQuery } from '@mui/material';
@@ -39,13 +40,17 @@ export const DashboardSidebar = ({ open, onClose, navData = [] }: DashboardSideb
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box>
           <Box sx={{ p: 3 }}>
-            <NextLink href='/' passHref>
+            {/* <NextLink href='/' passHref>
               <a>
                 <Logo sx={{ height: 42, width: 42 }} />
               </a>
-            </NextLink>
+            </NextLink> */}
+            <Link href='/' underline='none' sx={{ display: 'flex' }}>
+              {/* <Logo sx={{ height: 42, width: 42 }} /> */}
+              <Typography variant='h4' sx={{ color: '#ffffff' }}>{`Aura.`}</Typography>
+            </Link>
           </Box>
-          <Box sx={{ px: 2 }}>
+          {/* <Box sx={{ px: 2 }}>
             <Box
               sx={{
                 alignItems: 'center',
@@ -65,14 +70,14 @@ export const DashboardSidebar = ({ open, onClose, navData = [] }: DashboardSideb
                   <Chip label={tier} color='primary' size='small' />
                 </Box>
               </Box>
-              {/* <IconButton size='large'>
+              <IconButton size='large'>
                 <UnfoldMore />
-              </IconButton> */}
-              {/* <IconButton size='large'>
+              </IconButton>
+              <IconButton size='large'>
                 <SelectorIcon sx={{ color: 'neutral.500', width: 14, height: 14 }} />
-              </IconButton> */}
+              </IconButton>
             </Box>
-          </Box>
+          </Box> */}
         </Box>
 
         <Divider sx={{ borderColor: '#2D3748', my: 3 }} />

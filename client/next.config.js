@@ -41,8 +41,8 @@ let nextConfig = {
     // public
     // ******************************
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_APP_TITLE: 'Carillon AI',
-    NEXT_PUBLIC_COMPANY_NAME: 'Carillon AI',
+    NEXT_PUBLIC_APP_TITLE: '',
+    NEXT_PUBLIC_COMPANY_NAME: '',
     NEXT_PUBLIC_DEFAULT_LOCALE: 'en',
     NEXT_PUBLIC_API_URI: isLocal
       ? 'https://api-dev.carillon.ai'
@@ -65,7 +65,7 @@ let nextConfig = {
     // ******************************
     // google analytics
     // ******************************
-    NEXT_PUBLIC_GA_TRACKING_ID: 'G-6HEC1VDSTV',
+    NEXT_PUBLIC_GA_TRACKING_ID: 'G-JQVMS5Z7S3',
     NEXT_PUBLIC_GOOGLE_TAG_MANAGER: 'https://www.googletagmanager.com/ns.html?id=GTM-K7BC3T2',
   },
   images: {
