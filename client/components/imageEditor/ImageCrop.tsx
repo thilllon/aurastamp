@@ -153,14 +153,14 @@ export function ImageCrop({
         )} */}
 
         {!imgSrc && (
-          <Box component='label' htmlFor='contained-button-file' sx={{ width: '100%' }}>
+          <Box component='label' htmlFor='uploadbutton' sx={{ width: '100%' }}>
             <Input
               inputProps={{ accept: 'image/*' }}
-              id='contained-button-file'
+              id='uploadbutton'
               type='file'
               sx={{ display: 'none' }}
             />
-            <Button fullWidth variant='contained' component='span'>
+            <Button fullWidth variant='outlined' component='span'>
               Upload
             </Button>
           </Box>
