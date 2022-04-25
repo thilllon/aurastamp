@@ -25,6 +25,7 @@ export default function DecodePage({}: DecodePageProps) {
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [secret, setSecret] = useState('');
   const [showCongrats, setShowCongrats] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
@@ -59,10 +60,17 @@ export default function DecodePage({}: DecodePageProps) {
     formData.append('file', file);
     formData.append('model_name', modelName);
     // formData.append('text', message);
-    const res = await axios.post(url, formData);
-    console.info(res.data);
-    setSecret(res.data.secret);
-    setShowCongrats(true);
+    try {
+      setLoading(true);
+      const res = await axios.post(url, formData);
+      console.info(res.data);
+      setSecret(res.data.secret);
+      setShowCongrats(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -78,7 +86,7 @@ export default function DecodePage({}: DecodePageProps) {
       >
         <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
         <Box sx={{ display: 'flex', flexFlow: 'column nowrap' }}>
-          {secret.startsWith('http://') ? (
+          {secret?.startsWith('http://') ? (
             <Link href={secret}>
               <Typography>{secret}</Typography>
             </Link>

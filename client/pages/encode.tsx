@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardActionArea,
+  CircularProgress,
   Container,
   IconButton,
   Input,
@@ -34,6 +35,7 @@ export default function EncodePage({}: EncodePageProps) {
   const [modelName, setModelName] = useState('BTS');
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
@@ -62,8 +64,15 @@ export default function EncodePage({}: EncodePageProps) {
     formData.append('file', file);
     formData.append('model_name', modelName);
     formData.append('text', message);
-    const res = await axios.post(url, formData);
-    setResultImgSrc(res.data);
+    setLoading(true);
+    try {
+      const res = await axios.post(url, formData);
+      setResultImgSrc(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -105,7 +114,13 @@ export default function EncodePage({}: EncodePageProps) {
           />
 
           <Box sx={{ width: '100%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            <Button sx={{ flex: 1 }} variant={'contained'} onClick={onClickEmbed} disabled={!file}>
+            <Button
+              sx={{ flex: 1 }}
+              variant={'contained'}
+              onClick={onClickEmbed}
+              disabled={loading || !file || !message}
+              endIcon={loading ? <CircularProgress size={24} /> : null}
+            >
               Embed
             </Button>
           </Box>
