@@ -30,7 +30,7 @@ export function ImageCrop({
   onChange: onChangeProps,
   onCropEnd,
   onCrop,
-  type,
+  type = 'encode',
 }: ImageCrop) {
   const [imgSrc, setImgSrc] = useState('');
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -155,16 +155,30 @@ export function ImageCrop({
         {!imgSrc && (
           <Box component='label' htmlFor='uploadbutton' sx={{ width: '100%' }}>
             <Input
-              inputProps={{ accept: 'image/*' }}
+              // inputProps={{ accept: 'image/*' }}
               id='uploadbutton'
               type='file'
               sx={{ display: 'none' }}
+              onChange={onSelectFile}
             />
             <Button fullWidth variant='outlined' component='span'>
               Upload
             </Button>
           </Box>
         )}
+
+        {/* <input 
+          // accept='image/*'
+          style={{ display: 'none' }}
+          id='uploadbutton2'
+          type='file'
+          onChange={onSelectFile}
+        />
+        <label htmlFor='uploadbutton2'>
+          <Button variant='contained' component='span'>
+            aaaaaaaaaaa
+          </Button>
+        </label> */}
 
         {false && (
           <Card sx={{ backgroundColor: '#dddddd', p: 1, borderRadius: 2 }}>

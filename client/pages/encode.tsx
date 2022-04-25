@@ -89,7 +89,7 @@ export default function EncodePage({}: EncodePageProps) {
             flexFlow: 'column nowrap',
             alignItems: 'center',
             gap: 1,
-            // mt: 2,
+            mt: 2,
           }}
         >
           <TextField
