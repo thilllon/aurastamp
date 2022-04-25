@@ -53,7 +53,7 @@ export const IconButtonMenu = () => {
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
         <IconButton onClick={handleClick} size='small' sx={{ ml: 2 }}>
-          <Avatar src={session?.user?.image??undefined  } sx={{ width: 32, height: 32 }}>
+          <Avatar src={session?.user?.image ?? undefined} sx={{ width: 32, height: 32 }}>
             <Person />
           </Avatar>
         </IconButton>

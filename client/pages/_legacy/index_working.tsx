@@ -38,8 +38,6 @@ export default function IndexPage({}: IndexPageProps) {
 
   const onCropEnd = useCallback((img: PixelCrop | undefined) => {
     console.info(img);
-    if (img) {
-    }
     setCropped(img);
   }, []);
 

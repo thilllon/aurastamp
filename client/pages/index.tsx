@@ -77,7 +77,6 @@ export default function IndexPage({}: IndexPageProps) {
     // formData.append('text', message);
     const res = await axios.post(url, formData);
     console.info(res.data);
-    debugger;
     // setResultImgSrc(res.data);
   };
 

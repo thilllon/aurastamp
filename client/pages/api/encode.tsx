@@ -24,7 +24,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // const fields = await parse(req);
   // console.log(fields);
   // // this.body = uploaded;
-  // debugger;
 
   // ******************************
 
@@ -48,7 +47,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .post(url, formData)
       .then((response) => {
         console.info(response);
-        debugger;
         return res.json({ status: 'ok' });
       })
       .catch((err) => {
@@ -66,7 +64,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // // model_name *
   // // text *
   // // file *
-  // debugger;
   // const url = baseUrl + '/encode_stamp';
   // const response = await axios.post(url, {});
 
