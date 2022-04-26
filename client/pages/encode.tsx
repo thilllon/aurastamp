@@ -36,6 +36,7 @@ export default function EncodePage({}: EncodePageProps) {
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
@@ -55,7 +56,9 @@ export default function EncodePage({}: EncodePageProps) {
   };
 
   const onClickEmbed = async () => {
-    const baseUrl = 'http://20.41.116.194:8000';
+    const baseUrl = 'https://presource.carillon.ai:8000';
+    // const baseUrl = 'http://20.41.116.194:8000';
+
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
     if (!file) {
@@ -70,6 +73,7 @@ export default function EncodePage({}: EncodePageProps) {
       setResultImgSrc(res.data);
     } catch (err) {
       console.error(err);
+      setErrMsg(JSON.stringify(err));
     } finally {
       setLoading(false);
     }
@@ -124,6 +128,8 @@ export default function EncodePage({}: EncodePageProps) {
               Embed
             </Button>
           </Box>
+
+          <Box sx={{ p: 2, m: 3 }}>{errMsg}</Box>
 
           {resultImgSrc && (
             <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
