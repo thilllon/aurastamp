@@ -45,9 +45,9 @@ export const ConsecutiveSnackbars = ({ closeWhenClickaway }: ConsecutiveSnackbar
   };
 
   const handleExited = useCallback(() => {
-    // 중요! "open" state로 close 상태를 체크해서 메세지를 없애면 아직 스낵바가 사라지기 전에 메세지가 바뀌어 버림. 즉 사용자는 메세지가 먼저 사라지고 스낵바가 사라지는 것을 보게됨. onExited는 스낵바가 사라진 뒤에 트리거되므로 스낵바가 사라질때까지 메세지가 바뀌는 현상이 발생하지 않음.
+    // 중요! "open" state로 close 상태를 체크해서 메세지를 없애면 아직 스낵바가 사라지기 전에 메세지가 바뀌어 버림. 즉 사용자는 메세지가 먼저 사라지고 스낵바가 사라지는 것을 보게됨. 대신 onExited를 사용하면 스낵바가 사라진 뒤에 트리거되므로 스낵바가 사라질때까지 메세지가 바뀌는 현상이 발생하지 않음.
     setMessageInfo(undefined);
-  }, [open]);
+  }, []);
 
   return (
     <>
