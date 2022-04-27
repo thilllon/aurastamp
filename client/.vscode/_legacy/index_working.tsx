@@ -30,23 +30,13 @@ export default function IndexPage({}: IndexPageProps) {
   const [modelName, setModelName] = useState('BTS');
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
-
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
-    // console.info(ev.target.files);
     setFile(ev.target.files?.[0] ?? undefined);
   };
-
   const onCropEnd = useCallback((img: PixelCrop | undefined) => {
     console.info(img);
     setCropped(img);
   }, []);
-
-  const onClickCrop = () => {};
-
-  const onClickCancel = () => {
-    //
-  };
-
   const onChangeMessage = (ev: any) => {
     let msg = ev.target.value;
     if (msg.length > 255) {
@@ -54,7 +44,6 @@ export default function IndexPage({}: IndexPageProps) {
     }
     setMessage(msg);
   };
-
   const onClickEmbed = async () => {
     // // const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     // const url = baseUrl + '/encode_stamp';
@@ -100,12 +89,9 @@ export default function IndexPage({}: IndexPageProps) {
 
       <Box
         sx={{
-          // border: '2px solid',
           width: '100%',
           position: 'sticky',
-          // bottom: 0,
           top: 'calc(100vh - 0px)',
-
           display: 'flex',
           flexFlow: 'column nowrap',
           alignItems: 'center',
@@ -146,14 +132,8 @@ export default function IndexPage({}: IndexPageProps) {
 
         <Box
           sx={{
-            // border: '2px solid',
             width: '100%',
-            // position: 'sticky',
-            // bottom: 0,
-            // top: 'calc(100vh - 0px)',
             display: 'flex',
-            // flexFlow: 'column nowrap',
-            // alignItems: 'center',
             gap: 1,
             mt: 2,
           }}
