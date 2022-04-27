@@ -87,6 +87,16 @@ let nextConfig = {
     skipWaiting: true,
     disable: !isProduction,
   },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       // destination: process.env.DESTINATION_URL,
+  //       // source: process.env.SOURCE_PATH,
+  //       destination: 'https://api.aurastamp.com/:path*',
+  //       source: '/api2/:path*',
+  //     },
+  //   ];
+  // },
 };
 
 // NOTE: gif, png, svg 등 이용시 필요

@@ -75,7 +75,6 @@ client.interceptors.response.use(
   },
   async (error) => {
     if (error.response) {
-      console.info('status', error?.response?.status as number);
     }
 
     //     const originalConfig = error.config;
@@ -112,19 +111,15 @@ export type _QueryOptions<TInput, TOutput> = Omit<
 // const makeQueryHook = <TInput, TOutput>(queryKey: string, queryFn: TQueryFn<TInput, TOutput>) => {
 //   return (input: TInput, options?: QueryOptions<TInput, TOutput>) => {
 //     const { data: session } = useSessionTmp();
-//     console.info('## makeQueryHook', client.defaults.headers.common.Authorization);
 //     client.defaults.headers.common.Authorization = session?.user.accessToken as string;
-//     console.info('## makeQueryHook', session?.accessToken);
 //     return useQuery<TOutput, AxiosError, TOutput, [string, TInput]>([queryKey, input], queryFn, {
 //       retry: (failureCount, error) => {
-//         console.info('failureCount', failureCount);
 //         if (error?.response?.status === 403) {
 //           return true;
 //         }
 //         return true;
 //       },
 //       onError: async (err: AxiosError) => {
-//         console.dir(err);
 //       },둣
 //       ...options,
 //     });

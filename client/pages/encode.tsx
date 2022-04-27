@@ -43,7 +43,6 @@ export default function EncodePage({}: EncodePageProps) {
   };
 
   const onCropEnd = useCallback((img: PixelCrop | undefined) => {
-    console.info(img);
     setCropped(img);
   }, []);
 

@@ -5,24 +5,17 @@ import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { Link } from '@/components/shared/Link';
 import { Box, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
-import getConfig from 'next/config';
 import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
-import { useTimeout, useTimeoutFn } from 'react-use';
-
-const { publicRuntimeConfig } = getConfig();
 
 type DecodePageProps = {};
 
-const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
 
 export default function DecodePage({}: DecodePageProps) {
   const [file, setFile] = useState<File>();
   const [cropped, setCropped] = useState<PixelCrop>();
   const [modelName, setModelName] = useState('BTS');
-  const [message, setMessage] = useState('');
-  const [resultImgSrc, setResultImgSrc] = useState('');
   const [secret, setSecret] = useState('');
   const [showCongrats, setShowCongrats] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,23 +25,8 @@ export default function DecodePage({}: DecodePageProps) {
   };
 
   const onCropEnd = useCallback((img: PixelCrop | undefined) => {
-    console.info(img);
     setCropped(img);
   }, []);
-
-  const onClickEmbed = async () => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    const url = baseUrl + '/encode_stamp';
-    const formData = new FormData();
-    if (!file) {
-      return;
-    }
-    formData.append('file', file);
-    formData.append('model_name', modelName);
-    formData.append('text', message);
-    const res = await axios.post(url, formData);
-    setResultImgSrc(res.data);
-  };
 
   const onClickExtract = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
@@ -59,7 +37,6 @@ export default function DecodePage({}: DecodePageProps) {
     }
     formData.append('file', file);
     formData.append('model_name', modelName);
-    // formData.append('text', message);
     try {
       setLoading(true);
       const res = await axios.post(url, formData);
@@ -98,8 +75,6 @@ export default function DecodePage({}: DecodePageProps) {
         <Box
           sx={{
             width: '100%',
-            // position: 'sticky',
-            // top: 'calc(100vh - 0px)',
             display: 'flex',
             flexFlow: 'column nowrap',
             alignItems: 'center',

@@ -82,7 +82,6 @@ export function ImageCrop({
   const onClickCrop = (ev: any) => {
     if (previewCanvasRef.current) {
       const data = previewCanvasRef.current.toDataURL('image/jpeg');
-      console.info(data);
       setImgSrc(data);
       // download(new Blob([data]), 'image.jpg');
       setCrop(undefined);

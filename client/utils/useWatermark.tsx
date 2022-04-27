@@ -45,22 +45,15 @@ export const useWatermark = (selector: string) => {
   useEffect(() => {
     const observeBody = () => {
       const mutationCallback = (mutations: MutationRecord[], observer: MutationObserver) => {
-        // console.group('observeBody');
-        // console.info('mutations', mutations);
-        // console.info('observer', observer);
-        // console.groupEnd();
         mutations.forEach((mutation) => {
           mutation.removedNodes.forEach((node) => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const el = node as HTMLElement;
               if (el.matches(selector)) {
-                // console.info ('engrave', el);
                 el.setAttribute('engraved', 'true');
                 // TODO: engrave background 다시 2개 생성
               }
             }
-            // console.info(node.id);
-            // console.dir(node);
           });
         });
       };

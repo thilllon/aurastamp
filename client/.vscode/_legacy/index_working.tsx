@@ -34,7 +34,6 @@ export default function IndexPage({}: IndexPageProps) {
     setFile(ev.target.files?.[0] ?? undefined);
   };
   const onCropEnd = useCallback((img: PixelCrop | undefined) => {
-    console.info(img);
     setCropped(img);
   }, []);
   const onChangeMessage = (ev: any) => {
@@ -58,7 +57,6 @@ export default function IndexPage({}: IndexPageProps) {
     //   // responseType: 'blob', // Important
     //   // responseType: 'arraybuffer',
     // });
-    // console.info(typeof res.data, res.data);
     // // const buf = Buffer.from(res.data, 'utf8');
     // // downloadBuffer(res.data, 'arraybuffer.png', file.type);
     // // window.location.href = 'data:application/octet-stream;base64,' + res.data;

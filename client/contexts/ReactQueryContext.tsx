@@ -34,8 +34,6 @@ export const ReactQueryClientProvider = ({
   children,
   dehydratedState,
 }: ReactQueryClientProviderProps) => {
-  // console.info('dehydratedState', dehydratedState);
-
   // TODO: queryClient 바깥으로 빼는것이 옳은가?
   // const [client] = useState(queryClient);
   // TODO: queryClient 바깥으로 빼는것이 옳은가?
@@ -50,11 +48,9 @@ export const ReactQueryClientProvider = ({
   // useEffect(() => {
   //   // By storing QueryClient in localstorage, it uses the existing cache to speed up loading when the browser is reopened.
   //   const persistor = createWebStoragePersistor({ storage: window.localStorage });
-  //   console.info('persistor', persistor);
 
   //   (async () => {
   //     const persistedClient: undefined | PersistedClient = await persistor.restoreClient();
-  //     console.info('persistedClient', persistedClient);
   //   })();
 
   //   persistQueryClient({
@@ -104,7 +100,6 @@ export const ReactQueryClientProvider = ({
 //   children,
 //   dehydratedState,
 // }: ReactQueryClientProviderProps) => {
-//   console.info('dehydratedState', dehydratedState);
 //   const [persistor, setPersistor] = useState<Persistor>();
 //   useEffect(() => {
 //     // By storing QueryClient in localstorage, it uses the existing cache to speed up loading when the browser is reopened.
