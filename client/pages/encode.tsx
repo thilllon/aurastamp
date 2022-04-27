@@ -56,9 +56,7 @@ export default function EncodePage({}: EncodePageProps) {
   };
 
   const onClickEmbed = async () => {
-    const baseUrl = 'https://presource.carillon.ai:8000';
-    // const baseUrl = 'http://20.41.116.194:8000';
-
+    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
     if (!file) {

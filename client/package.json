@@ -10,8 +10,8 @@
     "build": "next build --debug",
     "start": "next start",
     "lint": "next lint",
-    "bs": "yarn && yarn build && next start -p 3333",    "server":"yarn ngrok http 3333", 
-
+    "bs": "yarn && yarn build && next start -p 3333",
+    "server": "yarn ngrok http 3333",
     "format": "prettier . --write --config .prettierrc.json --list-different"
   },
   "dependencies": {
@@ -19,7 +19,7 @@
     "@emotion/react": "^11.9.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.8.1",
-    "@faker-js/faker": "^6.2.0", 
+    "@faker-js/faker": "^6.2.0",
     "@hookform/resolvers": "^2.8.8",
     "@mui/icons-material": "^5.6.2",
     "@mui/material": "^5.6.2",

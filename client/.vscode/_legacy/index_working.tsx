@@ -56,35 +56,30 @@ export default function IndexPage({}: IndexPageProps) {
   };
 
   const onClickEmbed = async () => {
-    // const baseUrl = 'http://localhost:3333';
-    // const url = baseUrl + '/api/encode';
-    const baseUrl = 'http://20.41.116.194:8000';
-    const url = baseUrl + '/encode_stamp';
-
-    const formData = new FormData();
-
-    if (!file) {
-      return;
-    }
-
-    formData.append('file', file);
-    formData.append('model_name', modelName);
-    formData.append('text', '안녕하세요');
-    const res = await axios.post(url, formData, {
-      // responseType: 'blob', // Important
-      // responseType: 'arraybuffer',
-    });
-    console.info(typeof res.data, res.data);
-    // const buf = Buffer.from(res.data, 'utf8');
-    // downloadBuffer(res.data, 'arraybuffer.png', file.type);
-    // window.location.href = 'data:application/octet-stream;base64,' + res.data;
-    // download(
-    //   // new Blob([`data:image/png;base64,` + res.data], { type: 'image/png' }),
-    //   new Blob([res.data], { type: 'image/png' }),
-    //   Date.now() + '.png'
-    // );
-    // setResultImgSrc(`data:image/png;base64,` + res.data);
-    setResultImgSrc(res.data);
+    // // const baseUrl = process.env.NEXT_PUBLIC_API_URI;
+    // const url = baseUrl + '/encode_stamp';
+    // const formData = new FormData();
+    // if (!file) {
+    //   return;
+    // }
+    // formData.append('file', file);
+    // formData.append('model_name', modelName);
+    // formData.append('text', '안녕하세요');
+    // const res = await axios.post(url, formData, {
+    //   // responseType: 'blob', // Important
+    //   // responseType: 'arraybuffer',
+    // });
+    // console.info(typeof res.data, res.data);
+    // // const buf = Buffer.from(res.data, 'utf8');
+    // // downloadBuffer(res.data, 'arraybuffer.png', file.type);
+    // // window.location.href = 'data:application/octet-stream;base64,' + res.data;
+    // // download(
+    // //   // new Blob([`data:image/png;base64,` + res.data], { type: 'image/png' }),
+    // //   new Blob([res.data], { type: 'image/png' }),
+    // //   Date.now() + '.png'
+    // // );
+    // // setResultImgSrc(`data:image/png;base64,` + res.data);
+    // setResultImgSrc(res.data);
   };
   const onClickExtract = async () => {
     //

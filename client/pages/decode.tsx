@@ -37,7 +37,7 @@ export default function DecodePage({}: DecodePageProps) {
   }, []);
 
   const onClickEmbed = async () => {
-    const baseUrl = 'http://20.41.116.194:8000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
     if (!file) {
@@ -51,7 +51,7 @@ export default function DecodePage({}: DecodePageProps) {
   };
 
   const onClickExtract = async () => {
-    const baseUrl = 'http://20.41.116.194:8000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/decode_stamp';
     const formData = new FormData();
     if (!file) {
