@@ -27,7 +27,7 @@
 // export default function IndexPage({}: IndexPageProps) {
 //   const [file, setFile] = useState<File>();
 //   const [cropped, setCropped] = useState<PixelCrop>();
-//   const [modelName, setModelName] = useState('BTS');
+//   const [modelName, setModelName] = useState(null);
 //   const [message, setMessage] = useState('');
 //   const [resultImgSrc, setResultImgSrc] = useState('');
 //   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {

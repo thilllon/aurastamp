@@ -21,6 +21,7 @@ import { download, downloadBuffer } from '@/utils/common';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { PixelCrop } from 'react-image-crop';
 import { Link } from '@/components/shared/Link';
+import { StampModel } from '@/types/types';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -32,7 +33,7 @@ const footerHeight = 120;
 export default function EncodePage({}: EncodePageProps) {
   const [file, setFile] = useState<File>();
   const [cropped, setCropped] = useState<PixelCrop>();
-  const [modelName, setModelName] = useState('BTS');
+  const [modelName, setModelName] = useState<StampModel | null>(null);
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [loading, setLoading] = useState(false);

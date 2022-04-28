@@ -7,6 +7,7 @@ import { Box, Button, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
+import { StampModel } from '@/types/types';
 
 type DecodePageProps = {};
 
@@ -15,7 +16,7 @@ const footerHeight = 120;
 export default function DecodePage({}: DecodePageProps) {
   const [file, setFile] = useState<File>();
   const [cropped, setCropped] = useState<PixelCrop>();
-  const [modelName, setModelName] = useState('BTS');
+  const [modelName, setModelName] = useState<StampModel | null>(null);
   const [secret, setSecret] = useState('');
   const [showCongrats, setShowCongrats] = useState(false);
   const [loading, setLoading] = useState(false);

@@ -1,8 +1,0 @@
-curl -X 'POST' \
-  'https://api.aurastamp.com/encode_stamp' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: multipart/form-data' \
-  -F 'model_name=BTS' \
-  -F 'text=aaaaaaaaaaaaaaaaaaaa' \
-  -F 'file=@코케인.png;type=image/png' \
-  -F 'return_type=base64'
