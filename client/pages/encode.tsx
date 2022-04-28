@@ -63,7 +63,9 @@ export default function EncodePage({}: EncodePageProps) {
       return;
     }
     formData.append('file', file);
-    formData.append('model_name', modelName);
+    if (modelName) {
+      formData.append('model_name', modelName);
+    }
     formData.append('text', message);
     setLoading(true);
     try {

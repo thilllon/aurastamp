@@ -37,7 +37,9 @@ export default function DecodePage({}: DecodePageProps) {
       return;
     }
     formData.append('file', file);
-    formData.append('model_name', modelName);
+    if (modelName) {
+      formData.append('model_name', modelName);
+    }
     try {
       setLoading(true);
       const res = await axios.post(url, formData);
