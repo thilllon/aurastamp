@@ -33,7 +33,7 @@ const footerHeight = 120;
 export default function EncodePage({}: EncodePageProps) {
   const [file, setFile] = useState<File>();
   const [cropped, setCropped] = useState<PixelCrop>();
-  const [modelName, setModelName] = useState<StampModel | null>(null);
+  const [modelName, setModelName] = useState<StampModel>('the');
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [loading, setLoading] = useState(false);

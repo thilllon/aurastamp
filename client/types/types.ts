@@ -1,1 +1,1 @@
-export type StampModel = 'BTS' | 'BLACKPINK';
+export type StampModel = 'bts' | 'blackpink' | 'the';

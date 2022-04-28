@@ -16,7 +16,7 @@ const footerHeight = 120;
 export default function DecodePage({}: DecodePageProps) {
   const [file, setFile] = useState<File>();
   const [cropped, setCropped] = useState<PixelCrop>();
-  const [modelName, setModelName] = useState<StampModel | null>(null);
+  const [modelName, setModelName] = useState<StampModel>('the');
   const [secret, setSecret] = useState('');
   const [showCongrats, setShowCongrats] = useState(false);
   const [loading, setLoading] = useState(false);
