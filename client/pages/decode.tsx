@@ -95,11 +95,11 @@ export default function DecodePage({}: DecodePageProps) {
               Extract
             </Button>
           </Box>
-          <Link href='/encode'>{`Hide your secret message!`}</Link>
+          {/* <Link href='/encode'>{`Hide your secret message!`}</Link> */}
         </Box>
       </Container>
 
-      <Box
+      {/* <Box
         sx={{
           background: (theme) => theme.palette.primary.main,
           height: 120,
@@ -111,7 +111,7 @@ export default function DecodePage({}: DecodePageProps) {
         }}
       >
         <Typography sx={{ color: '#ffffff', fontSize: 24, fontWeight: 700 }}>{`Aura.`}</Typography>
-      </Box>
+      </Box> */}
     </>
   );
 }

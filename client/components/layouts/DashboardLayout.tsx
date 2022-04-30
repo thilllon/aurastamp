@@ -3,9 +3,19 @@ import { DashboardSidebar } from '@/components/layouts/DashboardSidebar';
 import { DashboardTopNavbar } from '@/components/layouts/DashboardTopNavbar';
 import { defaultBreakpoint, sidebarWidth } from '@/contexts/MuiThemeContext';
 import { WorkOutlineOutlined } from '@mui/icons-material';
-import { Box, SxProps } from '@mui/material';
+
+import RestoreIcon from "@mui/icons-material/Restore";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { 
+  Box, 
+  SxProps, 
+  BottomNavigation,
+  BottomNavigationAction,
+  Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useCallback, useState } from 'react';
+import { useRouter } from "next/router";
 
 const isProduction = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 
@@ -107,6 +117,8 @@ const navData: NavData[] = [
 
 export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [page, setPage] = useState('');
+
 
   const onSidebarOpen = useCallback(() => {
     setSidebarOpen(true);
@@ -116,15 +128,32 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
     setSidebarOpen(false);
   }, []);
 
+  const router = useRouter();
+  const onLink = (href) => {
+    router.push(href);
+  };
+
   return (
     <>
-      <DashboardTopNavbar onSidebarOpen={onSidebarOpen} />
+      {/* <DashboardTopNavbar onSidebarOpen={onSidebarOpen} /> */}
       <DashboardLayoutRoot sx={sx}>
         <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', width: '100%' }}>
           {children}
         </Box>
       </DashboardLayoutRoot>
-      <DashboardSidebar onClose={onClose} open={isSidebarOpen} navData={navData} />
+      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <BottomNavigation
+          showLabels
+          value={page}
+          onChange={(event, newValue) => {
+            setPage(newValue);
+          }}
+        >
+          <BottomNavigationAction label="Read" icon={<RestoreIcon />} onClick={() => onLink("/encode")} />
+          <BottomNavigationAction label="Write" icon={<FavoriteIcon />} onClick={() => onLink("/decode")} />
+        </BottomNavigation>
+      </Paper>
+      {/* <DashboardSidebar onClose={onClose} open={isSidebarOpen} navData={navData} /> */}
       <Footer />
     </>
   );

@@ -153,10 +153,10 @@ export default function EncodePage({}: EncodePageProps) {
               Download
             </Button>
           )}
-          <Link href='/decode'>{`Let's go find the hidden message!`}</Link>
+          {/* <Link href='/decode'>{`Let's go find the hidden message!`}</Link> */}
         </Box>
       </Container>
-      <Box
+      {/* <Box
         sx={{
           background: (theme) => theme.palette.primary.main,
           height: 120,
@@ -168,7 +168,7 @@ export default function EncodePage({}: EncodePageProps) {
         }}
       >
         <Typography sx={{ color: '#ffffff', fontSize: 24, fontWeight: 700 }}>{`Aura.`}</Typography>
-      </Box>
+      </Box> */}
     </>
   );
 }
