@@ -92,7 +92,19 @@ export default function EncodePage({}: EncodePageProps) {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
+        <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1, mt: 2, mb: 3 }}>
+          {!resultImgSrc && (
+            <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
+          )}
+
+          {resultImgSrc && (
+            <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
+              <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} />
+            </a>
+          )}
+        </Box>
+
+
         <Box
           sx={{
             width: '100%',
@@ -105,54 +117,61 @@ export default function EncodePage({}: EncodePageProps) {
             mt: 2,
           }}
         >
-          <TextField
-            fullWidth
-            sx={{
-              // mt: 2,
-              mb: 2,
-            }}
-            // size='small'
-            value={message}
-            onChange={onChangeMessage}
-            placeholder={'Type message to hide :)'}
-          />
-
-          <Box sx={{ width: '100%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            <Button
-              sx={{ flex: 1 }}
-              variant={'contained'}
-              onClick={onClickEmbed}
-              disabled={loading || !file || !message}
-              endIcon={loading ? <CircularProgress size={24} /> : null}
-            >
-              Embed
-            </Button>
+          {!resultImgSrc && (
+            <TextField
+              fullWidth
+              sx={{
+                // mt: 2,
+                mb: 2,
+              }}
+              // size='small'
+              value={message}
+              onChange={onChangeMessage}
+              placeholder={'Type message to hide :)'}
+            />
+          )}
+          {resultImgSrc && (
+            <Box sx={{
+                // mt: 2,
+                mb: 2,
+              }}/>
+          )}
+          
+          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
+            {!resultImgSrc && (
+              <Button
+                sx={{ flex: 1 }}
+                variant={'contained'}
+                onClick={onClickEmbed}
+                disabled={loading || !file || !message}
+                endIcon={loading ? <CircularProgress size={24} /> : null}
+              >
+                Embed
+              </Button>
+            )}
+            {resultImgSrc && (
+              <Button
+                variant='outlined'
+                onClick={() => {
+                  const fileName = 'aurastamp_' + Date.now() + '.png';
+                  const downloadLink = document.createElement('a');
+                  downloadLink.download = fileName;
+                  downloadLink.innerHTML = 'Download File';
+                  downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
+                  downloadLink.click();
+                }}
+              >
+                Download
+              </Button>
+            )}
           </Box>
 
-          <Box sx={{ p: 2, m: 3 }}>{errMsg}</Box>
-
-          {resultImgSrc && (
-            <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
-              <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} />
-            </a>
+          
+          {errMsg && (
+            <Box sx={{ p: 2, m: 3 }}>{errMsg}</Box>
           )}
 
-          {resultImgSrc && (
-            <Button
-              variant='outlined'
-              sx={{ width: '100%' }}
-              onClick={() => {
-                const fileName = 'aurastamp_' + Date.now() + '.png';
-                const downloadLink = document.createElement('a');
-                downloadLink.download = fileName;
-                downloadLink.innerHTML = 'Download File';
-                downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
-                downloadLink.click();
-              }}
-            >
-              Download
-            </Button>
-          )}
+
           {/* <Link href='/decode'>{`Let's go find the hidden message!`}</Link> */}
         </Box>
       </Container>

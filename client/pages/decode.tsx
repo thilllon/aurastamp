@@ -64,7 +64,9 @@ export default function DecodePage({}: DecodePageProps) {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
+        <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1, mt: 2, mb: 3 }}>
+         <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
+        </Box>
         <Box sx={{ display: 'flex', flexFlow: 'column nowrap' }}>
           {secret?.startsWith('http://') ? (
             <Link href={secret}>
@@ -73,7 +75,7 @@ export default function DecodePage({}: DecodePageProps) {
           ) : (
             <Typography>{secret}</Typography>
           )}
-          {showCongrats && <Firework2 />}
+          {/* {showCongrats && <Firework2 />} */}
         </Box>
         <Box
           sx={{
@@ -85,7 +87,7 @@ export default function DecodePage({}: DecodePageProps) {
             mt: 2,
           }}
         >
-          <Box sx={{ width: '100%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
+          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
             <Button
               sx={{ flex: 1 }}
               variant={'contained'}
