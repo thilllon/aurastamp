@@ -20,6 +20,13 @@ const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
+    display: 'flex',
+    flex: '1 1 auto',
+    maxWidth: '420px',
+    maxHeight: '70px',
+    width: '100%',
+    paddingTop: 10,
+    margin: '0 auto',
   };
 });
 
@@ -34,13 +41,28 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
   return (
     <>
       <DashboardTopNavbarRoot
-        sx={{ left: { lg: sidebarWidth }, width: { lg: `calc(100% - ${sidebarWidth}px)` }, ...sx }}
+        sx={{ width: 'inherit', maxWidth: 'inherit', margin: '0 auto',
+                     position: 'fixed', bottom: 0, left: 0, right: 0 }}
         {...others}
       >
-        <Toolbar disableGutters sx={{ minHeight: 64, left: 0, px: 2 }}>
-          <IconButton onClick={onSidebarOpen} sx={{ display: { xs: 'inline-flex', lg: 'none' } }}>
+        <Box
+        sx={{
+          background: (theme) => theme.palette.primary.main,
+          height: 120,
+          p: 2,
+          display: 'flex',
+          flexFlow: 'row nowrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        >
+         
+          <Typography sx={{ color: '#ffffff', fontSize: 24, fontWeight: 700 }}>{`the aura`}</Typography>
+        </Box> 
+        <Toolbar disableGutters sx={{ left: 0, px: 2 }}>
+          {/* <IconButton onClick={onSidebarOpen} sx={{ display: { xs: 'inline-flex', lg: 'none' } }}>
             <MenuIcon fontSize='small' />
-          </IconButton>
+          </IconButton> */}
 
           {/* <TextField
             fullWidth
@@ -110,11 +132,11 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
           <NoSsr>
             {isLoading && <CircularProgress />}
             {!isLoading && session && <IconButtonMenu />}
-            {!isLoading && !session && (
+            {/* {!isLoading && !session && (
               <Link href='/api/auth/signin' underline='none'>
                 <Button>Login</Button>
               </Link>
-            )}
+            )} */}
           </NoSsr>
         </Toolbar>
       </DashboardTopNavbarRoot>

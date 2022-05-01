@@ -139,6 +139,7 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
     <>
       {/* <DashboardTopNavbar onSidebarOpen={onSidebarOpen} /> */}
       <DashboardLayoutRoot sx={sx}>
+        <DashboardTopNavbar onSidebarOpen={onSidebarOpen} />
         <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', width: '100%' }}>
           {children}
         </Box>
