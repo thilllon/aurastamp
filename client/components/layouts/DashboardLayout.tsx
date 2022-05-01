@@ -22,9 +22,11 @@ const isProduction = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 const DashboardLayoutRoot = styled('main')(({ theme }) => ({
   display: 'flex',
   flex: '1 1 auto',
-  maxWidth: '100%',
+  maxWidth: '420px',
+  width: '100%',
   paddingTop: 64,
-  [theme.breakpoints.up(defaultBreakpoint)]: { paddingLeft: sidebarWidth },
+  margin: '0 auto',
+  // [theme.breakpoints.up(defaultBreakpoint)]: { paddingLeft: sidebarWidth },
 }));
 
 type DashboardLayoutProps = {
@@ -140,19 +142,20 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
         <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', width: '100%' }}>
           {children}
         </Box>
+        <Paper sx={{ width: 'inherit', maxWidth: 'inherit', margin: '0 auto',
+                     position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+          <BottomNavigation
+            showLabels
+            value={page}
+            onChange={(event, newValue) => {
+              setPage(newValue);
+            }}
+          >
+            <BottomNavigationAction label="Read" icon={<RestoreIcon />} onClick={() => onLink("/encode")} />
+            <BottomNavigationAction label="Write" icon={<FavoriteIcon />} onClick={() => onLink("/decode")} />
+          </BottomNavigation>
+        </Paper>
       </DashboardLayoutRoot>
-      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
-        <BottomNavigation
-          showLabels
-          value={page}
-          onChange={(event, newValue) => {
-            setPage(newValue);
-          }}
-        >
-          <BottomNavigationAction label="Read" icon={<RestoreIcon />} onClick={() => onLink("/encode")} />
-          <BottomNavigationAction label="Write" icon={<FavoriteIcon />} onClick={() => onLink("/decode")} />
-        </BottomNavigation>
-      </Paper>
       {/* <DashboardSidebar onClose={onClose} open={isSidebarOpen} navData={navData} /> */}
       <Footer />
     </>
