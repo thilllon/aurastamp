@@ -4,9 +4,8 @@ import { DashboardTopNavbar } from '@/components/layouts/DashboardTopNavbar';
 import { defaultBreakpoint, sidebarWidth } from '@/contexts/MuiThemeContext';
 import { WorkOutlineOutlined } from '@mui/icons-material';
 
-import RestoreIcon from "@mui/icons-material/Restore";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { 
   Box, 
   SxProps, 
@@ -166,8 +165,8 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
               setPage(newValue);
             }}
           >
-            <BottomNavigationAction label="Read" icon={<RestoreIcon />} onClick={() => onLink("/encode")} />
-            <BottomNavigationAction label="Write" icon={<FavoriteIcon />} onClick={() => onLink("/decode")} />
+            <BottomNavigationAction label="Read" icon={<ImageSearchIcon />} onClick={() => onLink("/decode")} />
+            <BottomNavigationAction label="Write" icon={<BorderColorIcon />} onClick={() => onLink("/encode")} />
           </BottomNavigation>
         </Paper>
       </DashboardLayoutRoot>
