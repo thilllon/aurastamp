@@ -20,6 +20,8 @@ export default function DecodePage({}: DecodePageProps) {
   const [secret, setSecret] = useState('');
   const [showCongrats, setShowCongrats] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
+
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
@@ -44,8 +46,13 @@ export default function DecodePage({}: DecodePageProps) {
       setLoading(true);
       const res = await axios.post(url, formData);
       console.info(res.data);
-      setSecret(res.data.secret);
-      setShowCongrats(true);
+      if (res.data.secret) {
+        setSecret(res.data.secret);
+        setShowCongrats(true);
+      }
+      else if (res.data.error) {
+        setErrMsg(res.data.error);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -67,8 +74,15 @@ export default function DecodePage({}: DecodePageProps) {
         <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1, mt: 2, mb: 3 }}>
          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
         </Box>
-        <Box sx={{ display: 'flex', flexFlow: 'column nowrap' }}>
-          {secret?.startsWith('http://') ? (
+
+        {secret && (
+          <Box sx={{ display: 'flex', 
+            border: 1,
+            p: 4,
+            borderRadius: '12px',
+            borderColor: (theme) => theme.palette.primary.main,
+            flexFlow: 'column nowrap' }}>
+          {secret?.startsWith('http') ? (
             <Link href={secret}>
               <Typography>{secret}</Typography>
             </Link>
@@ -77,6 +91,13 @@ export default function DecodePage({}: DecodePageProps) {
           )}
           {/* {showCongrats && <Firework2 />} */}
         </Box>
+        )}
+
+        {errMsg && (
+          <Box sx={{ display: 'flex', flexFlow: 'column nowrap' }}>
+            <Typography>{errMsg}</Typography>
+        </Box>
+        )}
         <Box
           sx={{
             width: '100%',
