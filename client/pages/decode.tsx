@@ -80,6 +80,7 @@ export default function DecodePage({}: DecodePageProps) {
             border: 1,
             p: 4,
             borderRadius: '12px',
+            alignItems: 'center',
             borderColor: (theme) => theme.palette.primary.main,
             flexFlow: 'column nowrap' }}>
           {secret?.startsWith('http') ? (
