@@ -25,7 +25,6 @@ const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
     maxWidth: '420px',
     maxHeight: '70px',
     width: '100%',
-    paddingTop: 10,
     margin: '0 auto',
   };
 });
@@ -57,88 +56,8 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
         }}
         >
          
-          <Typography sx={{ color: '#ffffff', fontSize: 24, fontWeight: 700 }}>{`the aura`}</Typography>
+          <Typography sx={{ color: (theme) => theme.palette.primary.contrastText, fontSize: 24, fontWeight: 700 }}>{`the aura`}</Typography>
         </Box> 
-        <Toolbar disableGutters sx={{ left: 0, px: 2 }}>
-          {/* <IconButton onClick={onSidebarOpen} sx={{ display: { xs: 'inline-flex', lg: 'none' } }}>
-            <MenuIcon fontSize='small' />
-          </IconButton> */}
-
-          {/* <TextField
-            fullWidth
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SvgIcon color='action' fontSize='small'>
-                    <SearchIcon />
-                  </SvgIcon>
-                </InputAdornment>
-              ),
-            }}
-            placeholder='Search customer'
-            variant='outlined'
-            sx={{ ml: 1, mr: 1 }}
-          /> */}
-
-          <Box sx={{ flexGrow: 1 }} />
-
-          <NoSsr>
-            {/* FIXME: users icon */}
-            {/* {session && (
-              <Tooltip title='Contacts'>
-                <IconButton sx={{ ml: 1 }}>
-                  <UsersIcon fontSize='small' />
-                </IconButton>
-              </Tooltip>
-            )} */}
-          </NoSsr>
-
-          <NoSsr>
-            {/* FIXME: notification icon */}
-            {/* {session && (
-              <Tooltip title='Notifications'>
-                <IconButton sx={{ ml: 1 }}>
-                  <Badge badgeContent={4} color='primary' variant='dot'>
-                    <BellIcon fontSize='small' />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-            )} */}
-          </NoSsr>
-
-          <NoSsr>
-            {session && (
-              <Typography
-                sx={{ color: '#000000' }}
-                variant='h6'
-              >{`Hi, ${session?.user?.name}!`}</Typography>
-            )}
-          </NoSsr>
-
-          <NoSsr>
-            {/* {session && (
-              <IconButton sx={{ height: 40, width: 40, ml: 1 }}>
-                <Avatar
-                  // sx={{ height: 40, width: 40 }}
-                  src='/static/images/avatars/avatar_1234.png'
-                  // alt={session.user.name}
-                >
-                  <UserCircleIcon fontSize='small' />
-                </Avatar>
-              </IconButton> 
-            )} */}
-          </NoSsr>
-
-          <NoSsr>
-            {isLoading && <CircularProgress />}
-            {!isLoading && session && <IconButtonMenu />}
-            {/* {!isLoading && !session && (
-              <Link href='/api/auth/signin' underline='none'>
-                <Button>Login</Button>
-              </Link>
-            )} */}
-          </NoSsr>
-        </Toolbar>
       </DashboardTopNavbarRoot>
     </>
   );
