@@ -260,7 +260,7 @@ export function ImageCrop({
       </Box>
 
       {Boolean(imgSrc) && (
-        <Box sx={{ display: 'flex', justifyContent: 'end', margin: '10px' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'end', margin: '10px 0px' }}>
           {!cropMode && 
           <IconButton onClick={onClickCropMode}>
             <CropIcon sx={{ fontSize: 35 }} />
@@ -280,7 +280,6 @@ export function ImageCrop({
             alt='Crop me'
             src={imgSrc}
             style={{ width: '100%', transform: `scale(${scale}) rotate(${rotate}deg)` }}
-            onLoad={onImageLoad}
           />
       )}
 
@@ -291,10 +290,7 @@ export function ImageCrop({
           onComplete={(c) => setCompletedCrop(c)}
           aspect={aspect}
           style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            width: '100%'
           }}
         >
           <img
@@ -308,11 +304,10 @@ export function ImageCrop({
       )}
 
       <Box sx={{ display: 'none' }}>
-        {(Boolean(completedCrop)) && (
+        {(Boolean(cropMode)) && (
           <canvas
             ref={previewCanvasRef}
             style={{
-              border: '1px solid black',
               objectFit: 'contain',
               width: completedCrop?.width ?? 0,
               height: completedCrop?.height ?? 0,
