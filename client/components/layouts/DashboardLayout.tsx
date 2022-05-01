@@ -148,6 +148,20 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
           <BottomNavigation
             showLabels
             value={page}
+            sx={{
+              bgcolor: 'primary.main',
+              '& .Mui-selected': {
+                '& .MuiBottomNavigationAction-label': {
+                  fontSize: theme => theme.typography.caption,
+                  transition: 'none',
+                  fontWeight: 'bold',
+                  lineHeight: '20px'
+                },
+                '& .MuiSvgIcon-root, & .MuiBottomNavigationAction-label': {
+                  color: theme => theme.palette.primary.contrastText
+                }
+              }
+            }}
             onChange={(event, newValue) => {
               setPage(newValue);
             }}
