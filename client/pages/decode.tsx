@@ -75,7 +75,7 @@ export default function DecodePage({}: DecodePageProps) {
          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
         </Box>
 
-        {secret && (
+        {(secret || errMsg) && (
           <Box sx={{ display: 'flex', 
             border: 1,
             p: 4,
@@ -90,15 +90,15 @@ export default function DecodePage({}: DecodePageProps) {
           ) : (
             <Typography>{secret}</Typography>
           )}
-          {/* {showCongrats && <Firework2 />} */}
-        </Box>
-        )}
-
-        {errMsg && (
-          <Box sx={{ display: 'flex', flexFlow: 'column nowrap' }}>
+          {errMsg ? (
             <Typography>{errMsg}</Typography>
-        </Box>
+          ) : (
+            <Typography></Typography>
+          )}
+          {/* {showCongrats && <Firework2 />} */}
+          </Box>
         )}
+        
         <Box
           sx={{
             width: '100%',
