@@ -10,6 +10,7 @@ import CropIcon from '@mui/icons-material/Crop';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
@@ -174,7 +175,9 @@ export function ImageCrop({
         )} */}
 
         {!imgSrc && (
-          <Box component='label' htmlFor='uploadbutton' sx={{ width: '100%' }}>
+          <Box component='label' htmlFor='uploadbutton'
+              sx={{ cursor: 'pointer', border: '8px solid black',
+                    display: 'flex', justifyContent: 'center' }}>
             <Input
               // inputProps={{ accept: 'image/*' }}
               id='uploadbutton'
@@ -182,9 +185,9 @@ export function ImageCrop({
               sx={{ display: 'none' }}
               onChange={onSelectFile}
             />
-            <Button fullWidth variant='outlined' component='span'>
-              Upload
-            </Button>
+            <Box sx={{ margin: '20px'}}>
+              <FileUploadIcon sx={{ fontSize: 100 }} />
+            </Box>
           </Box>
         )}
 

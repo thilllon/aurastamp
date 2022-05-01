@@ -92,19 +92,17 @@ export default function EncodePage({}: EncodePageProps) {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1, mt: 2, mb: 3 }}>
+        <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1 }}>
           {!resultImgSrc && (
             <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
           )}
 
           {resultImgSrc && (
             <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
-              <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} />
+              <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} style={{ width: '100%' }}/>
             </a>
           )}
         </Box>
-
-
         <Box
           sx={{
             width: '100%',
@@ -113,8 +111,6 @@ export default function EncodePage({}: EncodePageProps) {
             display: 'flex',
             flexFlow: 'column nowrap',
             alignItems: 'center',
-            gap: 1,
-            mt: 2,
           }}
         >
           {!resultImgSrc && (
