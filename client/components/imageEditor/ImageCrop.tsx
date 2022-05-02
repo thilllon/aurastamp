@@ -41,7 +41,7 @@ export function ImageCrop({
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [cropMode, setCropMode] = useState(false);
-  const [crop, setCrop] = useState<Crop>({
+  const [crop, setCrop] = useState<Crop | undefined>({
     unit: '%', // Can be 'px' or '%'
     x: 25,
     y: 25,
@@ -51,7 +51,7 @@ export function ImageCrop({
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
-  const [aspect, setAspect] = useState(1);
+  const [aspect, setAspect] = useState<number | undefined>(1);
 
   function onSelectFile(ev: React.ChangeEvent<HTMLInputElement>) {
     if (ev.target.files && ev.target.files.length > 0) {
@@ -126,7 +126,7 @@ export function ImageCrop({
       setAspect(16 / 9);
       setCrop(centerAspectCrop(width, height, 16 / 9));
     }
-  };
+  }
 
   const onClickCropMode = () => {
     setCropMode(true);
