@@ -130,7 +130,7 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
   }, []);
 
   const router = useRouter();
-  const onLink = (href) => {
+  const onLink = (href: any) => {
     router.push(href);
   };
 

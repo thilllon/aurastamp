@@ -56,7 +56,7 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
         }}
         >
          
-          <Typography sx={{ color: (theme) => theme.palette.primary.contrastText, fontSize: 24, fontWeight: 700 }}>{`the aura`}</Typography>
+          <Typography sx={{ color: (theme) => theme.palette.primary.contrastText, fontSize: 24, fontWeight: 700, fontFamily: (theme) => theme.typography.fontFamily}}>{`the aura`}</Typography>
         </Box> 
       </DashboardTopNavbarRoot>
     </>
