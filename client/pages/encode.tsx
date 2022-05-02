@@ -123,7 +123,7 @@ export default function EncodePage({}: EncodePageProps) {
               // size='small'
               value={message}
               onChange={onChangeMessage}
-              placeholder={'Type message to hide :)'}
+              placeholder={'type message to hide :)'}
             />
           )}
           {resultImgSrc && (
@@ -142,7 +142,7 @@ export default function EncodePage({}: EncodePageProps) {
                 disabled={loading || !file || !message}
                 endIcon={loading ? <CircularProgress size={24} /> : null}
               >
-                Embed
+                write
               </Button>
             )}
             {resultImgSrc && (
@@ -157,7 +157,7 @@ export default function EncodePage({}: EncodePageProps) {
                   downloadLink.click();
                 }}
               >
-                Download
+                download
               </Button>
             )}
           </Box>

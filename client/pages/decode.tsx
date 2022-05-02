@@ -116,7 +116,7 @@ export default function DecodePage({}: DecodePageProps) {
               onClick={onClickExtract}
               disabled={!file}
             >
-              Extract
+              read
             </Button>
           </Box>
           {/* <Link href='/encode'>{`Hide your secret message!`}</Link> */}
