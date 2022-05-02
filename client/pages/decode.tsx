@@ -8,6 +8,7 @@ import axios from 'axios';
 import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
 import { StampModel } from '@/types/types';
+import { AnySchema } from 'yup';
 
 type DecodePageProps = {};
 
@@ -35,6 +36,8 @@ export default function DecodePage({}: DecodePageProps) {
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/decode_stamp';
     const formData = new FormData();
+
+   
     if (!file) {
       return;
     }
@@ -60,6 +63,28 @@ export default function DecodePage({}: DecodePageProps) {
     }
   };
 
+  const replaceURL = (input_text: any) => {
+    // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
+    const exp = /(\b(((https?|ftp|file|):\/\/)|www[.])[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    let temp = input_text.replace(exp,"<a href=\"$1\" target=\"_blank\">$1</a>");
+    let result = "";
+
+    while (temp.length > 0) {
+        const pos = temp.indexOf("href=\"");
+        if (pos == -1) {
+            result += temp;
+            break;
+        }
+        result += temp.substring(0, pos + 6);
+
+        temp = temp.substring(pos + 6, temp.length);
+        if ((temp.indexOf("://") > 8) || (temp.indexOf("://") == -1)) {
+            result += "http://";
+        }
+    }
+    return result;
+  }
+
   return (
     <>
       <Container
@@ -83,13 +108,15 @@ export default function DecodePage({}: DecodePageProps) {
             alignItems: 'center',
             borderColor: (theme) => theme.palette.primary.main,
             flexFlow: 'column nowrap' }}>
-          {secret?.startsWith('http') ? (
+          {/* <div>{replaceURL(secret)}</div> */}
+          {secret && (<div dangerouslySetInnerHTML={{__html: replaceURL(secret)}} />)}
+          {/* {secret?.startsWith('http') ? (
             <Link href={secret}>
               <Typography>{secret}</Typography>
             </Link>
           ) : (
             <Typography>{secret}</Typography>
-          )}
+          )} */}
           {errMsg ? (
             <Typography>{errMsg}</Typography>
           ) : (
