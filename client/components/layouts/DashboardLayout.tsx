@@ -165,8 +165,8 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
               setPage(newValue);
             }}
           >
-            <BottomNavigationAction label="Read" icon={<ImageSearchIcon />} onClick={() => onLink("/decode")} />
-            <BottomNavigationAction label="Write" icon={<BorderColorIcon />} onClick={() => onLink("/encode")} />
+            <BottomNavigationAction label="read" icon={<ImageSearchIcon />} onClick={() => onLink("/decode")} />
+            <BottomNavigationAction label="write" icon={<BorderColorIcon />} onClick={() => onLink("/encode")} />
           </BottomNavigation>
         </Paper>
       </DashboardLayoutRoot>
