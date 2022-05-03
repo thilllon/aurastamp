@@ -98,9 +98,20 @@ export default function EncodePage({}: EncodePageProps) {
           )}
 
           {resultImgSrc && (
-            <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
-              <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} style={{ width: '100%' }}/>
-            </a>
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                flexFlow: 'column nowrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                pt: '50px'
+              }}
+            >
+              <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
+                <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} style={{ width: '100%' }}/>
+              </a>
+            </Box>
           )}
         </Box>
         <Box

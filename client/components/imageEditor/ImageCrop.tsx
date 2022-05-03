@@ -149,6 +149,7 @@ export function ImageCrop({
           flexFlow: 'column nowrap',
           justifyContent: 'center',
           alignItems: 'center',
+          pt: '50px'
         }}
       >
         {/* {!imgSrc && (
