@@ -22,6 +22,7 @@ import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { PixelCrop } from 'react-image-crop';
 import { Link } from '@/components/shared/Link';
 import { StampModel } from '@/types/types';
+import { imgPreview } from '@/components/imageEditor/ImagePreview';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -32,19 +33,23 @@ const footerHeight = 120;
 
 export default function EncodePage({}: EncodePageProps) {
   const [file, setFile] = useState<File>();
-  const [cropped, setCropped] = useState<PixelCrop>();
+  const [cropData, setCropData] = useState<PixelCrop>();
   const [modelName, setModelName] = useState<StampModel>('the');
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
+    // setImage();
   };
 
   const onCropEnd = useCallback((img: PixelCrop | undefined) => {
-    setCropped(img);
+    setCropData(img);
+    const previewUrl = imgPreview(image, cropData);
+    // setFile(ev.target.files?.[0] ?? undefined);
   }, []);
 
   const onChangeMessage = (ev: any) => {
@@ -59,6 +64,7 @@ export default function EncodePage({}: EncodePageProps) {
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
+
     if (!file) {
       return;
     }
@@ -93,9 +99,7 @@ export default function EncodePage({}: EncodePageProps) {
         }}
       >
         <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          {!resultImgSrc && (
-            <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
-          )}
+          {!resultImgSrc && <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />}
 
           {resultImgSrc && (
             <Box
@@ -105,11 +109,15 @@ export default function EncodePage({}: EncodePageProps) {
                 flexFlow: 'column nowrap',
                 justifyContent: 'center',
                 alignItems: 'center',
-                pt: '50px'
+                pt: '50px',
               }}
             >
               <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
-                <img src={'data:image/png;base64,' + resultImgSrc} alt={'result'} style={{ width: '100%' }}/>
+                <img
+                  src={'data:image/png;base64,' + resultImgSrc}
+                  alt={'result'}
+                  style={{ width: '100%' }}
+                />
               </a>
             </Box>
           )}
@@ -138,12 +146,14 @@ export default function EncodePage({}: EncodePageProps) {
             />
           )}
           {resultImgSrc && (
-            <Box sx={{
+            <Box
+              sx={{
                 // mt: 2,
                 mb: 2,
-              }}/>
+              }}
+            />
           )}
-          
+
           <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
             {!resultImgSrc && (
               <Button
@@ -173,11 +183,7 @@ export default function EncodePage({}: EncodePageProps) {
             )}
           </Box>
 
-          
-          {errMsg && (
-            <Box sx={{ p: 2, m: 3 }}>{errMsg}</Box>
-          )}
-
+          {errMsg && <Box sx={{ p: 2, m: 3 }}>{errMsg}</Box>}
 
           {/* <Link href='/decode'>{`Let's go find the hidden message!`}</Link> */}
         </Box>
