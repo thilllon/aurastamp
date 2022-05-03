@@ -3,11 +3,13 @@ import { Firework2 } from '@/components/Firework';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { Link } from '@/components/shared/Link';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, IconButton, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
 import { StampModel } from '@/types/types';
+import { AnySchema } from 'yup';
+import ShareIcon from '@mui/icons-material/Share';
 
 type DecodePageProps = {};
 
@@ -31,10 +33,24 @@ export default function DecodePage({}: DecodePageProps) {
     setCropped(img);
   }, []);
 
+  const onClickShare = () => {
+    if (navigator.share) {
+          navigator.share({
+              title: '기록하며 성장하기',
+              text: 'Hello World',
+              url: 'https://shinsangeun.github.io',
+          });
+    }else{
+        alert("sharing not support env")
+    }  
+  };
+
   const onClickExtract = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/decode_stamp';
     const formData = new FormData();
+
+   
     if (!file) {
       return;
     }
@@ -60,6 +76,28 @@ export default function DecodePage({}: DecodePageProps) {
     }
   };
 
+  const replaceURL = (input_text: any) => {
+    // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
+    const exp = /(\b(((https?|ftp|file|):\/\/)|www[.])[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; /* eslint-disable-line */
+    let temp = input_text.replace(exp,"<a href=\"$1\" target=\"_blank\">$1</a>");
+    let result = "";
+
+    while (temp.length > 0) {
+        const pos = temp.indexOf("href=\"");
+        if (pos == -1) {
+            result += temp;
+            break;
+        }
+        result += temp.substring(0, pos + 6);
+
+        temp = temp.substring(pos + 6, temp.length);
+        if ((temp.indexOf("://") > 8) || (temp.indexOf("://") == -1)) {
+            result += "http://";
+        }
+    }
+    return result;
+  }
+
   return (
     <>
       <Container
@@ -83,13 +121,15 @@ export default function DecodePage({}: DecodePageProps) {
             alignItems: 'center',
             borderColor: (theme) => theme.palette.primary.main,
             flexFlow: 'column nowrap' }}>
-          {secret?.startsWith('http') ? (
+          {/* <div>{replaceURL(secret)}</div> */}
+          {secret && (<div dangerouslySetInnerHTML={{__html: replaceURL(secret)}} />)}
+          {/* {secret?.startsWith('http') ? (
             <Link href={secret}>
               <Typography>{secret}</Typography>
             </Link>
           ) : (
             <Typography>{secret}</Typography>
-          )}
+          )} */}
           {errMsg ? (
             <Typography>{errMsg}</Typography>
           ) : (
@@ -109,7 +149,7 @@ export default function DecodePage({}: DecodePageProps) {
             mt: 2,
           }}
         >
-          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
+          <Box sx={{ width: '40%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
             <Button
               sx={{ flex: 1 }}
               variant={'contained'}
@@ -118,6 +158,12 @@ export default function DecodePage({}: DecodePageProps) {
             >
               read
             </Button>
+
+            {/* {secret && (
+              <IconButton onClick={onClickShare}>
+                <ShareIcon sx={{ fontSize: 35 }} />
+              </IconButton>
+            )} */}
           </Box>
           {/* <Link href='/encode'>{`Hide your secret message!`}</Link> */}
         </Box>
