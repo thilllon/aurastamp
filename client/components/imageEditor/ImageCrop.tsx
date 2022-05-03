@@ -263,7 +263,7 @@ export function ImageCrop({
       </Box>
 
       {Boolean(imgSrc) && (
-        <Box sx={{ display: 'flex', justifyContent: 'end', margin: '10px 0px' }}>
+        <Box sx={{ float: 'right', margin: '10px 0px' }}>
           {!cropMode && 
           <IconButton onClick={onClickCropMode}>
             <CropIcon sx={{ fontSize: 35 }} />
