@@ -3,12 +3,13 @@ import { Firework2 } from '@/components/Firework';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { Link } from '@/components/shared/Link';
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, IconButton, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
 import { StampModel } from '@/types/types';
 import { AnySchema } from 'yup';
+import ShareIcon from '@mui/icons-material/Share';
 
 type DecodePageProps = {};
 
@@ -31,6 +32,18 @@ export default function DecodePage({}: DecodePageProps) {
   const onCropEnd = useCallback((img: PixelCrop | undefined) => {
     setCropped(img);
   }, []);
+
+  const onClickShare = () => {
+    if (navigator.share) {
+          navigator.share({
+              title: '기록하며 성장하기',
+              text: 'Hello World',
+              url: 'https://shinsangeun.github.io',
+          });
+    }else{
+        alert("sharing not support env")
+    }  
+  };
 
   const onClickExtract = async () => {
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
@@ -136,7 +149,7 @@ export default function DecodePage({}: DecodePageProps) {
             mt: 2,
           }}
         >
-          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
+          <Box sx={{ width: '40%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
             <Button
               sx={{ flex: 1 }}
               variant={'contained'}
@@ -145,6 +158,12 @@ export default function DecodePage({}: DecodePageProps) {
             >
               read
             </Button>
+
+            {secret && (
+              <IconButton onClick={onClickShare}>
+                <ShareIcon sx={{ fontSize: 35 }} />
+              </IconButton>
+            )}
           </Box>
           {/* <Link href='/encode'>{`Hide your secret message!`}</Link> */}
         </Box>
