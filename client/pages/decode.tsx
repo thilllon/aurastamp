@@ -159,11 +159,11 @@ export default function DecodePage({}: DecodePageProps) {
               read
             </Button>
 
-            {secret && (
+            {/* {secret && (
               <IconButton onClick={onClickShare}>
                 <ShareIcon sx={{ fontSize: 35 }} />
               </IconButton>
-            )}
+            )} */}
           </Box>
           {/* <Link href='/encode'>{`Hide your secret message!`}</Link> */}
         </Box>
