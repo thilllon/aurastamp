@@ -87,6 +87,7 @@ export default function EncodePage({}: EncodePageProps) {
       formData.append('model_name', modelName);
     }
     formData.append('text', message);
+    formData.append('return_type', 'base64');
     setLoading(true);
     try {
       const res = await axios.post(url, formData);
@@ -180,8 +181,13 @@ export default function EncodePage({}: EncodePageProps) {
               <Button
                 variant='outlined'
                 onClick={() => {
+                  // const reader = new FileReader();
                   const currentBlob = b64toBlob(resultImgSrc, 'image/png')
                   const fileName = 'aurastamp_' + Date.now() + '.png';
+                  // reader.onload = function(e: any){
+                  //   window.location.href = reader.result;
+                  // }
+                  // reader.readAsDataURL(currentBlob);
                   const downloadLink = document.createElement('a');
                   downloadLink.download = fileName;
                   downloadLink.innerHTML = 'Download File';
