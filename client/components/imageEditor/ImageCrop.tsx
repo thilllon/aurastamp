@@ -16,7 +16,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 // which is a bit trickier so we use some helper functions.
 function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
   return centerCrop(
-    makeAspectCrop({ unit: '%', width: 90 }, aspect, mediaWidth, mediaHeight),
+    makeAspectCrop({ unit: '%', width: 100 }, aspect, mediaWidth, mediaHeight),
     mediaWidth,
     mediaHeight
   );
