@@ -39,6 +39,26 @@ export default function EncodePage({}: EncodePageProps) {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
 
+  const b64toBlob = (b64Data: any, contentType='', sliceSize=512) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, {type: contentType});
+  return blob;
+}
+
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
   };
@@ -160,11 +180,13 @@ export default function EncodePage({}: EncodePageProps) {
               <Button
                 variant='outlined'
                 onClick={() => {
+                  const currentBlob = b64toBlob(resultImgSrc, 'image/png')
                   const fileName = 'aurastamp_' + Date.now() + '.png';
                   const downloadLink = document.createElement('a');
                   downloadLink.download = fileName;
                   downloadLink.innerHTML = 'Download File';
-                  downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
+                  downloadLink.href = URL.createObjectURL(currentBlob);
+                  // downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
                   downloadLink.click();
                 }}
               >
