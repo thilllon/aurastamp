@@ -22,6 +22,7 @@ import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { PixelCrop } from 'react-image-crop';
 import { Link } from '@/components/shared/Link';
 import { StampModel } from '@/types/types';
+import { saveAs } from 'file-saver';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -40,23 +41,23 @@ export default function EncodePage({}: EncodePageProps) {
   const [errMsg, setErrMsg] = useState('');
 
   const b64toBlob = (b64Data: any, contentType='', sliceSize=512) => {
-  const byteCharacters = atob(b64Data);
-  const byteArrays = [];
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
 
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
 
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
     }
 
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  const blob = new Blob(byteArrays, {type: contentType});
-  return blob;
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
 }
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
@@ -184,16 +185,17 @@ export default function EncodePage({}: EncodePageProps) {
                   // const reader = new FileReader();
                   const currentBlob = b64toBlob(resultImgSrc, 'image/png')
                   const fileName = 'aurastamp_' + Date.now() + '.png';
+                  saveAs(currentBlob, fileName);
                   // reader.onload = function(e: any){
                   //   window.location.href = reader.result;
                   // }
                   // reader.readAsDataURL(currentBlob);
-                  const downloadLink = document.createElement('a');
-                  downloadLink.download = fileName;
-                  downloadLink.innerHTML = 'Download File';
-                  downloadLink.href = URL.createObjectURL(currentBlob);
-                  // downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
-                  downloadLink.click();
+                  // const downloadLink = document.createElement('a');
+                  // downloadLink.download = fileName;
+                  // downloadLink.innerHTML = 'Download File';
+                  // downloadLink.href = URL.createObjectURL(currentBlob);
+                  // // downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
+                  // downloadLink.click();
                 }}
               >
                 download
