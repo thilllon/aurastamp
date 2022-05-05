@@ -198,7 +198,7 @@ export default function EncodePage({}: EncodePageProps) {
                   // downloadLink.click();
                 }}
               >
-                download
+                download!
               </Button>
             )}
           </Box>
