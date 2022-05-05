@@ -22,7 +22,6 @@ import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { PixelCrop } from 'react-image-crop';
 import { Link } from '@/components/shared/Link';
 import { StampModel } from '@/types/types';
-import { saveAs } from 'file-saver';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -182,23 +181,15 @@ export default function EncodePage({}: EncodePageProps) {
               <Button
                 variant='outlined'
                 onClick={() => {
-                  // const reader = new FileReader();
-                  const currentBlob = b64toBlob(resultImgSrc, 'image/png')
                   const fileName = 'aurastamp_' + Date.now() + '.png';
-                  saveAs(currentBlob, fileName);
-                  // reader.onload = function(e: any){
-                  //   window.location.href = reader.result;
-                  // }
-                  // reader.readAsDataURL(currentBlob);
-                  // const downloadLink = document.createElement('a');
-                  // downloadLink.download = fileName;
-                  // downloadLink.innerHTML = 'Download File';
-                  // downloadLink.href = URL.createObjectURL(currentBlob);
-                  // // downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
-                  // downloadLink.click();
+                  const downloadLink = document.createElement('a');
+                  downloadLink.download = fileName;
+                  downloadLink.innerHTML = 'Download File';
+                  downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
+                  downloadLink.click();
                 }}
               >
-                download!
+                download
               </Button>
             )}
           </Box>
