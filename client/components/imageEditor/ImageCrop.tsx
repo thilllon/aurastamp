@@ -41,7 +41,7 @@ export type ImageCrop = {
   onCrop?: () => {};
 };
 
-export function ImageCrop({ children, icon, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
+export function ImageCrop(icon:any , { children, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
   const [base64String, setBase64String] = useState<string>('');
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const previewImageRef = useRef<HTMLImageElement>(null);
@@ -147,7 +147,7 @@ export function ImageCrop({ children, icon, onChange: onChangeProps, onCropEnd, 
     }
   };
 
-   function IconBox(props: any) {
+  function IconBox(props: any) {
     const whichPage = props.icon;
     if (whichPage == 'decode'){
       return <SearchIcon sx={{ fontSize: 100 }} />
@@ -155,6 +155,7 @@ export function ImageCrop({ children, icon, onChange: onChangeProps, onCropEnd, 
     else if (whichPage == 'encode'){
       return <BorderColorIcon sx={{ fontSize: 100 }} />
     }
+    return <div></div>
   }
 
   const onClickCropMode = () => {
