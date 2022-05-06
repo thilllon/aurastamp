@@ -39,18 +39,19 @@ export const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) =>
 };
 
 export default function EncodePage({}: EncodePageProps) {
-  const [file, setFile] = useState<File>();
+  const [originalFile, setOriginalFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
-  const [message, setMessage] = useState('');
-  const [resultImgSrc, setResultImgSrc] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState('');
+  const [hiddenMessage, setHiddenMessage] = useState('');
+  const [encodedImageBase64String, setEncodedImageBase64String] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     // event handler for file load, unload
     const file = ev.target.files?.[0] ?? undefined;
-    setFile(file);
+    setOriginalFile(file);
+    // FIXME: blob=>file 변환할것
     setCroppedBlob(file);
   };
 
@@ -63,11 +64,11 @@ export default function EncodePage({}: EncodePageProps) {
     if (msg.length > MAX_MESSAGE_LENGTH) {
       msg = msg.slice(0, MAX_MESSAGE_LENGTH);
     }
-    setMessage(msg);
+    setHiddenMessage(msg);
   };
 
   const onClickEncode = async () => {
-    setErrMsg('');
+    setErrorMessage('');
     if (!croppedBlob) {
       return;
     }
@@ -78,17 +79,17 @@ export default function EncodePage({}: EncodePageProps) {
     if (modelName) {
       formData.append('model_name', modelName);
     }
-    formData.append('text', message);
+    formData.append('text', hiddenMessage);
     formData.append('return_type', 'base64');
-    setLoading(true);
+    setIsLoading(true);
     try {
       const res = await axios.post(url, formData);
-      setResultImgSrc(res.data);
+      setEncodedImageBase64String(res.data);
     } catch (err) {
       console.error(err);
-      setErrMsg(JSON.stringify(err));
+      setErrorMessage(JSON.stringify(err));
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -106,9 +107,9 @@ export default function EncodePage({}: EncodePageProps) {
         }}
       >
         <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          {!resultImgSrc && <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />}
+          {!encodedImageBase64String && <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />}
 
-          {resultImgSrc && (
+          {encodedImageBase64String && (
             <Box
               sx={{
                 width: '100%',
@@ -119,9 +120,9 @@ export default function EncodePage({}: EncodePageProps) {
                 pt: '50px',
               }}
             >
-              <a href={'data:image/png;base64,' + resultImgSrc} download={'result.png'}>
+              <a href={'data:image/png;base64,' + encodedImageBase64String} download={'result.png'}>
                 <img
-                  src={'data:image/png;base64,' + resultImgSrc}
+                  src={'data:image/png;base64,' + encodedImageBase64String}
                   alt={'result'}
                   style={{ width: '100%' }}
                 />
@@ -139,30 +140,30 @@ export default function EncodePage({}: EncodePageProps) {
             alignItems: 'center',
           }}
         >
-          {!resultImgSrc && (
+          {!encodedImageBase64String && (
             <TextField
               fullWidth
-              value={message}
+              value={hiddenMessage}
               onChange={onChangeMessage}
               placeholder={'type message to hide :)'}
             />
           )}
 
-          {!resultImgSrc && (
+          {!encodedImageBase64String && (
             <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 4 }}>
               <Button
                 sx={{ flex: 1 }}
                 variant={'contained'}
                 onClick={onClickEncode}
-                disabled={loading || !file || !message}
-                endIcon={loading ? <CircularProgress size={24} /> : null}
+                disabled={isLoading || !originalFile || !hiddenMessage}
+                endIcon={isLoading ? <CircularProgress size={24} /> : null}
               >
                 write
               </Button>
             </Box>
           )}
 
-          {resultImgSrc && (
+          {encodedImageBase64String && (
             <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2 }}>
               <Button
                 variant='outlined'
@@ -171,7 +172,7 @@ export default function EncodePage({}: EncodePageProps) {
                   const downloadLink = document.createElement('a');
                   downloadLink.download = fileName;
                   downloadLink.innerHTML = 'Download File';
-                  downloadLink.href = 'data:image/png;base64,' + resultImgSrc;
+                  downloadLink.href = 'data:image/png;base64,' + encodedImageBase64String;
                   downloadLink.click();
                 }}
               >
@@ -180,7 +181,7 @@ export default function EncodePage({}: EncodePageProps) {
             </Box>
           )}
 
-          {errMsg && <Box sx={{ p: 2, m: 3 }}>{errMsg}</Box>}
+          {errorMessage && <Box sx={{ p: 2, m: 3 }}>{errorMessage}</Box>}
 
           {/* <Link href='/decode'>{`Let's go find the hidden message!`}</Link> */}
         </Box>

@@ -3,7 +3,7 @@ import { Firework2 } from '@/components/Firework';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { Link } from '@/components/shared/Link';
-import { Box, Button, Container, IconButton, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Container, IconButton, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
@@ -40,17 +40,18 @@ const replaceURL = (inputText: string) => {
 };
 
 export default function DecodePage({}: DecodePageProps) {
-  const [file, setFile] = useState<File>();
+  const [originalFile, setOriginalFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [secret, setSecret] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState('');
-  const [croppedBlob, setCroppedBlob] = useState<Blob | File>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [croppedBlob, setCroppedBlob] = useState<Blob>();
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     // event handler for file load, unload
     const file = ev.target.files?.[0] ?? undefined;
-    setFile(file);
+    setOriginalFile(file);
+    // FIXME: blob=>file 변환할것
     setCroppedBlob(file);
   };
 
@@ -67,7 +68,7 @@ export default function DecodePage({}: DecodePageProps) {
   // };
 
   const onClickDecode = async () => {
-    setErrMsg('');
+    setErrorMessage('');
     setSecret('');
     if (!croppedBlob) {
       return;
@@ -80,18 +81,15 @@ export default function DecodePage({}: DecodePageProps) {
       formData.append('model_name', modelName);
     }
     try {
-      setLoading(true);
+      setIsLoading(true);
       const res = await axios.post(url, formData);
       console.info(res.data);
-      if (res.data.secret) {
-        setSecret(res.data.secret);
-      } else if (res.data.error) {
-        setErrMsg(res.data.error);
-      }
+      setSecret(res.data.secret ?? '');
+      setErrorMessage(res.data.error ?? '');
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -120,7 +118,7 @@ export default function DecodePage({}: DecodePageProps) {
           <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
         </Box>
 
-        {(secret || errMsg) && (
+        {(secret || errorMessage) && (
           <Box
             sx={{
               display: 'flex',
@@ -141,7 +139,7 @@ export default function DecodePage({}: DecodePageProps) {
           ) : (
             <Typography>{secret}</Typography>
           )} */}
-            {errMsg ? <Typography>{errMsg}</Typography> : <Typography></Typography>}
+            {errorMessage ? <Typography>{errorMessage}</Typography> : <Typography></Typography>}
             {/* {showCongrats && <Firework2 />} */}
           </Box>
         )}
@@ -157,7 +155,13 @@ export default function DecodePage({}: DecodePageProps) {
           }}
         >
           <Box sx={{ width: '40%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            <Button sx={{ flex: 1 }} variant={'contained'} onClick={onClickDecode} disabled={!file}>
+            <Button
+              sx={{ flex: 1 }}
+              variant={'contained'}
+              onClick={onClickDecode}
+              disabled={!originalFile}
+              endIcon={isLoading ? <CircularProgress size={24} /> : null}
+            >
               read
             </Button>
 
