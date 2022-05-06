@@ -41,6 +41,26 @@ export default function EncodePage({}: EncodePageProps) {
   const [errMsg, setErrMsg] = useState('');
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
+  const b64toBlob = (b64Data: any, contentType='', sliceSize=512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+}
+
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
     // setImage();
@@ -79,6 +99,7 @@ export default function EncodePage({}: EncodePageProps) {
       formData.append('model_name', modelName);
     }
     formData.append('text', message);
+    formData.append('return_type', 'base64');
     setLoading(true);
     try {
       const res = await axios.post(url, formData);
