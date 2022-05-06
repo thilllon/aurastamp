@@ -115,7 +115,7 @@ export default function DecodePage({}: DecodePageProps) {
             mb: 3,
           }}
         >
-          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
+          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='decode' />
         </Box>
 
         {(secret || errorMessage) && (

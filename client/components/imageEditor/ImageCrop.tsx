@@ -17,6 +17,8 @@ import { canvasPreview } from './CanvasPreview';
 import CropIcon from '@mui/icons-material/Crop';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
+import ApprovalIcon from '@mui/icons-material/Approval';
 import CheckIcon from '@mui/icons-material/Check';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { imgPreview } from '@/components/imageEditor/ImagePreview';
@@ -38,11 +40,12 @@ export type ImageCrop = {
   onCrop?: () => {};
 };
 
-export function ImageCrop({ children, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
+export function ImageCrop({ children, icon, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
   const [base64String, setBase64String] = useState<string>('');
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const previewImageRef = useRef<HTMLImageElement>(null);
   const [isCropMode, setIsCropMode] = useState(false);
+
   const [crop, setCrop] = useState<Crop | undefined>({
     unit: '%', // Can be 'px' or '%'
     x: 25,
@@ -143,6 +146,16 @@ export function ImageCrop({ children, onChange: onChangeProps, onCropEnd, onCrop
     }
   };
 
+   function IconBox(props: any) {
+    const whichPage = props.icon;
+    if (whichPage == 'decode'){
+      return <SearchIcon sx={{ fontSize: 100 }} />
+    }
+    else if (whichPage == 'encode'){
+      return <ApprovalIcon sx={{ fontSize: 100 }} />
+    }
+  }
+
   const onClickCropMode = () => {
     setIsCropMode(true);
   };
@@ -180,7 +193,7 @@ export function ImageCrop({ children, onChange: onChangeProps, onCropEnd, onCrop
               onChange={onSelectFile}
             />
             <Box sx={{ margin: '20px' }}>
-              <FileUploadIcon sx={{ fontSize: 100 }} />
+              <IconBox icon={icon} />
             </Box>
           </Box>
         )}
