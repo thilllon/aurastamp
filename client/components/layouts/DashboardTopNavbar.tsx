@@ -14,7 +14,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
@@ -34,8 +34,8 @@ type DashboardTopNavbarProps = AppBarProps & {
 };
 
 export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTopNavbarProps) => {
-  const { data: session, status } = useSession();
-  const isLoading = status === 'loading';
+  // const { data: session, status } = useSession();
+  // const isLoading = status === 'loading';
 
   return (
     <>
@@ -69,7 +69,9 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
               fontWeight: 700,
               fontFamily: (theme) => theme.typography.fontFamily,
             }}
-          >{`the aura`}</Typography>
+          >
+            {/* {`the aura`} */}
+          </Typography>
         </Box>
       </DashboardTopNavbarRoot>
     </>

@@ -16,35 +16,59 @@ type DecodePageProps = {};
 const footerHeight = 120;
 const defaultModelName = 'the';
 
+const replaceURL = (inputText: string) => {
+  // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
+  const exp =
+    /(\b(((https?|ftp|file|):\/\/)|www[.])[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi; /* eslint-disable-line */
+  let temp = inputText.replace(exp, '<a href="$1" target="_blank">$1</a>');
+  let result = '';
+
+  while (temp.length > 0) {
+    const pos = temp.indexOf('href="');
+    if (pos == -1) {
+      result += temp;
+      break;
+    }
+    result += temp.substring(0, pos + 6);
+
+    temp = temp.substring(pos + 6, temp.length);
+    if (temp.indexOf('://') > 8 || temp.indexOf('://') == -1) {
+      result += 'http://';
+    }
+  }
+  return result;
+};
+
 export default function DecodePage({}: DecodePageProps) {
   const [file, setFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [secret, setSecret] = useState('');
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const [croppedBlob, setCroppedBlob] = useState<Blob>();
+  const [croppedBlob, setCroppedBlob] = useState<Blob | File>();
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
-    setFile(ev.target.files?.[0] ?? undefined);
+    // event handler for file load, unload
+    const file = ev.target.files?.[0] ?? undefined;
+    setFile(file);
+    setCroppedBlob(file);
   };
 
   const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
     setCroppedBlob(blob);
   }, []);
 
-  const onClickShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: '기록하며 성장하기',
-        text: 'Hello World',
-        url: 'https://shinsangeun.github.io',
-      });
-    } else {
-      alert('sharing not support env');
-    }
-  };
+  // const onClickShare = () => {
+  //   navigator?.share({
+  //     title: '기록하며 성장하기',
+  //     text: 'Hello World',
+  //     url: 'https://shinsangeun.github.io',
+  //   });
+  // };
 
-  const onClickExtract = async () => {
+  const onClickDecode = async () => {
+    setErrMsg('');
+    setSecret('');
     if (!croppedBlob) {
       return;
     }
@@ -71,29 +95,6 @@ export default function DecodePage({}: DecodePageProps) {
     }
   };
 
-  const replaceURL = (input_text: any) => {
-    // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
-    const exp =
-      /(\b(((https?|ftp|file|):\/\/)|www[.])[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi; /* eslint-disable-line */
-    let temp = input_text.replace(exp, '<a href="$1" target="_blank">$1</a>');
-    let result = '';
-
-    while (temp.length > 0) {
-      const pos = temp.indexOf('href="');
-      if (pos == -1) {
-        result += temp;
-        break;
-      }
-      result += temp.substring(0, pos + 6);
-
-      temp = temp.substring(pos + 6, temp.length);
-      if (temp.indexOf('://') > 8 || temp.indexOf('://') == -1) {
-        result += 'http://';
-      }
-    }
-    return result;
-  };
-
   return (
     <>
       <Container
@@ -116,7 +117,7 @@ export default function DecodePage({}: DecodePageProps) {
             mb: 3,
           }}
         >
-          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
+          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
         </Box>
 
         {(secret || errMsg) && (
@@ -156,12 +157,7 @@ export default function DecodePage({}: DecodePageProps) {
           }}
         >
           <Box sx={{ width: '40%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            <Button
-              sx={{ flex: 1 }}
-              variant={'contained'}
-              onClick={onClickExtract}
-              disabled={!file}
-            >
+            <Button sx={{ flex: 1 }} variant={'contained'} onClick={onClickDecode} disabled={!file}>
               read
             </Button>
 

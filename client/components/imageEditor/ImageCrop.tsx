@@ -28,16 +28,9 @@ export type ImageCrop = {
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
   onCropEnd?: (crop: PixelCrop | undefined, blob?: Blob) => void;
   onCrop?: () => {};
-  type?: 'encode' | 'decode';
 };
 
-export function ImageCrop({
-  children,
-  onChange: onChangeProps,
-  onCropEnd,
-  onCrop,
-  type = 'encode',
-}: ImageCrop) {
+export function ImageCrop({ children, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
   const [imgSrc, setImgSrc] = useState('');
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -79,7 +72,6 @@ export function ImageCrop({
         // We use canvasPreview as it's much faster than imgPreview.
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate);
         const { previewUrl, blob } = await imgPreview(imgRef.current, completedCrop, scale, rotate);
-        // setCroppedBlob(blob);
         onCropEnd?.(completedCrop, blob);
       }
     },
@@ -87,18 +79,21 @@ export function ImageCrop({
     [completedCrop, scale, rotate]
   );
 
-  const onClickCrop = (ev: any) => {
+  const onClickConfirmCrop = async (ev: any) => {
     if (previewCanvasRef.current) {
       const data = previewCanvasRef.current.toDataURL('image/jpeg');
       setImgSrc(data);
       setCropMode(false);
-      // download(new Blob([data]), 'image.jpg');
+      if (imgRef.current && completedCrop) {
+        const { previewUrl, blob } = await imgPreview(imgRef.current, completedCrop, scale, rotate);
+        onCropEnd?.(completedCrop, blob);
+      }
       setCrop(undefined);
       setCompletedCrop(undefined);
     }
   };
 
-  const onClickCancel = () => {
+  const onClickCancelCrop = () => {
     if (cropMode) {
       setCrop(undefined);
       setCompletedCrop(undefined);
@@ -131,13 +126,7 @@ export function ImageCrop({
   const htmlId = 'image-uploader';
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        // border: '2px solid'
-        pt: 3,
-      }}
-    >
+    <Box sx={{ width: '100%', pt: 3 }}>
       <Box
         sx={{
           width: '100%',
@@ -274,11 +263,11 @@ export function ImageCrop({
             </IconButton>
           )}
           {cropMode && (
-            <IconButton onClick={onClickCrop}>
+            <IconButton onClick={onClickConfirmCrop}>
               <CheckIcon sx={{ fontSize: 35 }} />
             </IconButton>
           )}
-          <IconButton onClick={onClickCancel}>
+          <IconButton onClick={onClickCancelCrop}>
             <CloseIcon sx={{ fontSize: 35 }} />
           </IconButton>
         </Box>
@@ -298,9 +287,7 @@ export function ImageCrop({
           onChange={(_, percentCrop) => setCrop(percentCrop)}
           onComplete={(c) => setCompletedCrop(c)}
           aspect={aspect}
-          style={{
-            width: '100%',
-          }}
+          style={{ width: '100%' }}
         >
           <img
             ref={imgRef}

@@ -16,6 +16,28 @@ const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
 
+export const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
+  const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
+  // const byteCharacters = Buffer.from(b64Data, 'base64');
+
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};
+
 export default function EncodePage({}: EncodePageProps) {
   const [file, setFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
@@ -25,31 +47,11 @@ export default function EncodePage({}: EncodePageProps) {
   const [errMsg, setErrMsg] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
 
-  const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-    const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
-    // const byteCharacters = Buffer.from(b64Data, 'base64');
-
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-
-    const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
-  };
-
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     // event handler for file load, unload
-    setFile(ev.target.files?.[0] ?? undefined);
+    const file = ev.target.files?.[0] ?? undefined;
+    setFile(file);
+    setCroppedBlob(file);
   };
 
   const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
@@ -64,7 +66,8 @@ export default function EncodePage({}: EncodePageProps) {
     setMessage(msg);
   };
 
-  const onClickEmbed = async () => {
+  const onClickEncode = async () => {
+    setErrMsg('');
     if (!croppedBlob) {
       return;
     }
@@ -126,11 +129,11 @@ export default function EncodePage({}: EncodePageProps) {
             </Box>
           )}
         </Box>
+
         <Box
           sx={{
+            mt: 4,
             width: '100%',
-            // position: 'sticky',
-            // top: 'calc(100vh - 0px)',
             display: 'flex',
             flexFlow: 'column nowrap',
             alignItems: 'center',
@@ -139,38 +142,28 @@ export default function EncodePage({}: EncodePageProps) {
           {!resultImgSrc && (
             <TextField
               fullWidth
-              sx={{
-                // mt: 2,
-                mb: 2,
-              }}
-              // size='small'
               value={message}
               onChange={onChangeMessage}
               placeholder={'type message to hide :)'}
             />
           )}
-          {resultImgSrc && (
-            <Box
-              sx={{
-                // mt: 2,
-                mb: 2,
-              }}
-            />
-          )}
 
-          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            {!resultImgSrc && (
+          {!resultImgSrc && (
+            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 4 }}>
               <Button
                 sx={{ flex: 1 }}
                 variant={'contained'}
-                onClick={onClickEmbed}
+                onClick={onClickEncode}
                 disabled={loading || !file || !message}
                 endIcon={loading ? <CircularProgress size={24} /> : null}
               >
                 write
               </Button>
-            )}
-            {resultImgSrc && (
+            </Box>
+          )}
+
+          {resultImgSrc && (
+            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2 }}>
               <Button
                 variant='outlined'
                 onClick={() => {
@@ -184,8 +177,8 @@ export default function EncodePage({}: EncodePageProps) {
               >
                 download
               </Button>
-            )}
-          </Box>
+            </Box>
+          )}
 
           {errMsg && <Box sx={{ p: 2, m: 3 }}>{errMsg}</Box>}
 
