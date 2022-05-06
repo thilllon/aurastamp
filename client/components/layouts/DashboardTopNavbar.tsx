@@ -70,7 +70,7 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
               fontFamily: (theme) => theme.typography.fontFamily,
             }}
           >
-            {/* {`the aura`} */}
+            {`the aura`}
           </Typography>
         </Box>
       </DashboardTopNavbarRoot>
