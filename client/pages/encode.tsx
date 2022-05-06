@@ -1,28 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { PhotoCamera } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Card,
-  CardActionArea,
-  CircularProgress,
-  Container,
-  IconButton,
-  Input,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { useSession } from 'next-auth/react';
-import getConfig from 'next/config';
-import React, { ReactNode, ChangeEventHandler, useState, useCallback } from 'react';
-import axios from 'axios';
-import { download, downloadBuffer } from '@/utils/common';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
-import { PixelCrop } from 'react-image-crop';
-import { Link } from '@/components/shared/Link';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { StampModel } from '@/types/types';
-import { imgPreview } from '@/components/imageEditor/ImagePreview';
+import { Box, Button, CircularProgress, Container, TextField } from '@mui/material';
+import axios from 'axios';
+import getConfig from 'next/config';
+import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
+import { PixelCrop } from 'react-image-crop';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -39,10 +23,12 @@ export default function EncodePage({}: EncodePageProps) {
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [croppedBlob, setCroppedBlob] = useState<Blob>();
 
-  const b64toBlob = (b64Data: any, contentType='', sliceSize=512) => {
-    const byteCharacters = atob(b64Data);
+  const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
+    const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
+    // const byteCharacters = Buffer.from(b64Data, 'base64');
+
     const byteArrays = [];
 
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
@@ -57,28 +43,21 @@ export default function EncodePage({}: EncodePageProps) {
       byteArrays.push(byteArray);
     }
 
-    const blob = new Blob(byteArrays, {type: contentType});
+    const blob = new Blob(byteArrays, { type: contentType });
     return blob;
-}
-
-  const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
-    setFile(ev.target.files?.[0] ?? undefined);
-    // setImage();
   };
 
-  const onCropEnd = useCallback(
-    async (img: PixelCrop | undefined) => {
-      setCropData(img);
-      if (image && cropData) {
-        const previewUrl = await imgPreview(image, cropData);
-        debugger;
-        // setFile(ev.target.files?.[0] ?? undefined);
-      }
-    },
-    [cropData, image]
-  );
+  const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
+    // event handler for file load, unload
+    setFile(ev.target.files?.[0] ?? undefined);
+  };
 
-  const onChangeMessage = (ev: any) => {
+  const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
+    setCropData(crop);
+    setCroppedBlob(blob);
+  }, []);
+
+  const onChangeMessage: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (ev) => {
     let msg = ev.target.value;
     if (msg.length > MAX_MESSAGE_LENGTH) {
       msg = msg.slice(0, MAX_MESSAGE_LENGTH);
@@ -91,10 +70,13 @@ export default function EncodePage({}: EncodePageProps) {
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
 
-    if (!file) {
-      return;
-    }
-    formData.append('file', file);
+    // FIX: file에서 croppedBlob으로 변경
+    if (!croppedBlob) return;
+    formData.append('file', croppedBlob);
+
+    // if (!file) return;
+    // formData.append('file', file);
+
     if (modelName) {
       formData.append('model_name', modelName);
     }

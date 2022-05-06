@@ -43,12 +43,9 @@ export default function EncodePage({}: EncodePageProps) {
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
-    // FIXME:
-    // setImage();
   };
 
   const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
-    // debugger;
     setCropData(crop);
     setCroppedBlob(blob);
   }, []);

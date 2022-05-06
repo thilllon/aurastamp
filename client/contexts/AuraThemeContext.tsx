@@ -265,7 +265,7 @@ export const theme = createTheme(
       },
       divider: '#E6E8F0',
       primary: {
-        main: '#000000',//'#5048E5',
+        main: '#000000', //'#5048E5',
         light: '#FFFFFF',
         dark: '#828282',
         contrastText: '#FFFFFF',

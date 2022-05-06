@@ -75,7 +75,6 @@ export function ImageCrop({
 
   useDebounce(
     async () => {
-      debugger;
       if (completedCrop && imgRef.current && previewCanvasRef.current) {
         // We use canvasPreview as it's much faster than imgPreview.
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate);
@@ -87,12 +86,6 @@ export function ImageCrop({
     100,
     [completedCrop, scale, rotate]
   );
-
-  // 일단 지워보기
-  // useEffect(() => {
-  //   debugger;
-  //   onCropEnd?.(completedCrop);
-  // }, [completedCrop, onCropEnd]);
 
   const onClickCrop = (ev: any) => {
     if (previewCanvasRef.current) {
