@@ -14,11 +14,11 @@ type EncodePageProps = {};
 
 const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
+const defaultModelName = 'the';
 
 export default function EncodePage({}: EncodePageProps) {
   const [file, setFile] = useState<File>();
-  const [cropData, setCropData] = useState<PixelCrop>();
-  const [modelName, setModelName] = useState<StampModel>('the');
+  const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [message, setMessage] = useState('');
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [loading, setLoading] = useState(false);
@@ -53,7 +53,6 @@ export default function EncodePage({}: EncodePageProps) {
   };
 
   const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
-    setCropData(crop);
     setCroppedBlob(blob);
   }, []);
 
@@ -66,17 +65,13 @@ export default function EncodePage({}: EncodePageProps) {
   };
 
   const onClickEmbed = async () => {
+    if (!croppedBlob) {
+      return;
+    }
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
-
-    // FIX: file에서 croppedBlob으로 변경
-    if (!croppedBlob) return;
-    formData.append('file', croppedBlob);
-
-    // if (!file) return;
-    // formData.append('file', file);
-
+    formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
     if (modelName) {
       formData.append('model_name', modelName);
     }

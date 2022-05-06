@@ -14,22 +14,22 @@ import ShareIcon from '@mui/icons-material/Share';
 type DecodePageProps = {};
 
 const footerHeight = 120;
+const defaultModelName = 'the';
 
 export default function DecodePage({}: DecodePageProps) {
   const [file, setFile] = useState<File>();
-  const [cropped, setCropped] = useState<PixelCrop>();
-  const [modelName, setModelName] = useState<StampModel>('the');
+  const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [secret, setSecret] = useState('');
-  const [showCongrats, setShowCongrats] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
+  const [croppedBlob, setCroppedBlob] = useState<Blob>();
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
   };
 
-  const onCropEnd = useCallback((img: PixelCrop | undefined) => {
-    setCropped(img);
+  const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
+    setCroppedBlob(blob);
   }, []);
 
   const onClickShare = () => {
@@ -45,14 +45,13 @@ export default function DecodePage({}: DecodePageProps) {
   };
 
   const onClickExtract = async () => {
+    if (!croppedBlob) {
+      return;
+    }
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/decode_stamp';
     const formData = new FormData();
-
-    if (!file) {
-      return;
-    }
-    formData.append('file', file);
+    formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
     if (modelName) {
       formData.append('model_name', modelName);
     }
@@ -62,7 +61,6 @@ export default function DecodePage({}: DecodePageProps) {
       console.info(res.data);
       if (res.data.secret) {
         setSecret(res.data.secret);
-        setShowCongrats(true);
       } else if (res.data.error) {
         setErrMsg(res.data.error);
       }
