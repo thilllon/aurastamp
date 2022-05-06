@@ -187,7 +187,7 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
             />
             <BottomNavigationAction
               label=''
-              icon={<ApprovalIcon fontSize='large'/>}
+              icon={<BorderColorIcon fontSize='large'/>}
               onClick={() => onLink('/encode')}
             />
           </BottomNavigation>

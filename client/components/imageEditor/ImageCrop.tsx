@@ -18,6 +18,7 @@ import CropIcon from '@mui/icons-material/Crop';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import ApprovalIcon from '@mui/icons-material/Approval';
 import CheckIcon from '@mui/icons-material/Check';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -152,7 +153,7 @@ export function ImageCrop({ children, icon, onChange: onChangeProps, onCropEnd, 
       return <SearchIcon sx={{ fontSize: 100 }} />
     }
     else if (whichPage == 'encode'){
-      return <ApprovalIcon sx={{ fontSize: 100 }} />
+      return <BorderColorIcon sx={{ fontSize: 100 }} />
     }
   }
 
