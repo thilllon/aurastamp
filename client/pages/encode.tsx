@@ -16,7 +16,16 @@ const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
 
-export const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
+export const downloadBase64String = (b64String: string) => {
+  const fileName = 'aurastamp_' + Date.now() + '.png';
+  const downloadLink = document.createElement('a');
+  downloadLink.download = fileName;
+  downloadLink.innerHTML = 'Download File';
+  downloadLink.href = 'data:image/png;base64,' + b64String;
+  downloadLink.click();
+};
+
+export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
   const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
   // const byteCharacters = Buffer.from(b64Data, 'base64');
 
@@ -93,6 +102,10 @@ export default function EncodePage({}: EncodePageProps) {
     }
   };
 
+  const onClickDownload = () => {
+    downloadBase64String(encodedImageBase64String);
+  };
+
   return (
     <>
       <Container
@@ -165,40 +178,15 @@ export default function EncodePage({}: EncodePageProps) {
 
           {encodedImageBase64String && (
             <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2 }}>
-              <Button
-                variant='outlined'
-                onClick={() => {
-                  const fileName = 'aurastamp_' + Date.now() + '.png';
-                  const downloadLink = document.createElement('a');
-                  downloadLink.download = fileName;
-                  downloadLink.innerHTML = 'Download File';
-                  downloadLink.href = 'data:image/png;base64,' + encodedImageBase64String;
-                  downloadLink.click();
-                }}
-              >
+              <Button variant='outlined' onClick={onClickDownload}>
                 download
               </Button>
             </Box>
           )}
 
           {errorMessage && <Box sx={{ p: 2, m: 3 }}>{errorMessage}</Box>}
-
-          {/* <Link href='/decode'>{`Let's go find the hidden message!`}</Link> */}
         </Box>
       </Container>
-      {/* <Box
-        sx={{
-          background: (theme) => theme.palette.primary.main,
-          height: 120,
-          p: 2,
-          display: 'flex',
-          flexFlow: 'row nowrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Typography sx={{ color: '#ffffff', fontSize: 24, fontWeight: 700 }}>{`Aura.`}</Typography>
-      </Box> */}
     </>
   );
 }

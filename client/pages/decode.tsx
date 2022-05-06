@@ -130,17 +130,8 @@ export default function DecodePage({}: DecodePageProps) {
               flexFlow: 'column nowrap',
             }}
           >
-            {/* <div>{replaceURL(secret)}</div> */}
             {secret && <div dangerouslySetInnerHTML={{ __html: replaceURL(secret) }} />}
-            {/* {secret?.startsWith('http') ? (
-            <Link href={secret}>
-              <Typography>{secret}</Typography>
-            </Link>
-          ) : (
-            <Typography>{secret}</Typography>
-          )} */}
             {errorMessage ? <Typography>{errorMessage}</Typography> : <Typography></Typography>}
-            {/* {showCongrats && <Firework2 />} */}
           </Box>
         )}
 
@@ -171,23 +162,9 @@ export default function DecodePage({}: DecodePageProps) {
               </IconButton>
             )} */}
           </Box>
-          {/* <Link href='/encode'>{`Hide your secret message!`}</Link> */}
         </Box>
       </Container>
 
-      {/* <Box
-        sx={{
-          background: (theme) => theme.palette.primary.main,
-          height: 120,
-          p: 2,
-          display: 'flex',
-          flexFlow: 'row nowrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Typography sx={{ color: '#ffffff', fontSize: 24, fontWeight: 700 }}>{`Aura.`}</Typography>
-      </Box> */}
     </>
   );
 }
