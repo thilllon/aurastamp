@@ -19,7 +19,7 @@ const defaultModelName = 'the';
 const replaceURL = (inputText: string) => {
   // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
   const exp =
-    /((\b(((https?|ftp|file|):\/\/)|www[.]|)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])+[a-z0-9]{1,4})/gi; /* eslint-disable-line */
+    /((\b(((https?|ftp|file|):\/\/)|www[.]|)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]+[.])+[a-z0-9]{1,4})/gi; /* eslint-disable-line */
   let temp = inputText.replace(exp, '<a href="$1" target="_blank">$1</a>');
   let result = '';
 
