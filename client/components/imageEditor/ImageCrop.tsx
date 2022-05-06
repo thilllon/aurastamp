@@ -11,6 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { imgPreview } from '@/components/imageEditor/ImagePreview';
 
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
@@ -25,7 +26,7 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 export type ImageCrop = {
   children?: ReactNode;
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
-  onCropEnd?: (crop?: PixelCrop) => void;
+  onCropEnd?: (crop: PixelCrop | undefined, blob?: Blob) => void;
   onCrop?: () => {};
   type?: 'encode' | 'decode';
 };
@@ -46,7 +47,7 @@ export function ImageCrop({
     x: 25,
     y: 25,
     width: 50,
-    height: 50
+    height: 50,
   });
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale, setScale] = useState(1);
@@ -64,9 +65,6 @@ export function ImageCrop({
     }
     onChangeProps?.(ev);
   }
-  useEffect(() => {
-    onCropEnd?.(completedCrop);
-  }, [completedCrop, onCropEnd]);
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     if (aspect) {
@@ -77,19 +75,24 @@ export function ImageCrop({
 
   useDebounce(
     async () => {
-      if (
-        completedCrop?.width &&
-        completedCrop?.height &&
-        imgRef.current &&
-        previewCanvasRef.current
-      ) {
+      debugger;
+      if (completedCrop && imgRef.current && previewCanvasRef.current) {
         // We use canvasPreview as it's much faster than imgPreview.
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate);
+        const { previewUrl, blob } = await imgPreview(imgRef.current, completedCrop, scale, rotate);
+        // setCroppedBlob(blob);
+        onCropEnd?.(completedCrop, blob);
       }
     },
     100,
     [completedCrop, scale, rotate]
   );
+
+  // 일단 지워보기
+  // useEffect(() => {
+  //   debugger;
+  //   onCropEnd?.(completedCrop);
+  // }, [completedCrop, onCropEnd]);
 
   const onClickCrop = (ev: any) => {
     if (previewCanvasRef.current) {
@@ -103,7 +106,7 @@ export function ImageCrop({
   };
 
   const onClickCancel = () => {
-    if (cropMode){
+    if (cropMode) {
       setCrop(undefined);
       setCompletedCrop(undefined);
       setCropMode(false);
@@ -149,7 +152,7 @@ export function ImageCrop({
           flexFlow: 'column nowrap',
           justifyContent: 'center',
           alignItems: 'center',
-          pt: '50px'
+          pt: '50px',
         }}
       >
         {/* {!imgSrc && (
@@ -176,9 +179,16 @@ export function ImageCrop({
         )} */}
 
         {!imgSrc && (
-          <Box component='label' htmlFor='uploadbutton'
-              sx={{ cursor: 'pointer', border: '8px solid black',
-                    display: 'flex', justifyContent: 'center' }}>
+          <Box
+            component='label'
+            htmlFor='uploadbutton'
+            sx={{
+              cursor: 'pointer',
+              border: '8px solid black',
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
             <Input
               // inputProps={{ accept: 'image/*' }}
               id='uploadbutton'
@@ -186,7 +196,7 @@ export function ImageCrop({
               sx={{ display: 'none' }}
               onChange={onSelectFile}
             />
-            <Box sx={{ margin: '20px'}}>
+            <Box sx={{ margin: '20px' }}>
               <FileUploadIcon sx={{ fontSize: 100 }} />
             </Box>
           </Box>
@@ -265,36 +275,38 @@ export function ImageCrop({
 
       {Boolean(imgSrc) && (
         <Box sx={{ float: 'right', margin: '10px 0px' }}>
-          {!cropMode && 
-          <IconButton onClick={onClickCropMode}>
-            <CropIcon sx={{ fontSize: 35 }} />
-          </IconButton>}
-          {cropMode && 
-          <IconButton onClick={onClickCrop}>
-            <CheckIcon sx={{ fontSize: 35 }} />
-          </IconButton>}
+          {!cropMode && (
+            <IconButton onClick={onClickCropMode}>
+              <CropIcon sx={{ fontSize: 35 }} />
+            </IconButton>
+          )}
+          {cropMode && (
+            <IconButton onClick={onClickCrop}>
+              <CheckIcon sx={{ fontSize: 35 }} />
+            </IconButton>
+          )}
           <IconButton onClick={onClickCancel}>
             <CloseIcon sx={{ fontSize: 35 }} />
           </IconButton>
         </Box>
       )}
 
-      {(Boolean(imgSrc) && !cropMode) && (
-          <img
-            alt='Crop me'
-            src={imgSrc}
-            style={{ width: '100%', transform: `scale(${scale}) rotate(${rotate}deg)` }}
-          />
+      {Boolean(imgSrc) && !cropMode && (
+        <img
+          alt='Crop me'
+          src={imgSrc}
+          style={{ width: '100%', transform: `scale(${scale}) rotate(${rotate}deg)` }}
+        />
       )}
 
-      {(Boolean(imgSrc) && cropMode) && (
+      {Boolean(imgSrc) && cropMode && (
         <ReactCrop
           crop={crop}
           onChange={(_, percentCrop) => setCrop(percentCrop)}
           onComplete={(c) => setCompletedCrop(c)}
           aspect={aspect}
           style={{
-            width: '100%'
+            width: '100%',
           }}
         >
           <img
@@ -308,7 +320,7 @@ export function ImageCrop({
       )}
 
       <Box sx={{ display: 'none' }}>
-        {(Boolean(cropMode)) && (
+        {Boolean(cropMode) && (
           <canvas
             ref={previewCanvasRef}
             style={{

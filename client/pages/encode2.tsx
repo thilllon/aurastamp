@@ -39,24 +39,19 @@ export default function EncodePage({}: EncodePageProps) {
   const [resultImgSrc, setResultImgSrc] = useState('');
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [croppedBlob, setCroppedBlob] = useState<Blob>();
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
+    // FIXME:
     // setImage();
   };
 
-  const onCropEnd = useCallback(
-    async (img: PixelCrop | undefined) => {
-      setCropData(img);
-      if (image && cropData) {
-        const previewUrl = await imgPreview(image, cropData);
-        debugger;
-        // setFile(ev.target.files?.[0] ?? undefined);
-      }
-    },
-    [cropData, image]
-  );
+  const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
+    // debugger;
+    setCropData(crop);
+    setCroppedBlob(blob);
+  }, []);
 
   const onChangeMessage = (ev: any) => {
     let msg = ev.target.value;
@@ -71,10 +66,16 @@ export default function EncodePage({}: EncodePageProps) {
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
 
-    if (!file) {
+    // if (!file) {
+    //   return;
+    // }
+    // formData.append('file', file);
+
+    if (!croppedBlob) {
       return;
     }
-    formData.append('file', file);
+    formData.append('file', croppedBlob);
+
     if (modelName) {
       formData.append('model_name', modelName);
     }

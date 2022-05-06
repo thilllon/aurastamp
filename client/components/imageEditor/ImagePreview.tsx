@@ -21,5 +21,5 @@ export async function imgPreview(image: HTMLImageElement, crop: PixelCrop, scale
   }
 
   previewUrl = URL.createObjectURL(blob);
-  return previewUrl;
+  return { previewUrl, blob };
 }
