@@ -6,15 +6,10 @@ import { WorkOutlineOutlined } from '@mui/icons-material';
 
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import { 
-  Box, 
-  SxProps, 
-  BottomNavigation,
-  BottomNavigationAction,
-  Paper } from '@mui/material';
+import { Box, SxProps, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useCallback, useState } from 'react';
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 
 const isProduction = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 
@@ -120,7 +115,6 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [page, setPage] = useState('');
 
-
   const onSidebarOpen = useCallback(() => {
     setSidebarOpen(true);
   }, []);
@@ -139,11 +133,29 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
       {/* <DashboardTopNavbar onSidebarOpen={onSidebarOpen} /> */}
       <DashboardLayoutRoot sx={sx}>
         <DashboardTopNavbar onSidebarOpen={onSidebarOpen} />
-        <Box sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', width: '100%', paddingBottom: '56px'}}>
+        <Box
+          sx={{
+            display: 'flex',
+            flex: '1 1 auto',
+            flexDirection: 'column',
+            width: '100%',
+            paddingBottom: '56px',
+          }}
+        >
           {children}
         </Box>
-        <Paper sx={{ width: 'inherit', maxWidth: 'inherit', margin: '0 auto',
-                     position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <Paper
+          sx={{
+            width: 'inherit',
+            maxWidth: 'inherit',
+            margin: '0 auto',
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+          }}
+          elevation={3}
+        >
           <BottomNavigation
             showLabels
             value={page}
@@ -151,22 +163,30 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
               bgcolor: 'primary.main',
               '& .Mui-selected': {
                 '& .MuiBottomNavigationAction-label': {
-                  fontSize: theme => theme.typography.caption,
+                  fontSize: (theme) => theme.typography.caption,
                   transition: 'none',
                   fontWeight: 'bold',
-                  lineHeight: '20px'
+                  lineHeight: '20px',
                 },
                 '& .MuiSvgIcon-root, & .MuiBottomNavigationAction-label': {
-                  color: theme => theme.palette.primary.contrastText
-                }
-              }
+                  color: (theme) => theme.palette.primary.contrastText,
+                },
+              },
             }}
             onChange={(event, newValue) => {
               setPage(newValue);
             }}
           >
-            <BottomNavigationAction label="read" icon={<ImageSearchIcon />} onClick={() => onLink("/decode")} />
-            <BottomNavigationAction label="write" icon={<BorderColorIcon />} onClick={() => onLink("/encode")} />
+            <BottomNavigationAction
+              label='read'
+              icon={<ImageSearchIcon />}
+              onClick={() => onLink('/decode')}
+            />
+            <BottomNavigationAction
+              label='write'
+              icon={<BorderColorIcon />}
+              onClick={() => onLink('/encode')}
+            />
           </BottomNavigation>
         </Paper>
       </DashboardLayoutRoot>

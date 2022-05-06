@@ -40,24 +40,37 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
   return (
     <>
       <DashboardTopNavbarRoot
-        sx={{ width: 'inherit', maxWidth: 'inherit', margin: '0 auto',
-                     position: 'fixed', bottom: 0, left: 0, right: 0 }}
+        sx={{
+          width: 'inherit',
+          maxWidth: 'inherit',
+          margin: '0 auto',
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
         {...others}
       >
         <Box
-        sx={{
-          background: (theme) => theme.palette.primary.main,
-          height: 120,
-          p: 2,
-          display: 'flex',
-          flexFlow: 'row nowrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
+          sx={{
+            background: (theme) => theme.palette.primary.main,
+            height: 120,
+            p: 2,
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
-         
-          <Typography sx={{ color: (theme) => theme.palette.primary.contrastText, fontSize: 24, fontWeight: 700, fontFamily: (theme) => theme.typography.fontFamily}}>{`the aura`}</Typography>
-        </Box> 
+          <Typography
+            sx={{
+              color: (theme) => theme.palette.primary.contrastText,
+              fontSize: 24,
+              fontWeight: 700,
+              fontFamily: (theme) => theme.typography.fontFamily,
+            }}
+          >{`the aura`}</Typography>
+        </Box>
       </DashboardTopNavbarRoot>
     </>
   );

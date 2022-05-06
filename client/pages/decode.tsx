@@ -24,7 +24,6 @@ export default function DecodePage({}: DecodePageProps) {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
 
-
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     setFile(ev.target.files?.[0] ?? undefined);
   };
@@ -35,14 +34,14 @@ export default function DecodePage({}: DecodePageProps) {
 
   const onClickShare = () => {
     if (navigator.share) {
-          navigator.share({
-              title: '기록하며 성장하기',
-              text: 'Hello World',
-              url: 'https://shinsangeun.github.io',
-          });
-    }else{
-        alert("sharing not support env")
-    }  
+      navigator.share({
+        title: '기록하며 성장하기',
+        text: 'Hello World',
+        url: 'https://shinsangeun.github.io',
+      });
+    } else {
+      alert('sharing not support env');
+    }
   };
 
   const onClickExtract = async () => {
@@ -50,7 +49,6 @@ export default function DecodePage({}: DecodePageProps) {
     const url = baseUrl + '/decode_stamp';
     const formData = new FormData();
 
-   
     if (!file) {
       return;
     }
@@ -65,8 +63,7 @@ export default function DecodePage({}: DecodePageProps) {
       if (res.data.secret) {
         setSecret(res.data.secret);
         setShowCongrats(true);
-      }
-      else if (res.data.error) {
+      } else if (res.data.error) {
         setErrMsg(res.data.error);
       }
     } catch (err) {
@@ -78,25 +75,26 @@ export default function DecodePage({}: DecodePageProps) {
 
   const replaceURL = (input_text: any) => {
     // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
-    const exp = /(\b(((https?|ftp|file|):\/\/)|www[.])[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig; /* eslint-disable-line */
-    let temp = input_text.replace(exp,"<a href=\"$1\" target=\"_blank\">$1</a>");
-    let result = "";
+    const exp =
+      /(\b(((https?|ftp|file|):\/\/)|www[.])[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi; /* eslint-disable-line */
+    let temp = input_text.replace(exp, '<a href="$1" target="_blank">$1</a>');
+    let result = '';
 
     while (temp.length > 0) {
-        const pos = temp.indexOf("href=\"");
-        if (pos == -1) {
-            result += temp;
-            break;
-        }
-        result += temp.substring(0, pos + 6);
+      const pos = temp.indexOf('href="');
+      if (pos == -1) {
+        result += temp;
+        break;
+      }
+      result += temp.substring(0, pos + 6);
 
-        temp = temp.substring(pos + 6, temp.length);
-        if ((temp.indexOf("://") > 8) || (temp.indexOf("://") == -1)) {
-            result += "http://";
-        }
+      temp = temp.substring(pos + 6, temp.length);
+      if (temp.indexOf('://') > 8 || temp.indexOf('://') == -1) {
+        result += 'http://';
+      }
     }
     return result;
-  }
+  };
 
   return (
     <>
@@ -109,36 +107,46 @@ export default function DecodePage({}: DecodePageProps) {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Box sx={{ width: '100%', height: '70%', display: 'inline-flex', alignItems: 'center', gap: 1, mt: 2, mb: 3 }}>
-         <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
+        <Box
+          sx={{
+            width: '100%',
+            height: '70%',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1,
+            mt: 2,
+            mb: 3,
+          }}
+        >
+          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} type={'decode'} />
         </Box>
 
         {(secret || errMsg) && (
-          <Box sx={{ display: 'flex', 
-            border: 1,
-            p: 4,
-            borderRadius: '12px',
-            alignItems: 'center',
-            borderColor: (theme) => theme.palette.primary.main,
-            flexFlow: 'column nowrap' }}>
-          {/* <div>{replaceURL(secret)}</div> */}
-          {secret && (<div dangerouslySetInnerHTML={{__html: replaceURL(secret)}} />)}
-          {/* {secret?.startsWith('http') ? (
+          <Box
+            sx={{
+              display: 'flex',
+              border: 1,
+              p: 4,
+              borderRadius: '12px',
+              alignItems: 'center',
+              borderColor: (theme) => theme.palette.primary.main,
+              flexFlow: 'column nowrap',
+            }}
+          >
+            {/* <div>{replaceURL(secret)}</div> */}
+            {secret && <div dangerouslySetInnerHTML={{ __html: replaceURL(secret) }} />}
+            {/* {secret?.startsWith('http') ? (
             <Link href={secret}>
               <Typography>{secret}</Typography>
             </Link>
           ) : (
             <Typography>{secret}</Typography>
           )} */}
-          {errMsg ? (
-            <Typography>{errMsg}</Typography>
-          ) : (
-            <Typography></Typography>
-          )}
-          {/* {showCongrats && <Firework2 />} */}
+            {errMsg ? <Typography>{errMsg}</Typography> : <Typography></Typography>}
+            {/* {showCongrats && <Firework2 />} */}
           </Box>
         )}
-        
+
         <Box
           sx={{
             width: '100%',

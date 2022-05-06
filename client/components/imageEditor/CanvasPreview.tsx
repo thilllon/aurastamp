@@ -62,4 +62,6 @@ export async function canvasPreview(
   );
 
   ctx.restore();
+
+  return canvas;
 }

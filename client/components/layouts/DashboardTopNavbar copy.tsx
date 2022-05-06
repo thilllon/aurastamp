@@ -40,24 +40,36 @@ export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTo
   return (
     <>
       <DashboardTopNavbarRoot
-        sx={{ width: 'inherit', maxWidth: 'inherit', margin: '0 auto',
-                     position: 'fixed', bottom: 0, left: 0, right: 0 }}
+        sx={{
+          width: 'inherit',
+          maxWidth: 'inherit',
+          margin: '0 auto',
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
         {...others}
       >
         <Box
-        sx={{
-          background: (theme) => theme.palette.primary.main,
-          height: 120,
-          p: 2,
-          display: 'flex',
-          flexFlow: 'row nowrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
+          sx={{
+            background: (theme) => theme.palette.primary.main,
+            height: 120,
+            p: 2,
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
-         
-          <Typography sx={{ color: (theme) => theme.palette.primary.contrastText, fontSize: 24, fontWeight: 700 }}>{`the aura`}</Typography>
-        </Box> 
+          <Typography
+            sx={{
+              color: (theme) => theme.palette.primary.contrastText,
+              fontSize: 24,
+              fontWeight: 700,
+            }}
+          >{`the aura`}</Typography>
+        </Box>
         <Toolbar disableGutters sx={{ left: 0, px: 2 }}>
           {/* <IconButton onClick={onSidebarOpen} sx={{ display: { xs: 'inline-flex', lg: 'none' } }}>
             <MenuIcon fontSize='small' />

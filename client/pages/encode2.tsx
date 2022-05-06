@@ -1,12 +1,28 @@
 /* eslint-disable @next/next/no-img-element */
-import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { StampModel } from '@/types/types';
-import { Box, Button, CircularProgress, Container, TextField } from '@mui/material';
-import axios from 'axios';
+import { PhotoCamera } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Card,
+  CardActionArea,
+  CircularProgress,
+  Container,
+  IconButton,
+  Input,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useSession } from 'next-auth/react';
 import getConfig from 'next/config';
-import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
+import React, { ReactNode, ChangeEventHandler, useState, useCallback } from 'react';
+import axios from 'axios';
+import { download, downloadBuffer } from '@/utils/common';
+import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { PixelCrop } from 'react-image-crop';
+import { Link } from '@/components/shared/Link';
+import { StampModel } from '@/types/types';
+import { imgPreview } from '@/components/imageEditor/ImagePreview';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -25,30 +41,7 @@ export default function EncodePage({}: EncodePageProps) {
   const [errMsg, setErrMsg] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
 
-  const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-    const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
-    // const byteCharacters = Buffer.from(b64Data, 'base64');
-
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-
-    const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
-  };
-
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
-    // event handler for file load, unload
     setFile(ev.target.files?.[0] ?? undefined);
   };
 
@@ -57,7 +50,7 @@ export default function EncodePage({}: EncodePageProps) {
     setCroppedBlob(blob);
   }, []);
 
-  const onChangeMessage: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (ev) => {
+  const onChangeMessage = (ev: any) => {
     let msg = ev.target.value;
     if (msg.length > MAX_MESSAGE_LENGTH) {
       msg = msg.slice(0, MAX_MESSAGE_LENGTH);
@@ -70,18 +63,20 @@ export default function EncodePage({}: EncodePageProps) {
     const url = baseUrl + '/encode_stamp';
     const formData = new FormData();
 
-    // FIX: file에서 croppedBlob으로 변경
-    if (!croppedBlob) return;
-    formData.append('file', croppedBlob);
-
-    // if (!file) return;
+    // if (!file) {
+    //   return;
+    // }
     // formData.append('file', file);
+
+    if (!croppedBlob) {
+      return;
+    }
+    formData.append('file', croppedBlob);
 
     if (modelName) {
       formData.append('model_name', modelName);
     }
     formData.append('text', message);
-    formData.append('return_type', 'base64');
     setLoading(true);
     try {
       const res = await axios.post(url, formData);
