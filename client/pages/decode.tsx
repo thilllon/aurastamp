@@ -10,6 +10,7 @@ import { PixelCrop } from 'react-image-crop';
 import { StampModel } from '@/types/types';
 import { AnySchema } from 'yup';
 import ShareIcon from '@mui/icons-material/Share';
+import { sendEvent } from '@/utils/useGoogleAnalytics';
 
 type DecodePageProps = {};
 
@@ -86,6 +87,11 @@ export default function DecodePage({}: DecodePageProps) {
       console.info(res.data);
       setSecret(res.data.secret ?? '');
       setErrorMessage(res.data.error ?? '');
+      sendEvent('button_click', {
+        category: 'decode',
+        label: 'secret',
+        value: res.data.secret
+      });
     } catch (err) {
       console.error(err);
     } finally {
