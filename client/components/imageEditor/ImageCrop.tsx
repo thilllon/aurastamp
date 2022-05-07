@@ -39,9 +39,10 @@ export type ImageCrop = {
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
   onCropEnd?: (crop: PixelCrop | undefined, blob?: Blob) => void;
   onCrop?: () => {};
+  icon?: string;
 };
 
-export function ImageCrop(icon:any , { children, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
+export function ImageCrop({children, icon, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
   const [base64String, setBase64String] = useState<string>('');
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const previewImageRef = useRef<HTMLImageElement>(null);
@@ -149,6 +150,7 @@ export function ImageCrop(icon:any , { children, onChange: onChangeProps, onCrop
 
   function IconBox(props: any) {
     const whichPage = props.icon;
+    console.log(props.icon);
     if (whichPage == 'decode'){
       return <SearchIcon sx={{ fontSize: 100 }} />
     }
