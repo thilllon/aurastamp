@@ -6,6 +6,9 @@ import { WorkOutlineOutlined } from '@mui/icons-material';
 
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import SearchIcon from '@mui/icons-material/Search';
+import ApprovalIcon from '@mui/icons-material/Approval';
+
 import { Box, SxProps, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useCallback, useState } from 'react';
@@ -178,13 +181,13 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
             }}
           >
             <BottomNavigationAction
-              label='read'
-              icon={<ImageSearchIcon />}
+              label=''
+              icon={<SearchIcon fontSize='large'/>}
               onClick={() => onLink('/decode')}
             />
             <BottomNavigationAction
-              label='write'
-              icon={<BorderColorIcon />}
+              label=''
+              icon={<BorderColorIcon fontSize='large'/>}
               onClick={() => onLink('/encode')}
             />
           </BottomNavigation>

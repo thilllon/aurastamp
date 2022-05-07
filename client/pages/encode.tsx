@@ -120,7 +120,7 @@ export default function EncodePage({}: EncodePageProps) {
         }}
       >
         <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          {!encodedImageBase64String && <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />}
+          {!encodedImageBase64String && <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='encode' />}
 
           {encodedImageBase64String && (
             <Box

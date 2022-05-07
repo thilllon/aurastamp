@@ -121,7 +121,7 @@ export default function DecodePage({}: DecodePageProps) {
             mb: 3,
           }}
         >
-          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} />
+          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='decode' />
         </Box>
 
         {(secret || errorMessage) && (
@@ -151,7 +151,7 @@ export default function DecodePage({}: DecodePageProps) {
             mt: 2,
           }}
         >
-          <Box sx={{ width: '40%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
+          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
             <Button
               sx={{ flex: 1 }}
               variant={'contained'}
