@@ -115,27 +115,16 @@ const navData: NavData[] = [
 ];
 
 export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [page, setPage] = useState('');
-
-  const onSidebarOpen = useCallback(() => {
-    setSidebarOpen(true);
-  }, []);
-
-  const onClose = useCallback(() => {
-    setSidebarOpen(false);
-  }, []);
-
   const router = useRouter();
+
   const onLink = (href: any) => {
     router.push(href);
   };
 
   return (
     <>
-      {/* <DashboardTopNavbar onSidebarOpen={onSidebarOpen} /> */}
       <DashboardLayoutRoot sx={sx}>
-        <DashboardTopNavbar onSidebarOpen={onSidebarOpen} />
+        <DashboardTopNavbar />
         <Box
           sx={{
             display: 'flex',
@@ -161,7 +150,7 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
         >
           <BottomNavigation
             showLabels
-            value={page}
+            value={router.pathname}
             sx={{
               bgcolor: 'primary.main',
               '& .Mui-selected': {
@@ -176,17 +165,16 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
                 },
               },
             }}
-            onChange={(event, newValue) => {
-              setPage(newValue);
-            }}
           >
             <BottomNavigationAction
               label=''
+              value='/decode'
               icon={<SearchIcon fontSize='large'/>}
               onClick={() => onLink('/decode')}
             />
             <BottomNavigationAction
               label=''
+              value='/encode'
               icon={<BorderColorIcon fontSize='large'/>}
               onClick={() => onLink('/encode')}
             />

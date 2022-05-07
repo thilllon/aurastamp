@@ -29,14 +29,9 @@ const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   };
 });
 
-type DashboardTopNavbarProps = AppBarProps & {
-  onSidebarOpen: () => void;
-};
+type DashboardTopNavbarProps = AppBarProps ;
 
-export const DashboardTopNavbar = ({ onSidebarOpen, sx, ...others }: DashboardTopNavbarProps) => {
-  // const { data: session, status } = useSession();
-  // const isLoading = status === 'loading';
-
+export const DashboardTopNavbar = ({ sx, ...others }: DashboardTopNavbarProps) => {
   return (
     <>
       <DashboardTopNavbarRoot
