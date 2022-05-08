@@ -167,7 +167,7 @@ export function ImageCrop({children, icon, onChange: onChangeProps, onCropEnd, o
   const htmlId = 'image-uploader';
 
   return (
-    <Box sx={{ width: '100%', pt: 3 }}>
+    <Box sx={{ width: '100%' }}>
       <Box
         sx={{
           width: '100%',
@@ -175,7 +175,6 @@ export function ImageCrop({children, icon, onChange: onChangeProps, onCropEnd, o
           flexFlow: 'column nowrap',
           justifyContent: 'center',
           alignItems: 'center',
-          pt: '50px',
         }}
       >
         {!base64String && (

@@ -111,15 +111,14 @@ export default function EncodePage({}: EncodePageProps) {
       <Container
         sx={{
           display: 'flex',
-          flexFlow: 'column',
-          justifyContent: 'space-between',
-          // justifyContent: 'center',
+          flexDirection: 'column',
+          justifyContent: 'center',
           alignItems: 'space-between',
           minHeight: (theme) =>
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
           {!encodedImageBase64String && <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='encode' />}
 
           {encodedImageBase64String && (
@@ -146,7 +145,7 @@ export default function EncodePage({}: EncodePageProps) {
 
         <Box
           sx={{
-            mt: 4,
+            mt: 3,
             width: '100%',
             display: 'flex',
             flexFlow: 'column nowrap',

@@ -104,8 +104,8 @@ export default function DecodePage({}: DecodePageProps) {
       <Container
         sx={{
           display: 'flex',
-          flexFlow: 'column',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
+          flexDirection: 'column',
           minHeight: (theme) =>
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
@@ -113,11 +113,7 @@ export default function DecodePage({}: DecodePageProps) {
         <Box
           sx={{
             width: '100%',
-            height: '70%',
-            display: 'inline-flex',
             alignItems: 'center',
-            gap: 1,
-            mt: 2,
             mb: 3,
           }}
         >

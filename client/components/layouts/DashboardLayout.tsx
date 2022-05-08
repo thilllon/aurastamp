@@ -21,7 +21,7 @@ const DashboardLayoutRoot = styled('main')(({ theme }) => ({
   flex: '1 1 auto',
   maxWidth: '420px',
   width: '100%',
-  paddingTop: 64,
+  paddingTop: 70,
   margin: '0 auto',
   // [theme.breakpoints.up(defaultBreakpoint)]: { paddingLeft: sidebarWidth },
 }));
@@ -129,7 +129,6 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
           sx={{
             display: 'flex',
             flex: '1 1 auto',
-            flexDirection: 'column',
             width: '100%',
             paddingBottom: '56px',
           }}
