@@ -192,7 +192,7 @@ export function ImageCrop({children, icon, onChange: onChangeProps, onCropEnd, o
               // inputProps={{ accept: 'image/*' }}
               id='uploadbutton'
               type='file'
-              inputProps={{ accept: "image/*", capture: "" }}
+              inputProps={{ accept: "image/*"}}
               sx={{ display: 'none' }}
               onChange={onSelectFile}
             />
