@@ -61,10 +61,10 @@ export default function EncodePage({}: EncodePageProps) {
 
   useEffect(() => {
     setDownloadable(isDownloadableBrowser(browserName));
-  });
+  }, []);
 
-  const isDownloadableBrowser = (browser) => {
-    let unSupportedBrowserList = ['Edge', 'Chrome'];
+  const isDownloadableBrowser = (browser: string) => {
+    const unSupportedBrowserList = ['Edge', 'Chrome'];
     return unSupportedBrowserList.indexOf(browser) == -1;
   }
 
