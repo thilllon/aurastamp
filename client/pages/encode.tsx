@@ -143,13 +143,11 @@ export default function EncodePage({}: EncodePageProps) {
                 pt: '50px',
               }}
             >
-              <a href={'data:image/png;base64,' + encodedImageBase64String} download={'result.png'}>
-                <img
-                  src={'data:image/png;base64,' + encodedImageBase64String}
-                  alt={'result'}
-                  style={{ width: '100%' }}
-                />
-              </a>
+              <img
+                src={'data:image/png;base64,' + encodedImageBase64String}
+                alt={'result'}
+                style={{ width: '100%' }}
+              />
             </Box>
           )}
         </Box>
