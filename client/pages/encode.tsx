@@ -2,11 +2,13 @@
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { StampModel } from '@/types/types';
-import { Box, Button, CircularProgress, Container, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, Container, TextField, Alert } from '@mui/material';
 import axios from 'axios';
 import getConfig from 'next/config';
-import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
+import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
+import { browserName, deviceType, isChrome, isEdge } from 'react-device-detect';
+
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -55,6 +57,16 @@ export default function EncodePage({}: EncodePageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
+  const [downloadable, setDownloadable] = useState(true);
+
+  useEffect(() => {
+    setDownloadable(isDownloadableBrowser(browserName));
+  }, []);
+
+  const isDownloadableBrowser = (browser: string) => {
+    const unSupportedBrowserList = ['Edge', 'Chrome'];
+    return unSupportedBrowserList.indexOf(browser) == -1;
+  }
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     // event handler for file load, unload
@@ -111,17 +123,15 @@ export default function EncodePage({}: EncodePageProps) {
       <Container
         sx={{
           display: 'flex',
-          flexFlow: 'column',
-          justifyContent: 'space-between',
-          // justifyContent: 'center',
+          flexDirection: 'column',
+          justifyContent: 'center',
           alignItems: 'space-between',
           minHeight: (theme) =>
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Box sx={{ width: '100%', height: '70%', display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
           {!encodedImageBase64String && <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='encode' />}
-
           {encodedImageBase64String && (
             <Box
               sx={{
@@ -133,20 +143,18 @@ export default function EncodePage({}: EncodePageProps) {
                 pt: '50px',
               }}
             >
-              <a href={'data:image/png;base64,' + encodedImageBase64String} download={'result.png'}>
-                <img
-                  src={'data:image/png;base64,' + encodedImageBase64String}
-                  alt={'result'}
-                  style={{ width: '100%' }}
-                />
-              </a>
+              <img
+                src={'data:image/png;base64,' + encodedImageBase64String}
+                alt={'result'}
+                style={{ width: '100%' }}
+              />
             </Box>
           )}
         </Box>
 
         <Box
           sx={{
-            mt: 4,
+            mt: 3,
             width: '100%',
             display: 'flex',
             flexFlow: 'column nowrap',
@@ -163,7 +171,7 @@ export default function EncodePage({}: EncodePageProps) {
           )}
 
           {!encodedImageBase64String && (
-            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 4 }}>
+            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 3 }}>
               <Button
                 sx={{ flex: 1 }}
                 variant={'contained'}
@@ -177,8 +185,12 @@ export default function EncodePage({}: EncodePageProps) {
           )}
 
           {encodedImageBase64String && (
-            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2 }}>
-              <Button variant='outlined' onClick={onClickDownload}>
+            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column',
+                       alignItems: 'center', gap: 1 }}>
+              {!downloadable && (
+                <Alert severity="warning">현재 Browser에서는 다운로드가 불가합니다.😢
+                사진을 Long Press하여 다운 받아 주세요.</Alert>)}
+              <Button sx={{ width: '30%', mt: 1 }} variant='outlined' onClick={onClickDownload}>
                 download
               </Button>
             </Box>
