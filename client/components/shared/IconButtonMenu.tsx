@@ -8,13 +8,13 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import { signOut, useSession } from 'next-auth/react';
+// import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { MouseEvent, useCallback, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 export const IconButtonMenu = () => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
