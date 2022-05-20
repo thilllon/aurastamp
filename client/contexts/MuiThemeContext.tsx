@@ -50,6 +50,9 @@ export const theme = createTheme(
           // disableElevation: true,
         },
         styleOverrides: {
+          text: {
+            background: '#f0f0f0',
+          },
           root: {
             textTransform: 'none',
           },
@@ -188,6 +191,15 @@ export const theme = createTheme(
           },
         },
       },
+      MuiTypography: {
+        defaultProps: {
+          variant: 'body1',
+          variantMapping: {
+            body1: 'span',
+            body2: 'span',
+          },
+        },
+      },
       MuiTooltip: {
         styleOverrides: {
           popper: {
@@ -252,7 +264,7 @@ export const theme = createTheme(
         900: '#111827',
       },
       action: {
-        active: '#6B7280',
+        active: '#FFFFFFF',
         focus: 'rgba(55, 65, 81, 0.12)',
         hover: 'rgba(55, 65, 81, 0.04)',
         selected: 'rgba(55, 65, 81, 0.08)',
@@ -265,9 +277,9 @@ export const theme = createTheme(
       },
       divider: '#E6E8F0',
       primary: {
-        main: '#5048E5',
-        light: '#828DF8',
-        dark: '#3832A0',
+        main: '#000000', //'#5048E5',
+        light: '#FFFFFF',
+        dark: '#828282',
         contrastText: '#FFFFFF',
       },
       secondary: {

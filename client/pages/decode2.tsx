@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { Cropper } from '@/components/Cropper';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { StampModel } from '@/types/types';
@@ -57,6 +58,7 @@ export default function EncodePage({}: EncodePageProps) {
   const [errorMessage, setErrorMessage] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
   const [downloadable, setDownloadable] = useState(true);
+  const [key, setKey] = useState(1);
 
   useEffect(() => {
     setDownloadable(isDownloadableBrowser(browserName));
@@ -88,6 +90,7 @@ export default function EncodePage({}: EncodePageProps) {
   };
 
   const onClickEncode = async () => {
+    // debugger;
     setErrorMessage('');
     if (!croppedBlob) {
       return;
@@ -117,6 +120,12 @@ export default function EncodePage({}: EncodePageProps) {
     downloadBase64String(encodedImageBase64String);
   };
 
+  const onClickRetry = () => {
+    setKey((x) => x + 1);
+    setHiddenMessage('');
+    setEncodedImageBase64String('');
+  };
+
   return (
     <>
       <Container
@@ -129,29 +138,32 @@ export default function EncodePage({}: EncodePageProps) {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          {!encodedImageBase64String && (
-            <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='encode' />
-          )}
-          {encodedImageBase64String && (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                flexFlow: 'column nowrap',
-                justifyContent: 'center',
-                alignItems: 'center',
-                pt: '50px',
-              }}
-            >
-              <img
-                src={'data:image/png;base64,' + encodedImageBase64String}
-                alt={'result'}
-                style={{ width: '100%' }}
-              />
-            </Box>
-          )}
+        <Box key={key} sx={{ mt: 3 }}>
+          <Cropper
+            guideMessage='Pick an image to stamp'
+            defaultAspect={1}
+            onChangeFile={onChange}
+            onCropEnd={onCropEnd}
+          />
         </Box>
+        {encodedImageBase64String && (
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexFlow: 'column nowrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              mt: 2,
+            }}
+          >
+            <img
+              src={'data:image/png;base64,' + encodedImageBase64String}
+              alt={'result'}
+              style={{ width: '100%' }}
+            />
+          </Box>
+        )}
 
         <Box
           sx={{
@@ -167,6 +179,11 @@ export default function EncodePage({}: EncodePageProps) {
               fullWidth
               value={hiddenMessage}
               onChange={onChangeMessage}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter') {
+                  onClickEncode();
+                }
+              }}
               placeholder={'type message to hide :)'}
             />
           )}
@@ -185,25 +202,28 @@ export default function EncodePage({}: EncodePageProps) {
             </Box>
           )}
 
+          {encodedImageBase64String && !downloadable && (
+            <Alert severity='warning'>
+              현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.
+            </Alert>
+          )}
+
           {encodedImageBase64String && (
             <Box
               sx={{
                 width: '100%',
                 display: 'flex',
-                flexDirection: 'column',
+                flexFlow: 'row nowrap',
+                justifyContent: 'center',
                 alignItems: 'center',
                 gap: 1,
+                mt: 2,
               }}
             >
-              {!downloadable && (
-                <Alert severity='warning'>
-                  현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아
-                  주세요.
-                </Alert>
-              )}
-              <Button sx={{ width: '30%', mt: 1 }} variant='outlined' onClick={onClickDownload}>
+              <Button variant='contained' onClick={onClickDownload}>
                 download
               </Button>
+              <Button onClick={onClickRetry}>retry</Button>
             </Box>
           )}
 

@@ -74,9 +74,6 @@ client.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if (error.response) {
-    }
-
     //     const originalConfig = error.config;
     //     if (error.response.status === 403 && !originalConfig._retry) {
     //       originalConfig._retry = true;

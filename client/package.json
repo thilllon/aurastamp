@@ -31,7 +31,6 @@
     "formidable": "^2.0.1",
     "nanoid": "^3.3.3",
     "next": "^12.1.5",
-    "next-auth": "^4.3.3",
     "next-connect": "^0.12.2",
     "next-i18next": "^11.0.0",
     "next-images": "^1.8.4",

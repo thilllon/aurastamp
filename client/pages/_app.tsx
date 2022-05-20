@@ -1,12 +1,11 @@
+import { MuiThemeProvider } from '@/contexts/MuiThemeContext';
 import { createEmotionCache } from '@/styles/emotion';
 import { useGoogleAnalytics } from '@/utils/useGoogleAnalytics';
 import { EmotionCache } from '@emotion/cache';
 import { CacheProvider as EmotionCacheProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
-import { MuiThemeProvider } from 'contexts/AuraThemeContext';
 import { ReactQueryClientProvider } from 'contexts/ReactQueryContext';
 import { NextPage } from 'next';
-import { SessionProvider } from 'next-auth/react';
 import { appWithTranslation } from 'next-i18next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -25,19 +24,17 @@ const MyApp = ({
 
   const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
   return (
-    <SessionProvider session={session}>
-      <ReactQueryClientProvider dehydratedState={dehydratedState}>
-        <EmotionCacheProvider value={emotionCache}>
-          <Head>
-            <meta name='viewport' content='initial-scale=1, width=device-width' />
-          </Head>
-          <MuiThemeProvider>
-            <CssBaseline />
-            {getLayout(<Component {...pageProps} />)}
-          </MuiThemeProvider>
-        </EmotionCacheProvider>
-      </ReactQueryClientProvider>
-    </SessionProvider>
+    <ReactQueryClientProvider dehydratedState={dehydratedState}>
+      <EmotionCacheProvider value={emotionCache}>
+        <Head>
+          <meta name='viewport' content='initial-scale=1, width=device-width' />
+        </Head>
+        <MuiThemeProvider>
+          <CssBaseline />
+          {getLayout(<Component {...pageProps} />)}
+        </MuiThemeProvider>
+      </EmotionCacheProvider>
+    </ReactQueryClientProvider>
   );
 };
 export default appWithTranslation(MyApp);

@@ -1,28 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
-import { download } from '@/utils/common';
-import { Box, Button, Card, CardActionArea, Input } from '@mui/material';
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  ReactEventHandler,
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { imgPreview } from '@/components/imageEditor/ImagePreview';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import CropIcon from '@mui/icons-material/Crop';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, Input } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import React, { ChangeEventHandler, ReactEventHandler, ReactNode, useRef, useState } from 'react';
 import ReactCrop, { centerCrop, Crop, makeAspectCrop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useDebounce } from 'react-use';
 import { canvasPreview } from './CanvasPreview';
-import CropIcon from '@mui/icons-material/Crop';
-import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import ApprovalIcon from '@mui/icons-material/Approval';
-import CheckIcon from '@mui/icons-material/Check';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import { imgPreview } from '@/components/imageEditor/ImagePreview';
 
 // This is to demonstate how to make and center a % aspect crop
 // which is a bit trickier so we use some helper functions.
@@ -35,14 +24,12 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 }
 
 export type ImageCrop = {
-  children?: ReactNode;
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
   onCropEnd?: (crop: PixelCrop | undefined, blob?: Blob) => void;
-  onCrop?: () => {};
   icon?: string;
 };
 
-export function ImageCrop({children, icon, onChange: onChangeProps, onCropEnd, onCrop }: ImageCrop) {
+export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCrop) {
   const [base64String, setBase64String] = useState<string>('');
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const previewImageRef = useRef<HTMLImageElement>(null);
@@ -151,13 +138,12 @@ export function ImageCrop({children, icon, onChange: onChangeProps, onCropEnd, o
   function IconBox(props: any) {
     const whichPage = props.icon;
     console.log(props.icon);
-    if (whichPage == 'decode'){
-      return <SearchIcon sx={{ fontSize: 100 }} />
+    if (whichPage == 'decode') {
+      return <SearchIcon sx={{ fontSize: 100 }} />;
+    } else if (whichPage == 'encode') {
+      return <BorderColorIcon sx={{ fontSize: 100 }} />;
     }
-    else if (whichPage == 'encode'){
-      return <BorderColorIcon sx={{ fontSize: 100 }} />
-    }
-    return <div></div>
+    return <div></div>;
   }
 
   const onClickCropMode = () => {
@@ -192,7 +178,7 @@ export function ImageCrop({children, icon, onChange: onChangeProps, onCropEnd, o
               // inputProps={{ accept: 'image/*' }}
               id='uploadbutton'
               type='file'
-              inputProps={{ accept: "image/*"}}
+              inputProps={{ accept: 'image/*' }}
               sx={{ display: 'none' }}
               onChange={onSelectFile}
             />

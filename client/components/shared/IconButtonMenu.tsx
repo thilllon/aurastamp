@@ -8,13 +8,11 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-// import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React, { MouseEvent, useCallback, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 export const IconButtonMenu = () => {
-  // const { data: session } = useSession();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -37,8 +35,6 @@ export const IconButtonMenu = () => {
 
     localStorage.clear();
     sessionStorage.clear();
-
-    signOut();
   }, [queryClient]);
 
   const onClickMyProfile = useCallback(async () => {
@@ -53,7 +49,7 @@ export const IconButtonMenu = () => {
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
         <IconButton onClick={handleClick} size='small' sx={{ ml: 2 }}>
-          <Avatar src={session?.user?.image ?? undefined} sx={{ width: 32, height: 32 }}>
+          <Avatar src={undefined} sx={{ width: 32, height: 32 }}>
             <Person />
           </Avatar>
         </IconButton>
@@ -93,13 +89,13 @@ export const IconButtonMenu = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        {!session?.user && (
+        {/* {!session?.user && (
           <Box
             sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', px: 6, py: 6 }}
           >
             <CircularProgress />
           </Box>
-        )}
+        )} */}
 
         {/* <MenuItem>
           <Avatar /> Profile
@@ -127,7 +123,7 @@ export const IconButtonMenu = () => {
           <ListItemIcon>
             <LogoutIcon fontSize='small' />
           </ListItemIcon>
-          {`로그아웃`}
+          {`Sign Out`}
         </MenuItem>
       </Menu>
     </>

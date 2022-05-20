@@ -1,20 +1,5 @@
-import { IconButtonMenu } from '@/components/shared/IconButtonMenu';
-import { Link } from '@/components/shared/Link';
-import { sidebarWidth } from '@/contexts/MuiThemeContext';
 import styled from '@emotion/styled';
-import MenuIcon from '@mui/icons-material/Menu';
-import {
-  AppBar,
-  AppBarProps,
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  NoSsr,
-  Toolbar,
-  Typography,
-} from '@mui/material';
-// import { useSession } from 'next-auth/react';
+import { AppBar, AppBarProps, Box, Typography } from '@mui/material';
 
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
@@ -29,7 +14,7 @@ const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   };
 });
 
-type DashboardTopNavbarProps = AppBarProps ;
+type DashboardTopNavbarProps = AppBarProps;
 
 export const DashboardTopNavbar = ({ sx, ...others }: DashboardTopNavbarProps) => {
   return (

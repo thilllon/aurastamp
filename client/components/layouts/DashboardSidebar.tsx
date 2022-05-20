@@ -1,15 +1,12 @@
 import { NavData } from '@/components/layouts/DashboardLayout';
 import { NavItem } from '@/components/layouts/NavItem';
 import { Link } from '@/components/shared/Link';
-import { Logo } from '@/components/shared/Logo';
 import { defaultBreakpoint, sidebarWidth } from '@/contexts/MuiThemeContext';
-import { Box, Chip, Divider, Drawer, Theme, Typography, useMediaQuery } from '@mui/material';
-import NextLink from 'next/link';
+import { Box, Divider, Drawer, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 type DashboardSidebarProps = {
-  open: boolean;
   onClose: () => void;
   navData?: NavData[];
 };
@@ -22,7 +19,6 @@ export const DashboardSidebar = ({ open, onClose, navData = [] }: DashboardSideb
   });
 
   const orgName = 'Aura Stamp';
-  const tier = 'Premium';
 
   useEffect(() => {
     if (!router.isReady) {
