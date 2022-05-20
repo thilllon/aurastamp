@@ -24,6 +24,7 @@ type CropperProps = {
   showAspectRatioController?: boolean;
   onChangeFile?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
   onCropEnd?: (completedCrop: PixelCrop | undefined, blob?: Blob) => void;
+  freeze?: boolean;
 };
 
 const height = 36; // button height in pixel
@@ -37,6 +38,7 @@ export const Cropper = ({
   showAspectRatioController = true,
   onChangeFile,
   onCropEnd,
+  freeze = false,
 }: CropperProps) => {
   const [imgSrcBase64, setImgSrcBase64] = useState('');
   const [imgSrcBase64Original, setImgSrcBase64Original] = useState('');
@@ -347,19 +349,34 @@ export const Cropper = ({
         <Box sx={{ mr: 'auto' }} />
 
         {imgSrcBase64 && isEditMode && (
-          <Button sx={{ height }} startIcon={<CloseOutlinedIcon />} onClick={onClickCancelCrop}>
+          <Button
+            disabled={freeze}
+            sx={{ height }}
+            startIcon={<CloseOutlinedIcon />}
+            onClick={onClickCancelCrop}
+          >
             cancel
           </Button>
         )}
 
         {imgSrcBase64 && !isEditMode && (
-          <Button sx={{ height }} startIcon={<CropIcon />} onClick={onClickStartCrop}>
+          <Button
+            disabled={freeze}
+            sx={{ height }}
+            startIcon={<CropIcon />}
+            onClick={onClickStartCrop}
+          >
             crop
           </Button>
         )}
 
         {imgSrcBase64 && isEditMode && (
-          <Button sx={{ height }} startIcon={<Check />} onClick={onClickConfirmCrop}>
+          <Button
+            disabled={freeze}
+            sx={{ height }}
+            startIcon={<Check />}
+            onClick={onClickConfirmCrop}
+          >
             confirm
           </Button>
         )}
@@ -415,7 +432,7 @@ export const Cropper = ({
             sx={{ height }}
             startIcon={<Restore />}
             onClick={onClickResetCrop}
-            disabled={imgSrcBase64 === imgSrcBase64Original}
+            disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
           >
             reset
           </Button>
@@ -427,14 +444,19 @@ export const Cropper = ({
             sx={{ height }}
             startIcon={<ArrowBack />}
             onClick={onClickUndo}
-            disabled={imgSrcBase64 === imgSrcBase64Original}
+            disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
           >
             undo
           </Button>
         )}
 
         {imgSrcBase64 && (
-          <Button sx={{ height }} startIcon={<CloseOutlinedIcon />} onClick={onClickUnloadImage}>
+          <Button
+            disabled={freeze}
+            sx={{ height }}
+            startIcon={<CloseOutlinedIcon />}
+            onClick={onClickUnloadImage}
+          >
             unload
           </Button>
         )}

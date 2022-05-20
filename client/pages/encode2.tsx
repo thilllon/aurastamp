@@ -144,8 +144,10 @@ export default function EncodePage({}: EncodePageProps) {
             defaultAspect={1}
             onChangeFile={onChange}
             onCropEnd={onCropEnd}
+            freeze={Boolean(encodedImageBase64String)}
           />
         </Box>
+
         {encodedImageBase64String && (
           <Box
             sx={{
@@ -154,7 +156,7 @@ export default function EncodePage({}: EncodePageProps) {
               flexFlow: 'column nowrap',
               justifyContent: 'center',
               alignItems: 'center',
-              mt: 2,
+              mt: 3,
             }}
           >
             <img
@@ -163,6 +165,40 @@ export default function EncodePage({}: EncodePageProps) {
               style={{ width: '100%' }}
             />
           </Box>
+        )}
+
+        {!encodedImageBase64String && (
+          <TextField
+            fullWidth
+            value={hiddenMessage}
+            onChange={onChangeMessage}
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter') {
+                onClickEncode();
+              }
+            }}
+            placeholder={'type message to hide :)'}
+          />
+        )}
+
+        {!encodedImageBase64String && (
+          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 3 }}>
+            <Button
+              sx={{ flex: 1 }}
+              variant={'contained'}
+              onClick={onClickEncode}
+              disabled={isLoading || !originalFile || !hiddenMessage}
+              endIcon={isLoading ? <CircularProgress size={24} /> : null}
+            >
+              write
+            </Button>
+          </Box>
+        )}
+
+        {encodedImageBase64String && !downloadable && (
+          <Alert severity='warning'>
+            현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.
+          </Alert>
         )}
 
         <Box
@@ -174,40 +210,6 @@ export default function EncodePage({}: EncodePageProps) {
             alignItems: 'center',
           }}
         >
-          {!encodedImageBase64String && (
-            <TextField
-              fullWidth
-              value={hiddenMessage}
-              onChange={onChangeMessage}
-              onKeyDown={(ev) => {
-                if (ev.key === 'Enter') {
-                  onClickEncode();
-                }
-              }}
-              placeholder={'type message to hide :)'}
-            />
-          )}
-
-          {!encodedImageBase64String && (
-            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 3 }}>
-              <Button
-                sx={{ flex: 1 }}
-                variant={'contained'}
-                onClick={onClickEncode}
-                disabled={isLoading || !originalFile || !hiddenMessage}
-                endIcon={isLoading ? <CircularProgress size={24} /> : null}
-              >
-                write
-              </Button>
-            </Box>
-          )}
-
-          {encodedImageBase64String && !downloadable && (
-            <Alert severity='warning'>
-              현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.
-            </Alert>
-          )}
-
           {encodedImageBase64String && (
             <Box
               sx={{
@@ -217,7 +219,7 @@ export default function EncodePage({}: EncodePageProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 gap: 1,
-                mt: 2,
+                mt: 3,
               }}
             >
               <Button variant='contained' onClick={onClickDownload}>
@@ -226,9 +228,13 @@ export default function EncodePage({}: EncodePageProps) {
               <Button onClick={onClickRetry}>retry</Button>
             </Box>
           )}
-
-          {errorMessage && <Box sx={{ p: 2, m: 3 }}>{errorMessage}</Box>}
         </Box>
+
+        {errorMessage && (
+          <Alert severity='error' sx={{ mt: 3 }}>
+            {errorMessage}
+          </Alert>
+        )}
       </Container>
     </>
   );

@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 type DashboardSidebarProps = {
+  open?: boolean;
   onClose: () => void;
   navData?: NavData[];
 };

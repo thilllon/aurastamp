@@ -17,10 +17,11 @@ type DecodePageProps = {};
 const footerHeight = 120;
 const defaultModelName = 'the';
 
-const replaceURL = (inputText: string) => {
+export const replaceURL = (inputText: string) => {
   // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
   // const exp =/(?:^|\b)((((https?|ftp|file|):\/\/)|[\w.])+\.[a-z]{2,3}(?:\:[0-9]{1,5})?(?:\/.*)?)([,\s]|$)/ig; /* eslint-disable-line */
-  const exp = /(?:^|\b)(([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?)([,\s]|$)/ig; /* eslint-disable-line */
+  const exp =
+    /(?:^|\b)(([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?)([,\s]|$)/gi; /* eslint-disable-line */
   let temp = inputText.replace(exp, '<a href="$1" target="_blank">$1</a>');
   let result = '';
 
@@ -43,7 +44,7 @@ const replaceURL = (inputText: string) => {
 export default function DecodePage({}: DecodePageProps) {
   const [originalFile, setOriginalFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
-  const [secret, setSecret] = useState('');
+  const [hiddenMessage, setHiddenMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
@@ -70,7 +71,7 @@ export default function DecodePage({}: DecodePageProps) {
 
   const onClickDecode = async () => {
     setErrorMessage('');
-    setSecret('');
+    setHiddenMessage('');
     if (!croppedBlob) {
       return;
     }
@@ -85,12 +86,12 @@ export default function DecodePage({}: DecodePageProps) {
       setIsLoading(true);
       const res = await axios.post(url, formData);
       console.info(res.data);
-      setSecret(res.data.secret ?? '');
+      setHiddenMessage(res.data.secret ?? '');
       setErrorMessage(res.data.error ?? '');
       sendEvent('button_click', {
         category: 'decode',
         label: 'secret',
-        value: res.data.secret
+        value: res.data.secret,
       });
     } catch (err) {
       console.error(err);
@@ -120,7 +121,7 @@ export default function DecodePage({}: DecodePageProps) {
           <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='decode' />
         </Box>
 
-        {(secret || errorMessage) && (
+        {(hiddenMessage || errorMessage) && (
           <Box
             sx={{
               display: 'flex',
@@ -132,7 +133,9 @@ export default function DecodePage({}: DecodePageProps) {
               flexFlow: 'column nowrap',
             }}
           >
-            {secret && <div dangerouslySetInnerHTML={{ __html: replaceURL(secret) }} />}
+            {hiddenMessage && (
+              <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />
+            )}
             {errorMessage ? <Typography>{errorMessage}</Typography> : <Typography></Typography>}
           </Box>
         )}

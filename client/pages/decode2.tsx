@@ -2,8 +2,18 @@
 import { Cropper } from '@/components/Cropper';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { replaceURL } from '@/pages/decode';
 import { StampModel } from '@/types/types';
-import { Alert, Box, Button, CircularProgress, Container, TextField } from '@mui/material';
+import { sendEvent } from '@/utils/useGoogleAnalytics';
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  TextField,
+  Typography,
+} from '@mui/material';
 import axios from 'axios';
 import getConfig from 'next/config';
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
@@ -81,43 +91,35 @@ export default function EncodePage({}: EncodePageProps) {
     setCroppedBlob(blob);
   }, []);
 
-  const onChangeMessage: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (ev) => {
-    let msg = ev.target.value;
-    if (msg.length > MAX_MESSAGE_LENGTH) {
-      msg = msg.slice(0, MAX_MESSAGE_LENGTH);
-    }
-    setHiddenMessage(msg);
-  };
-
-  const onClickEncode = async () => {
-    // debugger;
+  const onClickDecode = async () => {
     setErrorMessage('');
+    setHiddenMessage('');
     if (!croppedBlob) {
       return;
     }
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    const url = baseUrl + '/encode_stamp';
+    const url = baseUrl + '/decode_stamp';
     const formData = new FormData();
     formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
     if (modelName) {
       formData.append('model_name', modelName);
     }
-    formData.append('text', hiddenMessage);
-    formData.append('return_type', 'base64');
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const res = await axios.post(url, formData);
-      setEncodedImageBase64String(res.data);
+      console.info(res.data);
+      setHiddenMessage(res.data.secret ?? '');
+      setErrorMessage(res.data.error ?? '');
+      sendEvent('button_click', {
+        category: 'decode',
+        label: 'secret',
+        value: res.data.secret,
+      });
     } catch (err) {
       console.error(err);
-      setErrorMessage(JSON.stringify(err));
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const onClickDownload = () => {
-    downloadBase64String(encodedImageBase64String);
   };
 
   const onClickRetry = () => {
@@ -140,12 +142,14 @@ export default function EncodePage({}: EncodePageProps) {
       >
         <Box key={key} sx={{ mt: 3 }}>
           <Cropper
-            guideMessage='Pick an image to stamp'
+            guideMessage='Pick an image to find a message'
             defaultAspect={1}
             onChangeFile={onChange}
             onCropEnd={onCropEnd}
+            freeze={Boolean(encodedImageBase64String)}
           />
         </Box>
+
         {encodedImageBase64String && (
           <Box
             sx={{
@@ -154,7 +158,7 @@ export default function EncodePage({}: EncodePageProps) {
               flexFlow: 'column nowrap',
               justifyContent: 'center',
               alignItems: 'center',
-              mt: 2,
+              mt: 3,
             }}
           >
             <img
@@ -163,6 +167,26 @@ export default function EncodePage({}: EncodePageProps) {
               style={{ width: '100%' }}
             />
           </Box>
+        )}
+
+        {/* <Box
+          sx={{ 
+            display: 'flex',
+            p: 4,
+
+            borderRadius: '12px',
+            alignItems: 'center',
+            borderColor: (theme) => theme.palette.primary.main,
+            flexFlow: 'column nowrap',
+          }}
+        >
+          {hiddenMessage && <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />}
+        </Box> */}
+
+        {hiddenMessage && (
+          <Alert sx={{ mt: 3 }} severity='success'>
+            {hiddenMessage}
+          </Alert>
         )}
 
         <Box
@@ -174,41 +198,16 @@ export default function EncodePage({}: EncodePageProps) {
             alignItems: 'center',
           }}
         >
-          {!encodedImageBase64String && (
-            <TextField
-              fullWidth
-              value={hiddenMessage}
-              onChange={onChangeMessage}
-              onKeyDown={(ev) => {
-                if (ev.key === 'Enter') {
-                  onClickEncode();
-                }
-              }}
-              placeholder={'type message to hide :)'}
-            />
-          )}
+          <Button
+            variant={'contained'}
+            onClick={onClickDecode}
+            disabled={isLoading}
+            endIcon={isLoading ? <CircularProgress size={24} /> : null}
+          >
+            read
+          </Button>
 
-          {!encodedImageBase64String && (
-            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 3 }}>
-              <Button
-                sx={{ flex: 1 }}
-                variant={'contained'}
-                onClick={onClickEncode}
-                disabled={isLoading || !originalFile || !hiddenMessage}
-                endIcon={isLoading ? <CircularProgress size={24} /> : null}
-              >
-                write
-              </Button>
-            </Box>
-          )}
-
-          {encodedImageBase64String && !downloadable && (
-            <Alert severity='warning'>
-              현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.
-            </Alert>
-          )}
-
-          {encodedImageBase64String && (
+          {hiddenMessage && (
             <Box
               sx={{
                 width: '100%',
@@ -217,17 +216,14 @@ export default function EncodePage({}: EncodePageProps) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 gap: 1,
-                mt: 2,
+                mt: 3,
               }}
             >
-              <Button variant='contained' onClick={onClickDownload}>
-                download
-              </Button>
               <Button onClick={onClickRetry}>retry</Button>
             </Box>
           )}
 
-          {errorMessage && <Box sx={{ p: 2, m: 3 }}>{errorMessage}</Box>}
+          {errorMessage && <Box sx={{ m: 3 }}>{errorMessage}</Box>}
         </Box>
       </Container>
     </>
