@@ -389,7 +389,6 @@ export const Cropper = ({
 
       {imgSrcBase64 && (
         <ReactCrop
-          // disabled
           locked={!isEditMode}
           onDragStart={onDragStart}
           crop={crop}
@@ -401,7 +400,10 @@ export const Cropper = ({
             ref={imgRef}
             alt='Crop me'
             src={imgSrcBase64}
-            style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
+            style={{
+              maxHeight: '50vh',
+              transform: `scale(${scale}) rotate(${rotate}deg)`,
+            }}
             onLoad={onImageLoad}
           />
         </ReactCrop>
