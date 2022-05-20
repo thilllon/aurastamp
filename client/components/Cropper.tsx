@@ -389,6 +389,8 @@ export const Cropper = ({
 
       {imgSrcBase64 && (
         <ReactCrop
+          // disabled
+          locked={!isEditMode}
           onDragStart={onDragStart}
           crop={crop}
           onChange={(_, percentCrop) => setCrop(percentCrop)}
