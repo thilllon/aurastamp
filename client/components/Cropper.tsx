@@ -223,7 +223,11 @@ export const Cropper = ({
       }}
     >
       <div>{`length: ${imgSrcBase64.length.toLocaleString()} / ${imgSrcBase64Original.length.toLocaleString()}`}</div>
-      <div>{`size: ${croppedBlobSize?.toLocaleString()} / ${originalBlob?.size?.toLocaleString()}`}</div>
+      <div>
+        {`size: ${toReadableSize(croppedBlobSize ?? 0)} / ${toReadableSize(
+          originalBlob?.size ?? 0
+        )}`}
+      </div>
 
       {/* -------------------------------- */}
       {/* 업로더 */}
