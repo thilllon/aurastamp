@@ -72,14 +72,9 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
     formData.append('text', hiddenMessage);
     formData.append('return_type', returnType);
 
-    // const url = buildURL({
-    //   host: process.env.NEXT_PUBLIC_API_URI,
-    //   params: '/v1/items/like',
-    //   query: { itemId, edition, type },
-    // });
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
     const url = baseUrl + '/encode_stamp';
-    const response = await axios.post<EncodeImageOutput>(url, null, {});
+    const response = await axios.post<EncodeImageOutput>(url, formData);
     return response.data;
   }, options);
 };

@@ -10,6 +10,8 @@ export const canvasPreview = async (
   scale = 1,
   rotate = 0
 ) => {
+  console.info('## canvasPreview');
+
   const ctx = canvas.getContext('2d');
 
   if (!ctx) {
@@ -63,8 +65,6 @@ export const canvasPreview = async (
   );
 
   ctx.restore();
-
-  return canvasToBlob(canvas);
 };
 
 let previewUrl = '';
@@ -72,7 +72,11 @@ let previewUrl = '';
 console.log('🚀 ~ file: tmp.tsx ~ line 86 ~ previewUrl', previewUrl);
 
 export const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | null> => {
-  return new Promise((resolve) => canvas.toBlob(resolve));
+  console.info('## canvasToBlob');
+
+  return new Promise((resolve) => {
+    return canvas.toBlob(resolve, 'image/png', 0.7);
+  });
 };
 
 // Returns an image source you should set to state and pass

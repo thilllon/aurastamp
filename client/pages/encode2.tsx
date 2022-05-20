@@ -39,8 +39,14 @@ export default function EncodePage() {
   }, []);
 
   const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob: Blob) => {
-    setCroppedBlob(blob);
+    // FIXME: 테스트중
+    // setCroppedBlob(blob);
   }, []);
+
+  const onConfirmCrop = async (crop: PixelCrop | undefined, blob: Blob) => {
+    // FIXME: 테스트중
+    setCroppedBlob(blob);
+  };
 
   const onChangeMessage: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (ev) => {
     let msg = ev.target.value;
@@ -92,6 +98,7 @@ export default function EncodePage() {
             onChangeFile={onChange}
             onCropEnd={onCropEnd}
             freeze={Boolean(encodedImgSrcBase64)}
+            onConfirmCrop={onConfirmCrop}
           />
         </Box>
 

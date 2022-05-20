@@ -5,6 +5,7 @@ import {
   centerAspectCrop,
   // useDebounce,
 } from '@/components/CropperHelper';
+import { toReadableSize } from '@/utils/common';
 import {
   ArrowBack as ArrowBackIcon,
   Check as CheckIcon,
@@ -30,32 +31,36 @@ import { useDebounce } from 'react-use';
 type CropperProps = {
   guideMessage?: string;
   defaultAspect?: number;
-  showPreview?: boolean;
+  hidePreview?: boolean;
   showScaleController?: boolean;
   showRotateController?: boolean;
   showAspectRatioController?: boolean;
   onChangeFile?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
   onCropEnd?: (completedCrop: PixelCrop | undefined, blob: Blob) => void;
   freeze?: boolean;
+  onConfirmCrop?: (crop: PixelCrop | undefined, blob: Blob) => void;
 };
 
 const buttonHeight = 36; // button height in pixel
 const uploadButtonSize = 200;
+const debounceDelay = 200; // ms
 
 export const Cropper = ({
   guideMessage,
   defaultAspect = 1,
-  showPreview = false,
+  hidePreview: hidePreviewCanvas = false,
   showScaleController = false,
   showRotateController = false,
   showAspectRatioController = true,
   onChangeFile,
   onCropEnd,
+  onConfirmCrop: onConfirmCropProp,
   freeze = false,
 }: CropperProps) => {
   const [imgSrcBase64, setImgSrcBase64] = useState('');
   const [imgSrcBase64Original, setImgSrcBase64Original] = useState('');
   const [originalBlob, setOriginalBlob] = useState<Blob>();
+  const [croppedBlobSize, setCroppedBlobSize] = useState<number>();
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [crop, setCrop] = useState<Crop>();
@@ -65,7 +70,6 @@ export const Cropper = ({
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
-  const [hasChanged, setHasChanged] = useState(false);
 
   useDebounce(
     async () => {
@@ -73,22 +77,22 @@ export const Cropper = ({
         // We use canvasPreview as it's much faster than imgPreview.
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate);
 
-        const blob = await canvasToBlob(previewCanvasRef.current);
-        console.info('blob', blob?.size);
-        // await imgPreview(imgRef.current, completedCrop, scale, rotate);
+        const croppedBlob = await canvasToBlob(previewCanvasRef.current);
+        console.info('cropped size', toReadableSize(croppedBlob?.size || 0));
         // const { previewUrl, blob } = await imgPreview(
         //   previewImageRef.current,
         //   completedCrop,
         //   scale,
         //   rotate
         // );
-        // console.info(completedCrop, crop);
-        if (blob) {
-          onCropEnd?.(completedCrop, blob);
+
+        setCroppedBlobSize(croppedBlob?.size);
+        if (croppedBlob) {
+          onCropEnd?.(completedCrop, croppedBlob);
         }
       }
     },
-    200,
+    debounceDelay,
     [completedCrop, scale, rotate]
   );
 
@@ -107,6 +111,7 @@ export const Cropper = ({
         };
         reader.onloadend = () => {
           // setIsCropProcessing(false);
+          onConfirmCropProp?.(completedCrop, newBlob);
         };
         reader.readAsDataURL(newBlob);
       }
@@ -123,8 +128,9 @@ export const Cropper = ({
 
   const onClickCancelCrop = () => {
     // setImgSrcBase64();
-    // setImgSrcBase64Original;
+    // setImgSrcBase64Original();
     // setOriginalBlob();
+    // previewCanvasRef.current.
     setCrop(undefined);
     setCompletedCrop(undefined);
     setIsEditMode(false);
@@ -216,9 +222,9 @@ export const Cropper = ({
         alignItems: 'center',
       }}
     >
-      <div>
-        {`length: ${imgSrcBase64.length} / ${imgSrcBase64Original.length}(${originalBlob?.size}bytes)`}
-      </div>
+      <div>{`length: ${imgSrcBase64.length.toLocaleString()} / ${imgSrcBase64Original.length.toLocaleString()}`}</div>
+      <div>{`size: ${croppedBlobSize?.toLocaleString()} / ${originalBlob?.size?.toLocaleString()}`}</div>
+
       {/* -------------------------------- */}
       {/* 업로더 */}
       {/* -------------------------------- */}
@@ -428,12 +434,11 @@ export const Cropper = ({
       {/* -------------------------------- */}
 
       {typeof completedCrop !== 'undefined' && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <canvas
-            hidden={!showPreview}
+            hidden={hidePreviewCanvas}
             ref={previewCanvasRef}
             style={{
-              border: '1px solid black',
               objectFit: 'contain',
               width: completedCrop.width,
               height: completedCrop.height,
