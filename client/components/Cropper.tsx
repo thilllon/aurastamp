@@ -1,15 +1,27 @@
 /* eslint-disable @next/next/no-img-element */
-import { canvasPreview, canvasToBlob, centerAspectCrop } from '@/components/CropperHelper';
 import {
-  ArrowBack,
-  ArrowLeft as ArrowLeftIcon,
-  Check,
+  canvasPreview,
+  canvasToBlob,
+  centerAspectCrop,
+  // useDebounce,
+} from '@/components/CropperHelper';
+import {
+  ArrowBack as ArrowBackIcon,
+  Check as CheckIcon,
   CloseOutlined as CloseOutlinedIcon,
   Crop as CropIcon,
-  Restore,
+  Restore as RestoreIcon,
   Upload as UploadIcon,
 } from '@mui/icons-material';
-import { Box, Button, Checkbox, FormControlLabel, Input, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControlLabel,
+  Input,
+  Typography,
+} from '@mui/material';
 import React, { ChangeEventHandler, SyntheticEvent, useRef, useState } from 'react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -23,11 +35,12 @@ type CropperProps = {
   showRotateController?: boolean;
   showAspectRatioController?: boolean;
   onChangeFile?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> | undefined;
-  onCropEnd?: (completedCrop: PixelCrop | undefined, blob?: Blob) => void;
+  onCropEnd?: (completedCrop: PixelCrop | undefined, blob: Blob) => void;
   freeze?: boolean;
 };
 
-const height = 36; // button height in pixel
+const buttonHeight = 36; // button height in pixel
+const uploadButtonSize = 200;
 
 export const Cropper = ({
   guideMessage,
@@ -48,24 +61,14 @@ export const Cropper = ({
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const [isCropProcessing, setIsCropProcessing] = useState(false);
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
   const [hasChanged, setHasChanged] = useState(false);
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (previewUrl) {
-  //       console.info('previeUrl', previewUrl.slice(0, 20));
-  //       URL.revokeObjectURL(previewUrl);
-  //     }
-  //   };
-  // }, []);
-
-  const debounced = useDebounce(
+  useDebounce(
     async () => {
-      // console.info(imgRef.current, previewCanvasRef.current);
       if (imgRef.current && previewCanvasRef.current && typeof completedCrop !== 'undefined') {
         // We use canvasPreview as it's much faster than imgPreview.
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate);
@@ -90,8 +93,8 @@ export const Cropper = ({
   );
 
   const onClickConfirmCrop = async () => {
-    // alert('not impl');
     if (previewCanvasRef.current) {
+      // setIsCropProcessing(true);
       const newBlob = await canvasToBlob(previewCanvasRef.current);
       if (newBlob) {
         // --------------------------------
@@ -101,6 +104,9 @@ export const Cropper = ({
         reader.onload = () => {
           const imgSrc = reader.result?.toString() || '';
           setImgSrcBase64(imgSrc);
+        };
+        reader.onloadend = () => {
+          // setIsCropProcessing(false);
         };
         reader.readAsDataURL(newBlob);
       }
@@ -127,7 +133,7 @@ export const Cropper = ({
 
   const onClickResetCrop = () => {
     setImgSrcBase64(imgSrcBase64Original);
-    // setImgSrcBase64Original()
+    // setImgSrcBase64Original();
     // setOriginalBlob();
     setCrop(undefined);
     setCompletedCrop(undefined);
@@ -165,6 +171,8 @@ export const Cropper = ({
         setImgSrcBase64Original(imgSrc);
       };
       reader.readAsDataURL(newFile);
+    } else {
+      setOriginalBlob(undefined);
     }
     onChangeFile?.(ev);
   };
@@ -185,7 +193,7 @@ export const Cropper = ({
     }
   };
 
-  const onClickUndo = () => {
+  const onClickUndoCrop = () => {
     //
   };
 
@@ -208,9 +216,12 @@ export const Cropper = ({
         alignItems: 'center',
       }}
     >
-      {/* // -------------------------------- */}
+      <div>
+        {`length: ${imgSrcBase64.length} / ${imgSrcBase64Original.length}(${originalBlob?.size}bytes)`}
+      </div>
+      {/* -------------------------------- */}
       {/* 업로더 */}
-      {/* // -------------------------------- */}
+      {/* -------------------------------- */}
 
       {!imgSrcBase64 && (
         <Box
@@ -220,13 +231,13 @@ export const Cropper = ({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            width: 200,
-            height: 200,
-            maxWidth: 200,
-            maxHeight: 200,
+            width: uploadButtonSize,
+            height: uploadButtonSize,
+            maxWidth: uploadButtonSize,
+            maxHeight: uploadButtonSize,
             borderRadius: 2,
             border: '2px solid #cccccc',
-            p: 0.8,
+            p: 1,
           }}
         >
           <Box
@@ -263,7 +274,6 @@ export const Cropper = ({
                 alignItems: 'center',
               }}
             >
-              {/* <Search sx={{ fontSize: 40, color: '#cccccc' }} /> */}
               <UploadIcon sx={{ fontSize: 40, color: '#cccccc' }} />
               {guideMessage && (
                 <Typography
@@ -283,9 +293,11 @@ export const Cropper = ({
           </Box>
         </Box>
       )}
-      {/* // -------------------------------- */}
-      {/* // 컨트롤러 */}
-      {/* // -------------------------------- */}
+
+      {/* -------------------------------- */}
+      {/* 컨트롤러 */}
+      {/* -------------------------------- */}
+
       <Box>
         {showScaleController && (
           <Box>
@@ -315,9 +327,10 @@ export const Cropper = ({
         )}
       </Box>
 
-      {/* // -------------------------------- */}
-      {/* // 크롭 상단 버튼들 */}
-      {/* // -------------------------------- */}
+      {/* -------------------------------- */}
+      {/* 상단 버튼 */}
+      {/* -------------------------------- */}
+
       <Box
         sx={{
           display: 'flex',
@@ -352,7 +365,7 @@ export const Cropper = ({
         {imgSrcBase64 && isEditMode && (
           <Button
             disabled={freeze}
-            sx={{ height }}
+            sx={{ height: buttonHeight }}
             startIcon={<CloseOutlinedIcon />}
             onClick={onClickCancelCrop}
           >
@@ -362,10 +375,11 @@ export const Cropper = ({
 
         {imgSrcBase64 && !isEditMode && (
           <Button
-            disabled={freeze}
-            sx={{ height }}
+            disabled={freeze || isCropProcessing}
+            sx={{ height: buttonHeight }}
             startIcon={<CropIcon />}
             onClick={onClickStartCrop}
+            endIcon={isCropProcessing && <CircularProgress />}
           >
             crop
           </Button>
@@ -374,8 +388,8 @@ export const Cropper = ({
         {imgSrcBase64 && isEditMode && (
           <Button
             disabled={freeze}
-            sx={{ height }}
-            startIcon={<Check />}
+            sx={{ height: buttonHeight }}
+            startIcon={<CheckIcon />}
             onClick={onClickConfirmCrop}
           >
             confirm
@@ -383,9 +397,9 @@ export const Cropper = ({
         )}
       </Box>
 
-      {/* // -------------------------------- */}
-      {/* //크롭이미지 */}
-      {/* // -------------------------------- */}
+      {/* -------------------------------- */}
+      {/* 크롭 이미지 */}
+      {/* -------------------------------- */}
 
       {imgSrcBase64 && (
         <ReactCrop
@@ -409,9 +423,9 @@ export const Cropper = ({
         </ReactCrop>
       )}
 
-      {/* // -------------------------------- */}
-      {/* // 크롭 미리보기 */}
-      {/* // -------------------------------- */}
+      {/* -------------------------------- */}
+      {/* 미리보기 */}
+      {/* -------------------------------- */}
 
       {typeof completedCrop !== 'undefined' && (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -428,14 +442,15 @@ export const Cropper = ({
         </div>
       )}
 
-      {/* // -------------------------------- */}
-      {/* // 하단버튼 */}
-      {/* // -------------------------------- */}
+      {/* -------------------------------- */}
+      {/* 하단 버튼 */}
+      {/* -------------------------------- */}
+
       <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 1 }}>
         {imgSrcBase64 && (
           <Button
-            sx={{ height }}
-            startIcon={<Restore />}
+            sx={{ height: buttonHeight }}
+            startIcon={<RestoreIcon />}
             onClick={onClickResetCrop}
             disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
           >
@@ -446,9 +461,9 @@ export const Cropper = ({
         {/* TODO: undo 기능 */}
         {imgSrcBase64 && (
           <Button
-            sx={{ height }}
-            startIcon={<ArrowBack />}
-            onClick={onClickUndo}
+            sx={{ height: buttonHeight }}
+            startIcon={<ArrowBackIcon />}
+            onClick={onClickUndoCrop}
             disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
           >
             undo
@@ -458,7 +473,7 @@ export const Cropper = ({
         {imgSrcBase64 && (
           <Button
             disabled={freeze}
-            sx={{ height }}
+            sx={{ height: buttonHeight }}
             startIcon={<CloseOutlinedIcon />}
             onClick={onClickUnloadImage}
           >

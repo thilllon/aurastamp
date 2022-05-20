@@ -11,9 +11,9 @@ const sentryDsn = 'https://b24dc675d1984f0d9a139ec1635897f8@o1216080.ingest.sent
 const sentryEnv = isLocal ? 'local' : process.env.NEXT_PUBLIC_VERCEL_ENV;
 
 const essentialEnvVars = [
-  // ******************************
+  // --------------------------------
   // NEXTAUTH
-  // ******************************
+  // --------------------------------
   'NEXTAUTH_URL',
   'NEXTAUTH_SECRET',
 ];
@@ -37,30 +37,30 @@ let nextConfig = {
   },
   env: {
     // https://vercel.com/docs/concepts/projects/environment-variables#system-environment-variables
-    // ******************************
+    // --------------------------------
     // public
-    // ******************************
+    // --------------------------------
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_APP_TITLE: '',
     NEXT_PUBLIC_COMPANY_NAME: '',
     NEXT_PUBLIC_DEFAULT_LOCALE: 'en',
     NEXT_PUBLIC_API_URI: process.env.API_URI ?? 'https://api.aurastamp.com',
     // http://20.41.116.194:8000
-    // ******************************
+    // --------------------------------
     // sentry
-    // ******************************
+    // --------------------------------
     // eslint-disable-next-line no-dupe-keys
     NEXT_PUBLIC_SENTRY_DSN: sentryDsn,
     SENTRY_DSN: sentryDsn,
     NEXT_PUBLIC_SENTRY_ENV: sentryEnv,
     SENTRY_ENV: sentryEnv,
-    // ******************************
+    // --------------------------------
     // middleware
-    // ******************************
+    // --------------------------------
     MIDDLEWARE_ACCESS_KEY: process.env.VERCEL_GITHUB_COMMIT_SHA ?? 'carillon',
-    // ******************************
+    // --------------------------------
     // google analytics
-    // ******************************
+    // --------------------------------
     NEXT_PUBLIC_GA_TRACKING_ID: 'G-JQVMS5Z7S3',
     NEXT_PUBLIC_GOOGLE_TAG_MANAGER: 'https://www.googletagmanager.com/ns.html?id=GTM-K7BC3T2',
   },

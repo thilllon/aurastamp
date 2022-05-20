@@ -1,12 +1,20 @@
 import { client, _QueryOptions } from '@/services/client';
-import { useQuery } from 'react-query';
+import axios, { AxiosError } from 'axios';
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from 'react-query';
 
-export {};
+export type MutationOptions<Output, Input, Context = unknown> =
+  | Omit<UseMutationOptions<Output, AxiosError, Input, Context>, 'mutationFn'>
+  | undefined;
 
-// ******************************
+export type QueryOptions<Output, Input> = Omit<
+  UseQueryOptions<Output, AxiosError, Output, [string, Input]>,
+  'queryKey' | 'queryFn'
+>;
+
+// --------------------------------
 // get tasks
-// ******************************
-// type GetTaskListInput = {
+// --------------------------------
+// type EncodeImageInput = {
 //   jobId: string;
 //   skip?: number;
 //   take?: number;
@@ -25,8 +33,8 @@ export {};
 // };
 
 // export const useGetTaskList = (
-//   input: GetTaskListInput,
-//   options?: _QueryOptions<GetTaskListInput, GetTaskListOutput>
+//   input: EncodeImageInput,
+//   options?: _QueryOptions<EncodeImageInput, GetTaskListOutput>
 // ) => {
 //   const [session] = useCustomSession();
 //   const query = useQuery(
@@ -41,3 +49,37 @@ export {};
 //   );
 //   return query;
 // };
+
+// --------------------------------
+// encode image
+// --------------------------------
+
+export type EncodeImageInput = {
+  file: File | Blob;
+  modelName: 'the' | string;
+  hiddenMessage: string;
+  returnType: 'base64' | string;
+};
+
+export type EncodeImageOutput = string;
+
+export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, EncodeImageInput>) => {
+  return useMutation<EncodeImageOutput, AxiosError, EncodeImageInput>(async (input) => {
+    const { file, modelName, hiddenMessage, returnType } = input;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('model_name', modelName);
+    formData.append('text', hiddenMessage);
+    formData.append('return_type', returnType);
+
+    // const url = buildURL({
+    //   host: process.env.NEXT_PUBLIC_API_URI,
+    //   params: '/v1/items/like',
+    //   query: { itemId, edition, type },
+    // });
+    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
+    const url = baseUrl + '/encode_stamp';
+    const response = await axios.post<EncodeImageOutput>(url, null, {});
+    return response.data;
+  }, options);
+};

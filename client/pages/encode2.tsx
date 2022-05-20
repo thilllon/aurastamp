@@ -1,130 +1,76 @@
 /* eslint-disable @next/next/no-img-element */
 import { Cropper } from '@/components/Cropper';
-import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { useEncodeImage } from '@/services/hooks';
 import { StampModel } from '@/types/types';
+import { downloadBase64String } from '@/utils/common';
 import { FRNCC } from '@/utils/styles';
 import { Alert, Box, Button, CircularProgress, Container, TextField } from '@mui/material';
-import axios from 'axios';
-import getConfig from 'next/config';
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
 
-const { publicRuntimeConfig } = getConfig();
-
-type EncodePageProps = {};
-
-const MAX_MESSAGE_LENGTH = 255;
+const maxMessageLength = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
+const downloadGuideMessage = `현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.`;
 
-export const downloadBase64String = (b64String: string) => {
-  const fileName = 'aurastamp_' + Date.now() + '.png';
-  const downloadLink = document.createElement('a');
-  downloadLink.download = fileName;
-  downloadLink.innerHTML = 'Download File';
-  downloadLink.href = 'data:image/png;base64,' + b64String;
-  downloadLink.click();
+const isDownloadableBrowser = (browser: string) => {
+  const unSupportedBrowserList = ['Edge', 'Chrome'];
+  return unSupportedBrowserList.indexOf(browser) == -1;
 };
 
-export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-  const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
-  // const byteCharacters = Buffer.from(b64Data, 'base64');
-
-  const byteArrays = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
-};
-
-export default function EncodePage({}: EncodePageProps) {
-  const [originalFile, setOriginalFile] = useState<File>();
+export default function EncodePage() {
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [hiddenMessage, setHiddenMessage] = useState('');
-  const [encodedImageBase64String, setEncodedImageBase64String] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [encodedImgSrcBase64, setEncodedImgSrcBase64] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
   const [downloadable, setDownloadable] = useState(true);
   const [key, setKey] = useState(1);
+  const encodeImage = useEncodeImage();
 
   useEffect(() => {
     setDownloadable(isDownloadableBrowser(browserName));
   }, []);
 
-  const isDownloadableBrowser = (browser: string) => {
-    const unSupportedBrowserList = ['Edge', 'Chrome'];
-    return unSupportedBrowserList.indexOf(browser) == -1;
-  };
-
-  const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
-    // event handler for file load, unload
+  const onChange: ChangeEventHandler<HTMLInputElement> = useCallback((ev) => {
     const file = ev.target.files?.[0] ?? undefined;
-    setOriginalFile(file);
-    // FIXME: blob=>file 변환할것
     setCroppedBlob(file);
-  };
+  }, []);
 
-  const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
+  const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob: Blob) => {
     setCroppedBlob(blob);
   }, []);
 
   const onChangeMessage: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (ev) => {
     let msg = ev.target.value;
-    if (msg.length > MAX_MESSAGE_LENGTH) {
-      msg = msg.slice(0, MAX_MESSAGE_LENGTH);
+    if (msg.length > maxMessageLength) {
+      msg = msg.slice(0, maxMessageLength);
     }
     setHiddenMessage(msg);
   };
 
   const onClickEncode = async () => {
-    // debugger;
-    setErrorMessage('');
     if (!croppedBlob) {
       return;
     }
-    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    const url = baseUrl + '/encode_stamp';
-    const formData = new FormData();
-    formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
-    if (modelName) {
-      formData.append('model_name', modelName);
-    }
-    formData.append('text', hiddenMessage);
-    formData.append('return_type', 'base64');
-    setIsLoading(true);
-    try {
-      const res = await axios.post(url, formData);
-      setEncodedImageBase64String(res.data);
-    } catch (err) {
-      console.error(err);
-      setErrorMessage(JSON.stringify(err));
-    } finally {
-      setIsLoading(false);
-    }
+    const encoded = await encodeImage.mutateAsync({
+      file: croppedBlob,
+      modelName,
+      hiddenMessage,
+      returnType: 'base64',
+    });
+    setEncodedImgSrcBase64(encoded);
   };
 
   const onClickDownload = () => {
-    downloadBase64String(encodedImageBase64String);
+    downloadBase64String(encodedImgSrcBase64, 'aurastamp_' + Date.now() + '.png');
   };
 
   const onClickRetry = () => {
-    setKey((x) => x + 1);
+    setKey((x) => x + 1); // gorgeous way to remount
     setHiddenMessage('');
-    setEncodedImageBase64String('');
+    setEncodedImgSrcBase64('');
   };
 
   return (
@@ -145,11 +91,11 @@ export default function EncodePage({}: EncodePageProps) {
             defaultAspect={1}
             onChangeFile={onChange}
             onCropEnd={onCropEnd}
-            freeze={Boolean(encodedImageBase64String)}
+            freeze={Boolean(encodedImgSrcBase64)}
           />
         </Box>
 
-        {encodedImageBase64String && (
+        {encodedImgSrcBase64 && (
           <Box
             sx={{
               width: '100%',
@@ -161,20 +107,20 @@ export default function EncodePage({}: EncodePageProps) {
             }}
           >
             <img
-              src={'data:image/png;base64,' + encodedImageBase64String}
-              alt={'result'}
+              src={'data:image/png;base64,' + encodedImgSrcBase64}
+              alt={'encoded image'}
               style={{ width: '100%' }}
             />
           </Box>
         )}
 
-        {!encodedImageBase64String && (
+        {!encodedImgSrcBase64 && (
           <TextField
             sx={{ mt: 3 }}
             fullWidth
             value={hiddenMessage}
             onChange={onChangeMessage}
-            disabled={isLoading}
+            disabled={encodeImage.isLoading}
             onKeyDown={(ev) => {
               if (ev.key === 'Enter') {
                 onClickEncode();
@@ -189,8 +135,8 @@ export default function EncodePage({}: EncodePageProps) {
             sx={{ flex: 1 }}
             variant={'contained'}
             onClick={onClickEncode}
-            // disabled={!encodedImageBase64String || isLoading || !originalFile || !hiddenMessage}
-            endIcon={isLoading ? <CircularProgress size={24} /> : null}
+            // disabled={!encodedImageBase64String || encodeImage.isLoading || !originalFile || !hiddenMessage}
+            endIcon={encodeImage.isLoading && <CircularProgress size={24} />}
           >
             write
           </Button>
@@ -199,21 +145,21 @@ export default function EncodePage({}: EncodePageProps) {
           </Button>
         </Box>
 
-        {encodedImageBase64String && !downloadable && (
+        {encodedImgSrcBase64 && !downloadable && (
           <Alert severity='warning' sx={{ mt: 3 }}>
-            현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.
+            {downloadGuideMessage}
           </Alert>
         )}
 
-        {encodedImageBase64String && (
+        {encodedImgSrcBase64 && (
           <Button fullWidth sx={{ mt: 3 }} variant='contained' onClick={onClickDownload}>
             download
           </Button>
         )}
 
-        {errorMessage && (
+        {encodeImage.error && (
           <Alert severity='error' sx={{ mt: 3 }}>
-            {errorMessage}
+            {JSON.stringify(encodeImage.error ?? {})}
           </Alert>
         )}
       </Container>
