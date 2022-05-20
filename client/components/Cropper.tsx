@@ -334,6 +334,7 @@ export const Cropper = ({
             onChange={onCheckFixAspectRatio}
             value='end'
             checked={Boolean(aspectRatio)}
+            disabled={freeze}
             control={<Checkbox />}
             label='fix aspect'
             labelPlacement='end'
