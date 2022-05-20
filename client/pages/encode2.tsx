@@ -3,6 +3,7 @@ import { Cropper } from '@/components/Cropper';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { StampModel } from '@/types/types';
+import { FRNCC } from '@/utils/styles';
 import { Alert, Box, Button, CircularProgress, Container, TextField } from '@mui/material';
 import axios from 'axios';
 import getConfig from 'next/config';
@@ -169,9 +170,11 @@ export default function EncodePage({}: EncodePageProps) {
 
         {!encodedImageBase64String && (
           <TextField
+            sx={{ mt: 3 }}
             fullWidth
             value={hiddenMessage}
             onChange={onChangeMessage}
+            disabled={isLoading}
             onKeyDown={(ev) => {
               if (ev.key === 'Enter') {
                 onClickEncode();
@@ -181,54 +184,32 @@ export default function EncodePage({}: EncodePageProps) {
           />
         )}
 
-        {!encodedImageBase64String && (
-          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 3 }}>
-            <Button
-              sx={{ flex: 1 }}
-              variant={'contained'}
-              onClick={onClickEncode}
-              disabled={isLoading || !originalFile || !hiddenMessage}
-              endIcon={isLoading ? <CircularProgress size={24} /> : null}
-            >
-              write
-            </Button>
-          </Box>
-        )}
+        <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
+          <Button
+            sx={{ flex: 1 }}
+            variant={'contained'}
+            onClick={onClickEncode}
+            // disabled={!encodedImageBase64String || isLoading || !originalFile || !hiddenMessage}
+            endIcon={isLoading ? <CircularProgress size={24} /> : null}
+          >
+            write
+          </Button>
+          <Button sx={{ flex: 1 }} onClick={onClickRetry}>
+            retry
+          </Button>
+        </Box>
 
         {encodedImageBase64String && !downloadable && (
-          <Alert severity='warning'>
+          <Alert severity='warning' sx={{ mt: 3 }}>
             현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.
           </Alert>
         )}
 
-        <Box
-          sx={{
-            mt: 3,
-            width: '100%',
-            display: 'flex',
-            flexFlow: 'column nowrap',
-            alignItems: 'center',
-          }}
-        >
-          {encodedImageBase64String && (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                flexFlow: 'row nowrap',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 1,
-                mt: 3,
-              }}
-            >
-              <Button variant='contained' onClick={onClickDownload}>
-                download
-              </Button>
-              <Button onClick={onClickRetry}>retry</Button>
-            </Box>
-          )}
-        </Box>
+        {encodedImageBase64String && (
+          <Button fullWidth sx={{ mt: 3 }} variant='contained' onClick={onClickDownload}>
+            download
+          </Button>
+        )}
 
         {errorMessage && (
           <Alert severity='error' sx={{ mt: 3 }}>

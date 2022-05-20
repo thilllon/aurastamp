@@ -1,26 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { Cropper } from '@/components/Cropper';
-import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { replaceURL } from '@/pages/decode';
 import { StampModel } from '@/types/types';
+import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import axios from 'axios';
 import getConfig from 'next/config';
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
-
-const { publicRuntimeConfig } = getConfig();
 
 type EncodePageProps = {};
 
@@ -133,9 +122,8 @@ export default function EncodePage({}: EncodePageProps) {
       <Container
         sx={{
           display: 'flex',
-          flexDirection: 'column',
+          flexFlow: 'column nowrap',
           justifyContent: 'center',
-          alignItems: 'space-between',
           minHeight: (theme) =>
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
@@ -169,62 +157,32 @@ export default function EncodePage({}: EncodePageProps) {
           </Box>
         )}
 
-        {/* <Box
-          sx={{ 
-            display: 'flex',
-            p: 4,
-
-            borderRadius: '12px',
-            alignItems: 'center',
-            borderColor: (theme) => theme.palette.primary.main,
-            flexFlow: 'column nowrap',
-          }}
-        >
-          {hiddenMessage && <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />}
-        </Box> */}
-
         {hiddenMessage && (
           <Alert sx={{ mt: 3 }} severity='success'>
             {hiddenMessage}
           </Alert>
         )}
 
-        <Box
-          sx={{
-            mt: 3,
-            width: '100%',
-            display: 'flex',
-            flexFlow: 'column nowrap',
-            alignItems: 'center',
-          }}
-        >
+        <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
           <Button
+            sx={{ flex: 1 }}
             variant={'contained'}
             onClick={onClickDecode}
-            disabled={isLoading}
+            disabled={!!hiddenMessage || isLoading}
             endIcon={isLoading ? <CircularProgress size={24} /> : null}
           >
             read
           </Button>
-
-          {hiddenMessage && (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                flexFlow: 'row nowrap',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 1,
-                mt: 3,
-              }}
-            >
-              <Button onClick={onClickRetry}>retry</Button>
-            </Box>
-          )}
-
-          {errorMessage && <Box sx={{ m: 3 }}>{errorMessage}</Box>}
+          <Button sx={{ flex: 1 }} onClick={onClickRetry}>
+            retry
+          </Button>
         </Box>
+
+        {errorMessage && (
+          <Alert severity='error' sx={{ mt: 3 }}>
+            {errorMessage}
+          </Alert>
+        )}
       </Container>
     </>
   );
