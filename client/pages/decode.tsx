@@ -1,16 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { Firework2 } from '@/components/Firework';
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { Link } from '@/components/shared/Link';
-import { Box, Button, CircularProgress, Container, IconButton, Typography } from '@mui/material';
+import { StampModel } from '@/types/types';
+import { sendEvent } from '@/utils/useGoogleAnalytics';
+import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
 import { PixelCrop } from 'react-image-crop';
-import { StampModel } from '@/types/types';
-import { AnySchema } from 'yup';
-import ShareIcon from '@mui/icons-material/Share';
-import { sendEvent } from '@/utils/useGoogleAnalytics';
 
 type DecodePageProps = {};
 
