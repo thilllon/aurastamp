@@ -88,14 +88,22 @@ let nextConfig = {
     disable: !isProduction,
   },
   // async rewrites() {
-  //   return [
-  //     {
-  //       // destination: process.env.DESTINATION_URL,
-  //       // source: process.env.SOURCE_PATH,
-  //       destination: 'https://api.aurastamp.com/:path*',
-  //       source: '/api2/:path*',
-  //     },
-  //   ];
+  //   // https://aurastamp.com/aboutus
+  //   // https://thilllon.notion.site/test-fa1587e6fae74d5aa377f2553926e8bc
+  //   return {
+  //     // { "src": "/[^/.]{1,8}", "status": 302, "headers": { "Location": "/" } },
+  //     // { "src": "/(.*)", "dest": "src/index.ts" }
+  //     beforeFiles: [
+  //       //
+  //     ],
+  //     fallback: [
+  //       {
+  //         source: '/aboutus',
+  //         destination: 'https://thilllon.notion.site/test-fa1587e6fae74d5aa377f2553926e8bc',
+  //         has: [{}],
+  //       },
+  //     ],
+  //   };
   // },
 };
 

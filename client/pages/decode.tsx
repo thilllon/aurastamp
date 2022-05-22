@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { ImageCrop } from '@/components/imageEditor/ImageCrop';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { Link } from '@/components/shared/Link';
 import { StampModel } from '@/types/types';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
 import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
@@ -107,6 +108,7 @@ export default function DecodePage({}: DecodePageProps) {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
+        <Link href='/aboutus'>aboutus</Link>
         <Box
           sx={{
             width: '100%',

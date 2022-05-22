@@ -1,7 +1,7 @@
 import { Fireworks } from 'fireworks/lib/react';
 import React from 'react';
 
-export const Firework2 = () => {
+export const Firework = () => {
   const fxProps: any = {
     count: 5,
     interval: 500,
