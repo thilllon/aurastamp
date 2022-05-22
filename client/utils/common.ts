@@ -77,3 +77,33 @@ export const downloadBuffer = (
   anchor.click();
   URL.revokeObjectURL(previewUrl);
 };
+
+export const downloadBase64String = (b64String: string, fileName: string) => {
+  const downloadLink = document.createElement('a');
+  downloadLink.download = fileName;
+  // downloadLink.innerHTML = 'Download File';
+  downloadLink.href = 'data:image/png;base64,' + b64String;
+  downloadLink.click();
+};
+
+export const base64ToBlob = (base64String: string, contentType = '', sliceSize = 512) => {
+  const byteCharacters = atob(base64String); // TODO: deprecated. Buffer.from으로 변경할 예정
+  // const byteCharacters = Buffer.from(b64Data, 'base64');
+
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};

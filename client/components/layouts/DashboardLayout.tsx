@@ -1,17 +1,10 @@
 import { Footer } from '@/components/Footer';
-import { DashboardSidebar } from '@/components/layouts/DashboardSidebar';
 import { DashboardTopNavbar } from '@/components/layouts/DashboardTopNavbar';
-import { defaultBreakpoint, sidebarWidth } from '@/contexts/MuiThemeContext';
 import { WorkOutlineOutlined } from '@mui/icons-material';
-
-import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import SearchIcon from '@mui/icons-material/Search';
-import ApprovalIcon from '@mui/icons-material/Approval';
-
-import { Box, SxProps, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Box, Paper, SxProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
 
 const isProduction = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
@@ -168,13 +161,13 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
             <BottomNavigationAction
               label=''
               value='/decode'
-              icon={<SearchIcon fontSize='large'/>}
+              icon={<SearchIcon fontSize='large' />}
               onClick={() => onLink('/decode')}
             />
             <BottomNavigationAction
               label=''
               value='/encode'
-              icon={<BorderColorIcon fontSize='large'/>}
+              icon={<BorderColorIcon fontSize='large' />}
               onClick={() => onLink('/encode')}
             />
           </BottomNavigation>

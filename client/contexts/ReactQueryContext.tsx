@@ -42,9 +42,9 @@ export const ReactQueryClientProvider = ({
     return queryClient;
   });
 
-  // ******************************
+  // --------------------------------
   // TODO: persistor 설정
-  // ******************************
+  // --------------------------------
   // useEffect(() => {
   //   // By storing QueryClient in localstorage, it uses the existing cache to speed up loading when the browser is reopened.
   //   const persistor = createWebStoragePersistor({ storage: window.localStorage });
@@ -71,8 +71,8 @@ export const ReactQueryClientProvider = ({
   );
 };
 
-// ******************************
-// ******************************
+// --------------------------------
+// --------------------------------
 
 // import React, { useEffect, useState } from 'react';
 // import { Hydrate, QueryClient, QueryClientConfig, QueryClientProvider } from 'react-query';
