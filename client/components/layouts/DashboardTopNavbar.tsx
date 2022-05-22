@@ -18,8 +18,8 @@ import {
 
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[3],
+    backgroundColor: theme.palette.background.default,
+    boxShadow: theme.shadows[0], 
     display: 'flex',
     flex: '1 1 auto',
     maxWidth: '420px',
@@ -36,6 +36,9 @@ export const DashboardTopNavbar = ({ sx, ...others }: DashboardTopNavbarProps) =
     <>
       <DashboardTopNavbarRoot
         sx={{
+          justifyContent: 'center',
+          paddingLeft: '30px',
+          paddingTop: '20px',
           width: 'inherit',
           maxWidth: 'inherit',
           margin: '0 auto',
@@ -46,28 +49,9 @@ export const DashboardTopNavbar = ({ sx, ...others }: DashboardTopNavbarProps) =
         }}
         {...others}
       >
-        <Box
-          sx={{
-            background: (theme) => theme.palette.primary.main,
-            height: 120,
-            p: 2,
-            display: 'flex',
-            flexFlow: 'row nowrap',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Typography
-            sx={{
-              color: (theme) => theme.palette.primary.contrastText,
-              fontSize: 24,
-              fontWeight: 700,
-              fontFamily: (theme) => theme.typography.fontFamily,
-            }}
-          >
-            {`the aura`}
-          </Typography>
-        </Box>
+          <Box sx={{ width: '40vw', maxWidth: '160px' }}>
+            <img src="logo.png" width="100%"></img>
+          </Box>
       </DashboardTopNavbarRoot>
     </>
   );
