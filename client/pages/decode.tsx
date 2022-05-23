@@ -108,7 +108,6 @@ export default function DecodePage({}: DecodePageProps) {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Link href='/aboutus'>aboutus</Link>
         <Box
           sx={{
             width: '100%',
