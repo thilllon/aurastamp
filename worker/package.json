@@ -31,6 +31,12 @@
       "sort-package-json"
     ]
   },
+  "prettier": {
+    "arrowParens": "always",
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "express-http-proxy": "^1.6.2"
