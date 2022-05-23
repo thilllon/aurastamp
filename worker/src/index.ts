@@ -2,14 +2,12 @@ import express from 'express';
 import proxy from 'express-http-proxy';
 import { URL } from 'url';
 
-const defaultPageUrl = 'https://www.notion.so/a63887d526fa43299aefff274a2acf54';
-// const defaultPageUrl =
-// 'https://notion.notion.site/Notion-Official-83715d7703ee4b8699b5e659a4712dd8';
-// const defaultPageUrl =
-//   'https://thilllon.notion.site/thilllon/test-fa1587e6fae74d5aa377f2553926e8bc';
+const defaultPageUrl =
+  'https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4';
 
 const pageUrl = process.env.PAGE_URL || defaultPageUrl;
 const gaTrackingId = process.env.GA_TRACKING_ID || '';
+const port = process.env.PORT || 3000;
 
 const { origin: pageDomain, pathname: pagePath } = new URL(pageUrl);
 const pageId = pagePath.match(/[^-]*$/);
@@ -41,19 +39,21 @@ const pageview = `<script>
   window.pagePath = location.pathname + location.search + location.hash;
   function pageview(){
     var pagePath = location.pathname + location.search + location.hash;
-    if (pagePath !== window.pagePath) {${
-      gaTrackingId
-        ? `
-      gtag('config', '${gaTrackingId}', {'page_path': pagePath});`
-        : ''
-    }
+    if (pagePath !== window.pagePath) {
+      ${
+        gaTrackingId
+          ? `gtag('config', '${gaTrackingId}', {'page_path': pagePath});`
+          : ''
+      } 
       window.pagePath = pagePath;
-    }
+    } 
   }
   window.addEventListener('popstate', pageview);
 </script>`;
 
 const app = express();
+
+// 출처: https://fullmoon1344.tistory.com/145 [태야]
 
 app.use(
   proxy(pageDomain, {
@@ -104,11 +104,14 @@ app.use(
     },
     userResDecorator: (_proxyRes, proxyResData, userReq) => {
       if (/^\/app-.*\.js$/.test(userReq.url)) {
-        return proxyResData
-          .toString()
-          .replace(/^/, ncd)
-          .replace(/window.location.href(?=[^=]|={2,})/g, 'ncd.href()') // Exclude 'window.locaton.href=' but not 'window.locaton.href=='
-          .replace(/window.history.(pushState|replaceState)/g, 'ncd.$1');
+        return (
+          proxyResData
+            .toString()
+            .replace(/^/, ncd)
+            // Exclude 'window.locaton.href=' but not 'window.locaton.href=='
+            .replace(/window.location.href(?=[^=]|={2,})/g, 'ncd.href()')
+            .replace(/window.history.(pushState|replaceState)/g, 'ncd.$1')
+        );
       } else if (/^\/image\//.test(userReq.url)) {
         return proxyResData;
       } else {
@@ -122,7 +125,6 @@ app.use(
 );
 
 if (!process.env.VERCEL_REGION) {
-  const port = process.env.PORT || 3000;
   app.listen(port, () =>
     console.log(`Server running at http://localhost:${port}`),
   );

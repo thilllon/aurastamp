@@ -50,9 +50,6 @@ export const theme = createTheme(
           // disableElevation: true,
         },
         styleOverrides: {
-          text: {
-            background: '#f0f0f0',
-          },
           root: {
             textTransform: 'none',
           },
@@ -188,15 +185,6 @@ export const theme = createTheme(
         styleOverrides: {
           notchedOutline: {
             borderColor: '#E6E8F0',
-          },
-        },
-      },
-      MuiTypography: {
-        defaultProps: {
-          variant: 'body1',
-          variantMapping: {
-            body1: 'span',
-            body2: 'span',
           },
         },
       },
@@ -353,7 +341,7 @@ export const theme = createTheme(
         fontWeight: 600,
       },
       fontFamily:
-        '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+        'Pretendard, "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
       body1: {
         fontSize: '1rem',
         fontWeight: 400,
