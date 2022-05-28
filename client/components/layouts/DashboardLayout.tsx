@@ -1,9 +1,10 @@
 import { Footer } from '@/components/Footer';
 import { DashboardTopNavbar } from '@/components/layouts/DashboardTopNavbar';
 import { WorkOutlineOutlined } from '@mui/icons-material';
+import HelpIcon from '@mui/icons-material/Help';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import SearchIcon from '@mui/icons-material/Search';
-import { BottomNavigation, BottomNavigationAction, Box, Paper, SxProps } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Box, Paper, SxProps, Fab } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 
@@ -140,6 +141,11 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
           }}
           elevation={3}
         >
+        <Fab variant="extended" size="small" color="primary" aria-label="add"
+             sx={{ position: 'absolute', zIndex: '999', right: '23px', bottom: '80px'}}
+             onClick={()=>window.open('https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4')}>
+          <HelpIcon fontSize="small"/> <Box sx={{ pl: '3px', fontWeight: 'bold' }}>ABOUT</Box>
+        </Fab>
           <BottomNavigation
             showLabels
             value={router.pathname}
