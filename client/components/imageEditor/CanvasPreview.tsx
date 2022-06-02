@@ -62,6 +62,8 @@ export async function canvasPreview(
   );
 
   ctx.restore();
-
-  return canvas;
+  return new Promise(resolve => {
+    resolve(canvas.toDataURL('image/jpeg'));
+  });
+  // return canvas;
 }
