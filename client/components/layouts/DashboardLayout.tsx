@@ -7,6 +7,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import { BottomNavigation, BottomNavigationAction, Box, Paper, SxProps, Fab } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
+import { isMobile } from 'react-device-detect';
+
 
 const isProduction = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 
@@ -143,7 +145,15 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
         >
         <Fab variant="extended" size="small" color="primary" aria-label="add"
              sx={{ position: 'absolute', zIndex: '999', right: '23px', bottom: '80px'}}
-             onClick={()=>window.open('https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4')}>
+             onClick={()=>{
+                if(isMobile) {
+                  window.open('https://able-eater-423.notion.site/aura-stamp-mobile-61704cbc68764d209308fe8b78598b18')
+                }
+                else {
+                  window.open('https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4')
+                }
+              }
+              }>
           <HelpIcon fontSize="small"/> <Box sx={{ pl: '3px', fontWeight: 'bold' }}>ABOUT</Box>
         </Fab>
           <BottomNavigation
