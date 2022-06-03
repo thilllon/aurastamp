@@ -70,6 +70,9 @@ export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCro
     async () => {
       if (completedCrop && previewImageRef.current && previewCanvasRef.current) {
         // We use canvasPreview as it's much faster than imgPreview.
+        console.log(previewImageRef.current.naturalWidth)
+        console.log(previewImageRef.current.width)
+
         canvasPreview(
           previewImageRef.current,
           previewCanvasRef.current,
@@ -137,7 +140,7 @@ export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCro
 
   function IconBox(props: any) {
     const whichPage = props.icon;
-    console.log(props.icon);
+    console.log(whichPage);
     if (whichPage == 'decode') {
       return <SearchIcon sx={{ fontSize: 100 }} />;
     } else if (whichPage == 'encode') {
@@ -147,6 +150,7 @@ export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCro
   }
 
   const onClickCropMode = () => {
+
     setIsCropMode(true);
   };
 
@@ -271,6 +275,7 @@ export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCro
             }}
           />
         )}
+
       </Box>
       {/* <img src={imgSrc} alt='dd' /> */}
     </Box>
