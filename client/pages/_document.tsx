@@ -26,8 +26,8 @@ export default class MyDocument extends Document {
         <DocumentHead>
           <GoogleAnalysisScript />
           <DisableInternetExplorer />
-          <link rel='preconnect' href='https://fonts.googleapis.com'/>
-          <link rel='preconnect' href='https://fonts.gstatic.com'/>
+          <link rel='preconnect' href='https://fonts.googleapis.com' />
+          <link rel='preconnect' href='https://fonts.gstatic.com' />
           <link
             rel='stylesheet'
             href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css'

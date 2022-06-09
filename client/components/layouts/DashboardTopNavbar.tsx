@@ -4,7 +4,7 @@ import { AppBar, AppBarProps, Box, Typography } from '@mui/material';
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
     backgroundColor: theme.palette.background.default,
-    boxShadow: theme.shadows[0], 
+    boxShadow: theme.shadows[0],
     display: 'flex',
     flex: '1 1 auto',
     maxWidth: '420px',
@@ -34,9 +34,9 @@ export const DashboardTopNavbar = ({ sx, ...others }: DashboardTopNavbarProps) =
         }}
         {...others}
       >
-          <Box sx={{ width: '40vw', maxWidth: '160px' }}>
-            <img src="logo.png" width="100%"></img>
-          </Box>
+        <Box sx={{ width: '40vw', maxWidth: '160px' }}>
+          <img src='logo.png' width='100%'></img>
+        </Box>
       </DashboardTopNavbarRoot>
     </>
   );

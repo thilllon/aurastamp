@@ -70,8 +70,8 @@ export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCro
     async () => {
       if (completedCrop && previewImageRef.current && previewCanvasRef.current) {
         // We use canvasPreview as it's much faster than imgPreview.
-        console.log(previewImageRef.current.naturalWidth)
-        console.log(previewImageRef.current.width)
+        console.log(previewImageRef.current.naturalWidth);
+        console.log(previewImageRef.current.width);
 
         canvasPreview(
           previewImageRef.current,
@@ -150,7 +150,6 @@ export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCro
   }
 
   const onClickCropMode = () => {
-
     setIsCropMode(true);
   };
 
@@ -275,7 +274,6 @@ export function ImageCrop({ icon, onChange: onChangeProps, onCropEnd }: ImageCro
             }}
           />
         )}
-
       </Box>
       {/* <img src={imgSrc} alt='dd' /> */}
     </Box>
