@@ -126,7 +126,7 @@ export default function DecodePage() {
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Box key={key} sx={{ mt: 3 }}>
+        <Box key={key} sx={{ mt: 0 }}>
           <Cropper
             guideMessage='Pick an image to find a message'
             defaultAspect={1}

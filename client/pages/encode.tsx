@@ -111,7 +111,7 @@ export default function EncodePage() {
       }}
     >
       {!encodedImgSrcBase64 && (
-        <Box key={key} sx={{ mt: 3 }}>
+        <Box key={key} sx={{ mt: 0 }}>
           <Cropper
             guideMessage='Pick an image to stamp'
             defaultAspect={1}
