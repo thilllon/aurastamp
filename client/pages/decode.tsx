@@ -6,7 +6,6 @@ import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import axios from 'axios';
-import getConfig from 'next/config';
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';

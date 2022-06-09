@@ -6,9 +6,8 @@ import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
 import { Alert, Box, Button, CircularProgress, Container, TextField } from '@mui/material';
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
-import { browserName, isMobile, isIOS, isDesktop } from 'react-device-detect';
+import { browserName, isDesktop } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
-import { RWebShare } from 'react-web-share';
 
 const maxMessageLength = 255;
 const footerHeight = 120;
@@ -126,7 +125,6 @@ export default function EncodePage() {
           />
         </Box>
       )}
-
       {encodedImgSrcBase64 && (
         <Box
           sx={{
@@ -145,7 +143,6 @@ export default function EncodePage() {
           />
         </Box>
       )}
-
       {!encodedImgSrcBase64 && (
         <TextField
           sx={{ mt: 3 }}
@@ -161,35 +158,39 @@ export default function EncodePage() {
           placeholder={'type message to hide :)'}
         />
       )}
-
       <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
-        <Button
-          sx={{ flex: 1 }}
-          variant={'contained'}
-          onClick={onClickEncode}
-          disabled={
-            !(croppedBlob && hiddenMessage) || encodeImage.isLoading || !!encodedImgSrcBase64
-          }
-          endIcon={encodeImage.isLoading && <CircularProgress size={24} />}
-        >
-          write
-        </Button>
+        {encodedImgSrcBase64 && (
+          <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
+            download
+          </Button>
+        )}
+        {!encodedImgSrcBase64 && (
+          <Button
+            sx={{ flex: 1 }}
+            variant={'contained'}
+            onClick={onClickEncode}
+            disabled={
+              !(croppedBlob && hiddenMessage) || encodeImage.isLoading || !!encodedImgSrcBase64
+            }
+            endIcon={encodeImage.isLoading && <CircularProgress size={24} />}
+          >
+            write
+          </Button>
+        )}
         <Button sx={{ flex: 1 }} onClick={onClickRetry}>
           retry
         </Button>
       </Box>
-
       {encodedImgSrcBase64 && !downloadable && (
         <Alert severity='warning' sx={{ mt: 3 }}>
           {downloadGuideMessage}
         </Alert>
       )}
-
       {encodedImgSrcBase64 && (
         <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
-          <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
+          {/* <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
             download
-          </Button>
+          </Button> */}
 
           {/* <RWebShare
             data={{
@@ -210,7 +211,6 @@ export default function EncodePage() {
           </RWebShare> */}
         </Box>
       )}
-
       {encodeImage.error && (
         <Alert severity='error' sx={{ mt: 3 }}>
           {JSON.stringify(encodeImage.error ?? {})}
