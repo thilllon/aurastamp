@@ -9,20 +9,16 @@ export const sleep = (amount = 0) => new Promise((resolve) => setTimeout(resolve
 
 export const toReadableSize = (bytes: number, decimalPlace = 1) => {
   const threshold = 1024;
-
   if (Math.abs(bytes) < threshold) {
     return bytes + ' B';
   }
-
   const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   let idx = -1;
   const r = 10 ** decimalPlace;
-
   do {
     bytes /= threshold;
     ++idx;
   } while (Math.round(Math.abs(bytes) * r) / r >= threshold && idx < units.length - 1);
-
   return bytes.toFixed(decimalPlace) + ' ' + units[idx];
 };
 

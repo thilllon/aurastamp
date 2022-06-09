@@ -3,9 +3,8 @@ import {
   canvasPreview,
   canvasToBlob,
   centerAspectCrop,
-  // useDebounce,
+  toReadableSize,
 } from '@/components/CropperHelper';
-import { toReadableSize } from '@/utils/common';
 import {
   ArrowBack as ArrowBackIcon,
   Check as CheckIcon,
@@ -28,10 +27,13 @@ import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useDebounce } from 'react-use';
 
+// TODO: undo 기능 추가할 것, 스타일 기능 추가할것
+
 type CropperProps = {
   guideMessage?: string;
   defaultAspect?: number;
   hidePreview?: boolean;
+  hideImageSpec?: boolean;
   showScaleController?: boolean;
   showRotateController?: boolean;
   showAspectRatioController?: boolean;
@@ -48,6 +50,7 @@ const debounceDelay = 200; // ms
 export const Cropper = ({
   guideMessage,
   defaultAspect = 1,
+  hideImageSpec = false,
   hidePreview: hidePreviewCanvas = false,
   showScaleController = false,
   showRotateController = false,
@@ -57,35 +60,35 @@ export const Cropper = ({
   onConfirmCrop: onConfirmCropProp,
   freeze = false,
 }: CropperProps) => {
+  // all state variables ------------------------------------
   const [imgSrcBase64, setImgSrcBase64] = useState('');
   const [imgSrcBase64Original, setImgSrcBase64Original] = useState('');
   const [originalBlob, setOriginalBlob] = useState<Blob>();
   const [croppedBlobSize, setCroppedBlobSize] = useState<number>();
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isCropProcessing, setIsCropProcessing] = useState(false);
+  const [isCropProcessing, setIsCropProcessing] = useState(false); // for better UX
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
+  // --------------------------------------------------------
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useDebounce(
     async () => {
       if (imgRef.current && previewCanvasRef.current && typeof completedCrop !== 'undefined') {
         // We use canvasPreview as it's much faster than imgPreview.
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate);
-
         const croppedBlob = await canvasToBlob(previewCanvasRef.current);
-        console.info('cropped size', toReadableSize(croppedBlob?.size || 0));
+        // console.info('cropped size', toReadableSize(croppedBlob?.size || 0));
         // const { previewUrl, blob } = await imgPreview(
         //   previewImageRef.current,
         //   completedCrop,
         //   scale,
         //   rotate
         // );
-
         setCroppedBlobSize(croppedBlob?.size);
         if (croppedBlob) {
           onCropEnd?.(completedCrop, croppedBlob);
@@ -117,9 +120,6 @@ export const Cropper = ({
       }
     }
 
-    // setImgSrcBase64();
-    // setImgSrcBase64Original();
-    // setOriginalBlob();
     setCrop(undefined);
     setCompletedCrop(undefined);
     setIsEditMode(false);
@@ -127,10 +127,6 @@ export const Cropper = ({
   };
 
   const onClickCancelCrop = () => {
-    // setImgSrcBase64();
-    // setImgSrcBase64Original();
-    // setOriginalBlob();
-    // previewCanvasRef.current.
     setCrop(undefined);
     setCompletedCrop(undefined);
     setIsEditMode(false);
@@ -139,8 +135,6 @@ export const Cropper = ({
 
   const onClickResetCrop = () => {
     setImgSrcBase64(imgSrcBase64Original);
-    // setImgSrcBase64Original();
-    // setOriginalBlob();
     setCrop(undefined);
     setCompletedCrop(undefined);
     setIsEditMode(false);
@@ -184,7 +178,7 @@ export const Cropper = ({
   };
 
   const onImageLoad = (ev: SyntheticEvent<HTMLImageElement>) => {
-    if (aspectRatio) {
+    if (typeof aspectRatio !== 'undefined') {
       const { width, height } = ev.currentTarget;
       setCrop(centerAspectCrop(width, height, aspectRatio));
     }
@@ -200,14 +194,14 @@ export const Cropper = ({
   };
 
   const onClickUndoCrop = () => {
-    //
+    // TODO: undo crop
   };
 
   const onCheckFixAspectRatio: (event: SyntheticEvent<Element, Event>, checked: boolean) => void = (
     ev
   ) => {
     // TODO: defaultAspect가 아니라 current aspect ratio 구하는걸로 향후 수정
-    const currentAspect = 1;
+    const currentAspect = defaultAspect;
     // const currentAspect = completedCrop ? completedCrop.height / completedCrop.width : 1;
     const newAspect = (ev.target as any).checked ? currentAspect : undefined;
     setAspectRatio(newAspect);
@@ -222,15 +216,21 @@ export const Cropper = ({
         alignItems: 'center',
       }}
     >
-      <div>{`length: ${imgSrcBase64.length.toLocaleString()} / ${imgSrcBase64Original.length.toLocaleString()}`}</div>
-      <div>
-        {`size: ${toReadableSize(croppedBlobSize ?? 0)} / ${toReadableSize(
-          originalBlob?.size ?? 0
-        )}`}
-      </div>
+      {!hideImageSpec && (
+        <>
+          <Typography>
+            {`length: ${imgSrcBase64.length.toLocaleString()} / ${imgSrcBase64Original.length.toLocaleString()}`}
+          </Typography>
+          <Typography>
+            {`size: ${toReadableSize(croppedBlobSize ?? 0)} / ${toReadableSize(
+              originalBlob?.size ?? 0
+            )}`}
+          </Typography>
+        </>
+      )}
 
       {/* -------------------------------- */}
-      {/* 업로더 */}
+      {/* Uploader */}
       {/* -------------------------------- */}
 
       {!imgSrcBase64 && (
@@ -305,40 +305,42 @@ export const Cropper = ({
       )}
 
       {/* -------------------------------- */}
-      {/* 컨트롤러 */}
+      {/* Controller */}
       {/* -------------------------------- */}
 
-      <Box>
-        {showScaleController && (
-          <Box>
-            <label htmlFor='scale-input'>Scale: </label>
-            <input
-              id='scale-input'
-              type='number'
-              step='0.1'
-              value={scale}
-              disabled={!imgSrcBase64}
-              onChange={(e) => setScale(Number(e.target.value))}
-            />
-          </Box>
-        )}
+      {(showScaleController || showRotateController) && (
+        <Box>
+          {showScaleController && (
+            <Box>
+              <label htmlFor='scale-input'>Scale: </label>
+              <input
+                id='scale-input'
+                type='number'
+                step='0.1'
+                value={scale}
+                disabled={!imgSrcBase64}
+                onChange={(ev) => setScale(Number(ev.target.value))}
+              />
+            </Box>
+          )}
 
-        {showRotateController && (
-          <Box>
-            <label htmlFor='rotate-input'>Rotate: </label>
-            <input
-              id='rotate-input'
-              type='number'
-              value={rotate}
-              disabled={!imgSrcBase64}
-              onChange={(e) => setRotate(Math.min(180, Math.max(-180, Number(e.target.value))))}
-            />
-          </Box>
-        )}
-      </Box>
+          {showRotateController && (
+            <Box>
+              <label htmlFor='rotate-input'>Rotate: </label>
+              <input
+                id='rotate-input'
+                type='number'
+                value={rotate}
+                disabled={!imgSrcBase64}
+                onChange={(ev) => setRotate(Math.min(180, Math.max(-180, Number(ev.target.value))))}
+              />
+            </Box>
+          )}
+        </Box>
+      )}
 
       {/* -------------------------------- */}
-      {/* 상단 버튼 */}
+      {/* Buttons at the top */}
       {/* -------------------------------- */}
 
       <Box
@@ -408,7 +410,7 @@ export const Cropper = ({
       </Box>
 
       {/* -------------------------------- */}
-      {/* 크롭 이미지 */}
+      {/* Cropped image */}
       {/* -------------------------------- */}
 
       {imgSrcBase64 && (
@@ -434,11 +436,17 @@ export const Cropper = ({
       )}
 
       {/* -------------------------------- */}
-      {/* 미리보기 */}
+      {/* Preview */}
       {/* -------------------------------- */}
 
       {typeof completedCrop !== 'undefined' && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <canvas
             hidden={hidePreviewCanvas}
             ref={previewCanvasRef}
@@ -452,7 +460,7 @@ export const Cropper = ({
       )}
 
       {/* -------------------------------- */}
-      {/* 하단 버튼 */}
+      {/* Buttons at the bottom */}
       {/* -------------------------------- */}
 
       <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 1 }}>
@@ -468,7 +476,7 @@ export const Cropper = ({
         )}
 
         {/* TODO: undo 기능 */}
-        {imgSrcBase64 && (
+        {false && imgSrcBase64 && (
           <Button
             sx={{ height: buttonHeight }}
             startIcon={<ArrowBackIcon />}

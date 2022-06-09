@@ -135,6 +135,8 @@ export default function EncodePage({}: EncodePageProps) {
             onChangeFile={onChange}
             onCropEnd={onCropEnd}
             freeze={Boolean(encodedImageBase64String)}
+            hideImageSpec={true}
+            hidePreview={true}
           />
         </Box>
 

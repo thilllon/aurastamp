@@ -109,12 +109,9 @@ export const centerAspectCrop = (mediaWidth: number, mediaHeight: number, aspect
   return centerCrop(crop, mediaWidth, mediaHeight);
 };
 
-// --------------------------------
-// --------------------------------
-// --------------------------------
-
 // https://github.com/streamich/react-use/blob/master/src/useTimeoutFn.ts
 export type UseTimeoutFnReturn = [() => boolean | null, () => void, () => void];
+
 export const useTimeoutFn = (fn: Function, ms = 0): UseTimeoutFnReturn => {
   const ready = useRef<boolean | null>(false);
   const timeout = useRef<ReturnType<typeof setTimeout>>();
@@ -150,10 +147,26 @@ export const useTimeoutFn = (fn: Function, ms = 0): UseTimeoutFnReturn => {
 
   return [isReady, clear, set];
 };
+
 export type UseDebounceReturn = [() => boolean | null, () => void];
 
 export const useDebounce = (fn: Function, ms = 0, deps: DependencyList = []): UseDebounceReturn => {
   const [isReady, cancel, reset] = useTimeoutFn(fn, ms);
   useEffect(reset, [reset, ...deps]);
   return [isReady, cancel];
+};
+
+export const toReadableSize = (bytes: number, decimalPlace = 1) => {
+  const threshold = 1024;
+  if (Math.abs(bytes) < threshold) {
+    return bytes + ' B';
+  }
+  const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  let idx = -1;
+  const r = 10 ** decimalPlace;
+  do {
+    bytes /= threshold;
+    ++idx;
+  } while (Math.round(Math.abs(bytes) * r) / r >= threshold && idx < units.length - 1);
+  return bytes.toFixed(decimalPlace) + ' ' + units[idx];
 };

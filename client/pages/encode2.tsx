@@ -99,6 +99,8 @@ export default function EncodePage() {
             onCropEnd={onCropEnd}
             freeze={Boolean(encodedImgSrcBase64)}
             onConfirmCrop={onConfirmCrop}
+            hidePreview={true}
+            hideImageSpec={true}
           />
         </Box>
 
