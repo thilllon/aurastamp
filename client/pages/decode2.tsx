@@ -74,6 +74,10 @@ export default function DecodePage() {
     setCroppedBlob(blob);
   }, []);
 
+  const onUnload = async () => {
+    setCroppedBlob(undefined);
+  };
+
   const onClickDecode = async () => {
     setErrorMessage('');
     setHiddenMessage('');
@@ -131,6 +135,7 @@ export default function DecodePage() {
             freeze={Boolean(encodedImageBase64String)}
             hideImageSpec={true}
             hidePreview={true}
+            onUnload={onUnload}
           />
         </Box>
 
@@ -164,7 +169,7 @@ export default function DecodePage() {
             sx={{ flex: 1 }}
             variant={'contained'}
             onClick={onClickDecode}
-            disabled={!!hiddenMessage || isLoading}
+            disabled={!!hiddenMessage || isLoading || !croppedBlob}
             endIcon={isLoading ? <CircularProgress size={24} /> : null}
           >
             read

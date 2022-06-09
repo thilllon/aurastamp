@@ -41,6 +41,7 @@ type CropperProps = {
   onCropEnd?: (completedCrop: PixelCrop | undefined, blob: Blob) => void;
   freeze?: boolean;
   onConfirmCrop?: (crop: PixelCrop | undefined, blob: Blob) => void;
+  onUnload?: () => void;
 };
 
 const buttonHeight = 36; // button height in pixel
@@ -58,6 +59,7 @@ export const Cropper = ({
   onChangeFile,
   onCropEnd,
   onConfirmCrop: onConfirmCropProp,
+  onUnload,
   freeze = false,
 }: CropperProps) => {
   // all state variables ------------------------------------
@@ -149,6 +151,7 @@ export const Cropper = ({
     setCompletedCrop(undefined);
     setIsEditMode(false);
     setAspectRatio(undefined);
+    onUnload?.();
   };
 
   const onDragStart = () => {
@@ -272,7 +275,7 @@ export const Cropper = ({
             <Input
               id='uploadbutton'
               type='file'
-              inputProps={{ accept: 'image/*' }}
+              // inputProps={{ accept: 'image/*' }}
               sx={{ display: 'none' }}
               onChange={onChange}
             />

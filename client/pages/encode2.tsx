@@ -13,7 +13,9 @@ import { RWebShare } from 'react-web-share';
 const maxMessageLength = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
-const downloadGuideMessage = `현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.`;
+// const downloadGuideMessage = `사진을 길게눌러 다운받아 주세요.`;
+const downloadGuideMessage = `Long press the image to download.`;
+// 현재 브라우저에서는 다운로드가 불가능합니다.😢 (애초에 알릴필요가 있을까? 🤔)
 
 const downloadBase64String = (b64String: string) => {
   const fileName = 'aurastamp_' + Date.now() + '.png';
@@ -24,23 +26,22 @@ const downloadBase64String = (b64String: string) => {
   downloadLink.click();
 };
 
-const isDownloadableBrowser = (browser: string) => {
-  const unSupportedBrowserList = ['Edge', 'Chrome'];
-  return unSupportedBrowserList.indexOf(browser) == -1;
+const isDownloadable = () => {
+  const unsupported = ['edge', 'chrome'];
+  return unsupported.indexOf(browserName.toLowerCase()) === -1;
 };
 
 export default function EncodePage() {
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
+  const [croppedBlob, setCroppedBlob] = useState<Blob>();
   const [hiddenMessage, setHiddenMessage] = useState('');
   const [encodedImgSrcBase64, setEncodedImgSrcBase64] = useState('');
-  const [croppedBlob, setCroppedBlob] = useState<Blob>();
   const [downloadable, setDownloadable] = useState(true);
   const [key, setKey] = useState(1);
   const encodeImage = useEncodeImage();
 
   useEffect(() => {
-    console.log('browserName', browserName);
-    setDownloadable(isDownloadableBrowser(browserName));
+    setDownloadable(isDownloadable());
   }, []);
 
   const onChange: ChangeEventHandler<HTMLInputElement> = useCallback((ev) => {
@@ -56,6 +57,10 @@ export default function EncodePage() {
   const onConfirmCrop = async (crop: PixelCrop | undefined, blob: Blob) => {
     // FIXME: 테스트중
     setCroppedBlob(blob);
+  };
+
+  const onUnload = async () => {
+    setCroppedBlob(undefined);
   };
 
   const onChangeMessage: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (ev) => {
@@ -102,18 +107,21 @@ export default function EncodePage() {
           `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
       }}
     >
-      <Box key={key} sx={{ mt: 3 }}>
-        <Cropper
-          guideMessage='Pick an image to stamp'
-          defaultAspect={1}
-          onChangeFile={onChange}
-          onCropEnd={onCropEnd}
-          freeze={Boolean(encodedImgSrcBase64)}
-          onConfirmCrop={onConfirmCrop}
-          hidePreview={true}
-          hideImageSpec={true}
-        />
-      </Box>
+      {!encodedImgSrcBase64 && (
+        <Box key={key} sx={{ mt: 3 }}>
+          <Cropper
+            guideMessage='Pick an image to stamp'
+            defaultAspect={1}
+            onChangeFile={onChange}
+            onCropEnd={onCropEnd}
+            freeze={Boolean(encodedImgSrcBase64)}
+            onConfirmCrop={onConfirmCrop}
+            hidePreview={true}
+            hideImageSpec={true}
+            onUnload={onUnload}
+          />
+        </Box>
+      )}
 
       {encodedImgSrcBase64 && (
         <Box
@@ -155,7 +163,9 @@ export default function EncodePage() {
           sx={{ flex: 1 }}
           variant={'contained'}
           onClick={onClickEncode}
-          // disabled={!encodedImageBase64String || encodeImage.isLoading || !originalFile || !hiddenMessage}
+          disabled={
+            !(croppedBlob && hiddenMessage) || encodeImage.isLoading || !!encodedImgSrcBase64
+          }
           endIcon={encodeImage.isLoading && <CircularProgress size={24} />}
         >
           write
