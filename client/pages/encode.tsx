@@ -164,6 +164,9 @@ export default function EncodePage() {
             download
           </Button>
         )}
+        <a download='FILENAME.EXT' href={'data:image/png;base64,' + encodedImgSrcBase64}>
+          Download {encodedImgSrcBase64?.slice(0, 20)}
+        </a>
         {!encodedImgSrcBase64 && (
           <Button
             sx={{ flex: 1 }}
