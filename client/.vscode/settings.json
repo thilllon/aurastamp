@@ -6,5 +6,6 @@
     "yarn.lock": true
   },
   "git.ignoreLimitWarning": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "typescript.preferences.importModuleSpecifier": "project-relative"
 }

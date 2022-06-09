@@ -1,50 +1,66 @@
 /* eslint-disable @next/next/no-img-element */
-import { ImageCrop } from '@/components/imageEditor/ImageCrop';
+import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { Link } from '@/components/shared/Link';
 import { StampModel } from '@/types/types';
+import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
-import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import axios from 'axios';
-import React, { ChangeEventHandler, ReactNode, useCallback, useState } from 'react';
+import getConfig from 'next/config';
+import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
+import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
 
-type DecodePageProps = {};
-
+const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
 
-export const replaceURL = (inputText: string) => {
-  // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
-  // const exp =/(?:^|\b)((((https?|ftp|file|):\/\/)|[\w.])+\.[a-z]{2,3}(?:\:[0-9]{1,5})?(?:\/.*)?)([,\s]|$)/ig; /* eslint-disable-line */
-  const exp =
-    /(?:^|\b)(([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?)([,\s]|$)/gi; /* eslint-disable-line */
-  let temp = inputText.replace(exp, '<a href="$1" target="_blank">$1</a>');
-  let result = '';
-
-  while (temp.length > 0) {
-    const pos = temp.indexOf('href="');
-    if (pos == -1) {
-      result += temp;
-      break;
-    }
-    result += temp.substring(0, pos + 6);
-
-    temp = temp.substring(pos + 6, temp.length);
-    if (temp.indexOf('://') > 8 || temp.indexOf('://') == -1) {
-      result += 'http://';
-    }
-  }
-  return result;
+export const downloadBase64String = (b64String: string) => {
+  const fileName = 'aurastamp_' + Date.now() + '.png';
+  const downloadLink = document.createElement('a');
+  downloadLink.download = fileName;
+  downloadLink.innerHTML = 'Download File';
+  downloadLink.href = 'data:image/png;base64,' + b64String;
+  downloadLink.click();
 };
 
-export default function DecodePage({}: DecodePageProps) {
+export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
+  const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
+  // const byteCharacters = Buffer.from(b64Data, 'base64');
+  const byteArrays = [];
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+  const blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};
+
+export default function DecodePage() {
   const [originalFile, setOriginalFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [hiddenMessage, setHiddenMessage] = useState('');
+  const [encodedImageBase64String, setEncodedImageBase64String] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
+  const [downloadable, setDownloadable] = useState(true);
+  const [key, setKey] = useState(1);
+
+  useEffect(() => {
+    setDownloadable(isDownloadableBrowser(browserName));
+  }, []);
+
+  const isDownloadableBrowser = (browser: string) => {
+    const unSupportedBrowserList = ['Edge', 'Chrome'];
+    return unSupportedBrowserList.indexOf(browser) == -1;
+  };
 
   const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
     // event handler for file load, unload
@@ -58,13 +74,10 @@ export default function DecodePage({}: DecodePageProps) {
     setCroppedBlob(blob);
   }, []);
 
-  // const onClickShare = () => {
-  //   navigator?.share({
-  //     title: '기록하며 성장하기',
-  //     text: 'Hello World',
-  //     url: 'https://shinsangeun.github.io',
-  //   });
-  // };
+  const onUnload = async () => {
+    setCroppedBlob(undefined);
+    setHiddenMessage('');
+  };
 
   const onClickDecode = async () => {
     setErrorMessage('');
@@ -97,74 +110,81 @@ export default function DecodePage({}: DecodePageProps) {
     }
   };
 
+  const onClickRetry = () => {
+    setKey((x) => x + 1);
+    setHiddenMessage('');
+    setEncodedImageBase64String('');
+  };
+
   return (
     <>
       <Container
         sx={{
           display: 'flex',
+          flexFlow: 'column nowrap',
           justifyContent: 'center',
-          flexDirection: 'column',
           minHeight: (theme) =>
             `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
         }}
       >
-        <Box
-          sx={{
-            width: '100%',
-            alignItems: 'center',
-            mb: 3,
-          }}
-        >
-          <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='decode' />
+        <Box key={key} sx={{ mt: 3 }}>
+          <Cropper
+            guideMessage='Pick an image to find a message'
+            defaultAspect={1}
+            onChangeFile={onChange}
+            onCropEnd={onCropEnd}
+            freeze={Boolean(encodedImageBase64String)}
+            hideImageSpec={true}
+            hidePreview={true}
+            onUnload={onUnload}
+          />
         </Box>
 
-        {(hiddenMessage || errorMessage) && (
+        {encodedImageBase64String && (
           <Box
             sx={{
+              width: '100%',
               display: 'flex',
-              border: 1,
-              p: 4,
-              borderRadius: '12px',
-              alignItems: 'center',
-              borderColor: (theme) => theme.palette.primary.main,
               flexFlow: 'column nowrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              mt: 3,
             }}
           >
-            {hiddenMessage && (
-              <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />
-            )}
-            {errorMessage ? <Typography>{errorMessage}</Typography> : <Typography></Typography>}
+            <img
+              src={'data:image/png;base64,' + encodedImageBase64String}
+              alt={'result'}
+              style={{ width: '100%' }}
+            />
           </Box>
         )}
 
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            flexFlow: 'column nowrap',
-            alignItems: 'center',
-            gap: 1,
-            mt: 2,
-          }}
-        >
-          <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 2, mb: 3 }}>
-            <Button
-              sx={{ flex: 1 }}
-              variant={'contained'}
-              onClick={onClickDecode}
-              disabled={!originalFile}
-              endIcon={isLoading ? <CircularProgress size={24} /> : null}
-            >
-              read
-            </Button>
+        {hiddenMessage && (
+          <Alert sx={{ mt: 3 }} severity='success'>
+            {hiddenMessage}
+          </Alert>
+        )}
 
-            {/* {secret && (
-              <IconButton onClick={onClickShare}>
-                <ShareIcon sx={{ fontSize: 35 }} />
-              </IconButton>
-            )} */}
-          </Box>
+        <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
+          <Button
+            sx={{ flex: 1 }}
+            variant={'contained'}
+            onClick={onClickDecode}
+            disabled={!!hiddenMessage || isLoading || !croppedBlob}
+            endIcon={isLoading ? <CircularProgress size={24} /> : null}
+          >
+            read
+          </Button>
+          <Button sx={{ flex: 1 }} onClick={onClickRetry}>
+            retry
+          </Button>
         </Box>
+
+        {errorMessage && (
+          <Alert severity='error' sx={{ mt: 3 }}>
+            {errorMessage}
+          </Alert>
+        )}
       </Container>
     </>
   );

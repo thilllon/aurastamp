@@ -98,14 +98,14 @@ export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
             }}
           >
             <BottomNavigationAction
-              label=''
-              value='/decode'
+              // label=''
+              // value='/decode'
               icon={<SearchIcon fontSize='large' />}
               onClick={() => router.push('/decode')}
             />
             <BottomNavigationAction
-              label=''
-              value='/encode'
+              // label=''
+              // value='/encode'
               icon={<BorderColorIcon fontSize='large' />}
               onClick={() => router.push('/encode')}
             />

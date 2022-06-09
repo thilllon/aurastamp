@@ -4,43 +4,20 @@ import createEmotionServer from '@emotion/server/create-instance';
 import { createEmotionCache } from '@/styles/emotion';
 import { GoogleAnalysisScript } from '@/utils/useGoogleAnalytics';
 
-const DisableInternetExplorer = () => {
-  const consoleMessage = `Please use Edge or Chrome browser.`;
-  const literal = [
-    `if (window.navigator.userAgent.match(/MSIE|Internet Explorer|Trident/i)) {`,
-    `  window.location = "microsoft-edge:" + window.location.href;`,
-    `  setTimeout(function() {`,
-    `    console.log('${consoleMessage}');`,
-    `    window.location.replace('https://go.microsoft.com/fwlink/?linkid=2135547');`,
-    `  }, 100);`,
-    `}`,
-  ];
-  const __html = literal.join('');
-  return <script dangerouslySetInnerHTML={{ __html }} />;
-};
-
 export default class MyDocument extends Document {
   render() {
     return (
       <Html>
         <DocumentHead>
           <GoogleAnalysisScript />
-          <DisableInternetExplorer />
           <link rel='preconnect' href='https://fonts.googleapis.com' />
           <link rel='preconnect' href='https://fonts.gstatic.com' />
-          <link
-            rel='stylesheet'
-            href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css'
-          />
           <link
             rel='stylesheet'
             href='https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800;900&display=swap'
           />
         </DocumentHead>
         <body>
-          <noscript>
-            <iframe src={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER} style={{ display: 'none' }} />
-          </noscript>
           <Main />
           <NextScript />
         </body>
@@ -50,12 +27,14 @@ export default class MyDocument extends Document {
 }
 
 MyDocument.getInitialProps = async (ctx) => {
+  // console.info('document.getInitialProps');
+  // console.info(Date.now());
+
   const originalRenderPage = ctx.renderPage;
 
   // You can consider sharing the same emotion cache between all the SSR requests to speed up performance. However, be aware that it can have global side effects.
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
-
   ctx.renderPage = () =>
     originalRenderPage({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

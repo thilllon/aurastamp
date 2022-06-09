@@ -1,23 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
-import { ImageCrop } from '@/components/imageEditor/ImageCrop';
+import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { useEncodeImage } from '@/services/hooks';
 import { StampModel } from '@/types/types';
+import { FRNCC } from '@/utils/styles';
 import { Alert, Box, Button, CircularProgress, Container, TextField } from '@mui/material';
-import axios from 'axios';
-import getConfig from 'next/config';
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
-import { browserName } from 'react-device-detect';
+import { browserName, isMobile, isIOS, isDesktop } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
+import { RWebShare } from 'react-web-share';
 
-const { publicRuntimeConfig } = getConfig();
-
-type EncodePageProps = {};
-
-const MAX_MESSAGE_LENGTH = 255;
+const maxMessageLength = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
+// const downloadGuideMessage = `사진을 길게눌러 다운받아 주세요.`;
+const downloadGuideMessage = `Long press the image to download.`;
+// 현재 브라우저에서는 다운로드가 불가능합니다.😢 (애초에 알릴필요가 있을까? 🤔)
 
-export const downloadBase64String = (b64String: string) => {
+const downloadBase64String = (b64String: string) => {
   const fileName = 'aurastamp_' + Date.now() + '.png';
   const downloadLink = document.createElement('a');
   downloadLink.download = fileName;
@@ -26,191 +26,197 @@ export const downloadBase64String = (b64String: string) => {
   downloadLink.click();
 };
 
-export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-  const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
-  // const byteCharacters = Buffer.from(b64Data, 'base64');
-
-  const byteArrays = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
+const isDownloadable = () => {
+  const unsupported = ['edge', 'chrome'];
+  const flag = isDesktop || !unsupported.includes(browserName.toLowerCase());
+  // android: chrome, edge, samsung
+  // ios: safari, chrome
+  // desktop: chrome, edge, firefox
+  return flag;
 };
 
-export default function EncodePage({}: EncodePageProps) {
-  const [originalFile, setOriginalFile] = useState<File>();
+export default function EncodePage() {
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
-  const [hiddenMessage, setHiddenMessage] = useState('');
-  const [encodedImageBase64String, setEncodedImageBase64String] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
+  const [hiddenMessage, setHiddenMessage] = useState('');
+  const [encodedImgSrcBase64, setEncodedImgSrcBase64] = useState('');
   const [downloadable, setDownloadable] = useState(true);
+  const [key, setKey] = useState(1);
+  const encodeImage = useEncodeImage();
 
   useEffect(() => {
-    setDownloadable(isDownloadableBrowser(browserName));
+    setDownloadable(isDownloadable());
   }, []);
 
-  const isDownloadableBrowser = (browser: string) => {
-    const unSupportedBrowserList = ['Edge', 'Chrome'];
-    return unSupportedBrowserList.indexOf(browser) == -1;
-  };
-
-  const onChange: ChangeEventHandler<HTMLInputElement> = (ev) => {
-    // event handler for file load, unload
+  const onChange: ChangeEventHandler<HTMLInputElement> = useCallback((ev) => {
     const file = ev.target.files?.[0] ?? undefined;
-    setOriginalFile(file);
-    // FIXME: blob=>file 변환할것
     setCroppedBlob(file);
+  }, []);
+
+  const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob: Blob) => {
+    // FIXME: 테스트중
+    // setCroppedBlob(blob);
+  }, []);
+
+  const onConfirmCrop = async (crop: PixelCrop | undefined, blob: Blob) => {
+    // FIXME: 테스트중
+    setCroppedBlob(blob);
   };
 
-  const onCropEnd = useCallback(async (crop: PixelCrop | undefined, blob?: Blob) => {
-    setCroppedBlob(blob);
-  }, []);
+  const onUnload = async () => {
+    setCroppedBlob(undefined);
+  };
 
   const onChangeMessage: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (ev) => {
     let msg = ev.target.value;
-    if (msg.length > MAX_MESSAGE_LENGTH) {
-      msg = msg.slice(0, MAX_MESSAGE_LENGTH);
+    if (msg.length > maxMessageLength) {
+      msg = msg.slice(0, maxMessageLength);
     }
     setHiddenMessage(msg);
   };
 
   const onClickEncode = async () => {
-    setErrorMessage('');
     if (!croppedBlob) {
       return;
     }
-    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    const url = baseUrl + '/encode_stamp';
-    const formData = new FormData();
-    formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
-    if (modelName) {
-      formData.append('model_name', modelName);
-    }
-    formData.append('text', hiddenMessage);
-    formData.append('return_type', 'base64');
-    setIsLoading(true);
-    try {
-      const res = await axios.post(url, formData);
-      setEncodedImageBase64String(res.data);
-    } catch (err) {
-      console.error(err);
-      setErrorMessage(JSON.stringify(err));
-    } finally {
-      setIsLoading(false);
-    }
+    const encoded = await encodeImage.mutateAsync({
+      file: croppedBlob,
+      modelName,
+      hiddenMessage,
+      returnType: 'base64',
+    });
+    setEncodedImgSrcBase64(encoded);
   };
 
   const onClickDownload = () => {
-    downloadBase64String(encodedImageBase64String);
+    downloadBase64String(encodedImgSrcBase64);
+  };
+
+  const onClickShare = () => {};
+
+  const onClickRetry = () => {
+    setKey((x) => x + 1); // gorgeous way to remount
+    setHiddenMessage('');
+    setEncodedImgSrcBase64('');
   };
 
   return (
-    <>
-      <Container
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'space-between',
-          minHeight: (theme) =>
-            `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
-        }}
-      >
-        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
-          {!encodedImageBase64String && (
-            <ImageCrop onChange={onChange} onCropEnd={onCropEnd} icon='encode' />
-          )}
-          {encodedImageBase64String && (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                flexFlow: 'column nowrap',
-                justifyContent: 'center',
-                alignItems: 'center',
-                pt: '50px',
-              }}
-            >
-              <img
-                src={'data:image/png;base64,' + encodedImageBase64String}
-                alt={'result'}
-                style={{ width: '100%' }}
-              />
-            </Box>
-          )}
+    <Container
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'space-between',
+        minHeight: (theme) =>
+          `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
+      }}
+    >
+      {!encodedImgSrcBase64 && (
+        <Box key={key} sx={{ mt: 3 }}>
+          <Cropper
+            guideMessage='Pick an image to stamp'
+            defaultAspect={1}
+            onChangeFile={onChange}
+            onCropEnd={onCropEnd}
+            freeze={Boolean(encodedImgSrcBase64)}
+            onConfirmCrop={onConfirmCrop}
+            hidePreview={true}
+            hideImageSpec={true}
+            onUnload={onUnload}
+          />
         </Box>
+      )}
 
+      {encodedImgSrcBase64 && (
         <Box
           sx={{
-            mt: 3,
             width: '100%',
             display: 'flex',
             flexFlow: 'column nowrap',
+            justifyContent: 'center',
             alignItems: 'center',
+            mt: 3,
           }}
         >
-          {!encodedImageBase64String && (
-            <TextField
-              fullWidth
-              value={hiddenMessage}
-              onChange={onChangeMessage}
-              placeholder={'type message to hide :)'}
-            />
-          )}
-
-          {!encodedImageBase64String && (
-            <Box sx={{ width: '30%', display: 'flex', gap: 1, mt: 3 }}>
-              <Button
-                sx={{ flex: 1 }}
-                variant={'contained'}
-                onClick={onClickEncode}
-                disabled={isLoading || !originalFile || !hiddenMessage}
-                endIcon={isLoading ? <CircularProgress size={24} /> : null}
-              >
-                write
-              </Button>
-            </Box>
-          )}
-
-          {encodedImageBase64String && (
-            <Box
-              sx={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 1,
-              }}
-            >
-              {!downloadable && (
-                <Alert severity='warning'>
-                  현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아
-                  주세요.
-                </Alert>
-              )}
-              <Button sx={{ width: '30%', mt: 1 }} variant='outlined' onClick={onClickDownload}>
-                download
-              </Button>
-            </Box>
-          )}
-
-          {errorMessage && <Box sx={{ p: 2, m: 3 }}>{errorMessage}</Box>}
+          <img
+            src={'data:image/png;base64,' + encodedImgSrcBase64}
+            alt={'encoded image'}
+            style={{ width: '100%' }}
+          />
         </Box>
-      </Container>
-    </>
+      )}
+
+      {!encodedImgSrcBase64 && (
+        <TextField
+          sx={{ mt: 3 }}
+          fullWidth
+          value={hiddenMessage}
+          onChange={onChangeMessage}
+          disabled={encodeImage.isLoading}
+          onKeyDown={(ev) => {
+            if (ev.key === 'Enter') {
+              onClickEncode();
+            }
+          }}
+          placeholder={'type message to hide :)'}
+        />
+      )}
+
+      <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
+        <Button
+          sx={{ flex: 1 }}
+          variant={'contained'}
+          onClick={onClickEncode}
+          disabled={
+            !(croppedBlob && hiddenMessage) || encodeImage.isLoading || !!encodedImgSrcBase64
+          }
+          endIcon={encodeImage.isLoading && <CircularProgress size={24} />}
+        >
+          write
+        </Button>
+        <Button sx={{ flex: 1 }} onClick={onClickRetry}>
+          retry
+        </Button>
+      </Box>
+
+      {encodedImgSrcBase64 && !downloadable && (
+        <Alert severity='warning' sx={{ mt: 3 }}>
+          {downloadGuideMessage}
+        </Alert>
+      )}
+
+      {encodedImgSrcBase64 && (
+        <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
+          <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
+            download
+          </Button>
+
+          {/* <RWebShare
+            data={{
+              text: 'Like humans, flamingos make friends for life',
+              url: 'https://on.natgeo.com/2zHaNup',
+              title: 'Flamingos',
+            }}
+            onClick={() => console.log('shared successfully!')}
+          >
+            <Button
+              sx={{ flex: 1 }}
+              variant='contained'
+              onClick={onClickShare}
+              // icon: 🔗
+            >
+              share
+            </Button>
+          </RWebShare> */}
+        </Box>
+      )}
+
+      {encodeImage.error && (
+        <Alert severity='error' sx={{ mt: 3 }}>
+          {JSON.stringify(encodeImage.error ?? {})}
+        </Alert>
+      )}
+    </Container>
   );
 }
 

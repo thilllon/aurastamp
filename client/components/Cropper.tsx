@@ -22,6 +22,7 @@ import {
   Input,
   Typography,
 } from '@mui/material';
+import Image from 'next/image';
 import React, { ChangeEventHandler, SyntheticEvent, useRef, useState } from 'react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -275,7 +276,7 @@ export const Cropper = ({
             <Input
               id='uploadbutton'
               type='file'
-              // inputProps={{ accept: 'image/*' }}
+              // inputProps={{ accept: 'image/*' }} // 설정시 android에서 동작안함
               sx={{ display: 'none' }}
               onChange={onChange}
             />

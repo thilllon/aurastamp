@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { AppBar, AppBarProps, Box, Typography } from '@mui/material';
+import Image from 'next/image';
 
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
@@ -35,7 +36,8 @@ export const DashboardTopNavbar = ({ sx, ...others }: DashboardTopNavbarProps) =
         {...others}
       >
         <Box sx={{ width: '40vw', maxWidth: '160px' }}>
-          <img src='logo.png' width='100%'></img>
+          <Image src='/logo.png' width={256} height={39} alt='logo' objectFit='contain' />
+          {/* <img src='logo.png' width='100%' /> */}
         </Box>
       </DashboardTopNavbarRoot>
     </>
