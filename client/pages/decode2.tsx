@@ -11,8 +11,6 @@ import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState 
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
 
-type EncodePageProps = {};
-
 const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
@@ -29,12 +27,9 @@ export const downloadBase64String = (b64String: string) => {
 export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
   const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
   // const byteCharacters = Buffer.from(b64Data, 'base64');
-
   const byteArrays = [];
-
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice = byteCharacters.slice(offset, offset + sliceSize);
-
     const byteNumbers = new Array(slice.length);
     for (let i = 0; i < slice.length; i++) {
       byteNumbers[i] = slice.charCodeAt(i);
@@ -43,12 +38,11 @@ export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512)
     const byteArray = new Uint8Array(byteNumbers);
     byteArrays.push(byteArray);
   }
-
   const blob = new Blob(byteArrays, { type: contentType });
   return blob;
 };
 
-export default function EncodePage({}: EncodePageProps) {
+export default function DecodePage() {
   const [originalFile, setOriginalFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [hiddenMessage, setHiddenMessage] = useState('');
@@ -190,6 +184,6 @@ export default function EncodePage({}: EncodePageProps) {
   );
 }
 
-EncodePage.getLayout = (page: ReactNode) => {
+DecodePage.getLayout = (page: ReactNode) => {
   return <DashboardLayout>{page}</DashboardLayout>;
 };

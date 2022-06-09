@@ -40,6 +40,7 @@
     "react-image-crop": "^10.0.0",
     "react-query": "^3.38.0",
     "react-use": "^17.3.2",
+    "react-web-share": "^1.1.6",
     "sharp": "^0.30.4",
     "ts-essentials": "^9.1.2",
     "uuid": "^8.3.2",
