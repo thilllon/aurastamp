@@ -8,12 +8,6 @@ import { Alert, Box, Button, CircularProgress, Container, TextField } from '@mui
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
-import { RWebShare } from 'react-web-share';
-
-const maxMessageLength = 255;
-const footerHeight = 120;
-const defaultModelName = 'the';
-const downloadGuideMessage = `현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.`;
 
 const downloadBase64String = (b64String: string) => {
   const fileName = 'aurastamp_' + Date.now() + '.png';
@@ -23,6 +17,11 @@ const downloadBase64String = (b64String: string) => {
   downloadLink.href = 'data:image/png;base64,' + b64String;
   downloadLink.click();
 };
+
+const maxMessageLength = 255;
+const footerHeight = 120;
+const defaultModelName = 'the';
+const downloadGuideMessage = `현재 Browser에서는 다운로드가 불가합니다.😢 사진을 Long Press하여 다운 받아 주세요.`;
 
 const isDownloadableBrowser = (browser: string) => {
   const unSupportedBrowserList = ['Edge', 'Chrome'];
@@ -39,7 +38,6 @@ export default function EncodePage() {
   const encodeImage = useEncodeImage();
 
   useEffect(() => {
-    console.log('browserName', browserName);
     setDownloadable(isDownloadableBrowser(browserName));
   }, []);
 
@@ -80,10 +78,11 @@ export default function EncodePage() {
   };
 
   const onClickDownload = () => {
+    // cause error??
+    // cause error??
     downloadBase64String(encodedImgSrcBase64);
+    // downloadBase64String(encodedImgSrcBase64, 'aurastamp_' + Date.now() + '.png');
   };
-
-  const onClickShare = () => {};
 
   const onClickRetry = () => {
     setKey((x) => x + 1); // gorgeous way to remount
@@ -172,24 +171,9 @@ export default function EncodePage() {
       )}
 
       {encodedImgSrcBase64 && (
-        <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
-          <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
-            download
-          </Button>
-          <RWebShare
-            data={{
-              text: 'Like humans, flamingos make friends for life',
-              url: 'https://on.natgeo.com/2zHaNup',
-              title: 'Flamingos',
-            }}
-            onClick={() => console.log('shared successfully!')}
-          >
-            {/* icon: 🔗 */}
-            <Button sx={{ flex: 1 }} variant='contained' onClick={onClickShare}>
-              share
-            </Button>
-          </RWebShare>
-        </Box>
+        <Button fullWidth sx={{ mt: 3 }} variant='contained' onClick={onClickDownload}>
+          download
+        </Button>
       )}
 
       {encodeImage.error && (
