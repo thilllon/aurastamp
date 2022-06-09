@@ -6,13 +6,13 @@ export default function AboutPage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const url = `https://about.aurastamp.com`;
+  const url = `https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4`;
+  // const url = `https://about.aurastamp.com`;
   return {
     props: {},
     redirect: {
       destination: url,
-      // statusCode: 302,
-      permanent: false,
+      permanent: true,
     },
   };
 };
