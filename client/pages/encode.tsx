@@ -12,7 +12,6 @@ import { PixelCrop } from 'react-image-crop';
 const maxMessageLength = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
-// const downloadGuideMessage = `사진을 길게눌러 다운받아 주세요.`;
 const downloadGuideMessage = `Long press the image to download.`;
 // 현재 브라우저에서는 다운로드가 불가능합니다.😢 (애초에 알릴필요가 있을까? 🤔)
 
@@ -28,6 +27,7 @@ const downloadBase64String = (b64String: string) => {
 const isDownloadable = () => {
   const unsupported = ['edge', 'chrome'];
   const flag = isDesktop || !unsupported.includes(browserName.toLowerCase());
+  // TODO: 220609 현재 아이폰 사파리에서만 document로 다운받아지는 이슈
   // android: chrome, edge, samsung
   // ios: safari, chrome
   // desktop: chrome, edge, firefox
@@ -164,9 +164,6 @@ export default function EncodePage() {
             download
           </Button>
         )}
-        <a download='FILENAME.EXT' href={'data:image/png;base64,' + encodedImgSrcBase64}>
-          Download {encodedImgSrcBase64?.slice(0, 20)}
-        </a>
         {!encodedImgSrcBase64 && (
           <Button
             sx={{ flex: 1 }}
