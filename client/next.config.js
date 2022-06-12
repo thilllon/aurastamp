@@ -74,7 +74,7 @@ let nextConfig = {
       'via.placeholder.com',
       'images.unsplash.com',
       'avatars.githubusercontent.com',
-      'res.cloudinary.com'
+      'res.cloudinary.com',
     ],
   },
   i18n, // (중요) next-i18next.config.js로 설정 파일을 반드시 분리해야함

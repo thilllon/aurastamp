@@ -43,14 +43,14 @@ export default function EncodePage() {
   const [downloadable, setDownloadable] = useState(true);
   const [key, setKey] = useState(1);
   const encodeImage = useEncodeImage();
-  
+
   // for Modal
   const [openModal, setOpenModal] = useState(false);
   const handleModalOpen = () => setOpenModal(true);
   const handleModalClose = () => setOpenModal(false);
   const handleModalWrite = (hiddenMessage: string, hiddenImage: File | undefined) => {
     onClickEncode(hiddenMessage, hiddenImage);
-  }
+  };
 
   useEffect(() => {
     setDownloadable(isDownloadable());
@@ -87,11 +87,14 @@ export default function EncodePage() {
     if (!croppedBlob) {
       return;
     }
+    if (typeof hiddenImage === 'undefined') {
+      return;
+    }
     const encoded = await encodeImage.mutateAsync({
       file: croppedBlob,
       modelName,
-      hiddenMessage: hiddenMessage,
-      hiddenImage: hiddenImage,
+      hiddenMessage,
+      hiddenImage,
       returnType: 'base64',
     });
     setEncodedImgSrcBase64(encoded);
@@ -161,18 +164,16 @@ export default function EncodePage() {
             Download
           </Button>
         )}
-        {(!encodedImgSrcBase64 && !encodeImage.isLoading) &&
-            <Button
-              sx={{ flex: 1 }}
-              variant={'contained'}
-              onClick={handleModalOpen}
-              disabled={
-                !croppedBlob
-              }
-              >
-              Add Contents
-            </Button>
-        }
+        {!encodedImgSrcBase64 && !encodeImage.isLoading && (
+          <Button
+            sx={{ flex: 1 }}
+            variant={'contained'}
+            onClick={handleModalOpen}
+            disabled={!croppedBlob}
+          >
+            Add Contents
+          </Button>
+        )}
         {encodeImage.isLoading && (
           <Button
             sx={{ flex: 1 }}
@@ -185,7 +186,7 @@ export default function EncodePage() {
         )}
         {!encodeImage.isLoading && (
           <Button sx={{ flex: 1 }} onClick={onClickRetry}>
-          Retry
+            Retry
           </Button>
         )}
       </Box>

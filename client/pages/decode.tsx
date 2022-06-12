@@ -111,7 +111,7 @@ export default function DecodePage() {
         value: res.data.secret,
       });
       // modal을 통해 hidden info display
-      if (!res.data.error){
+      if (!res.data.error) {
         handleModalOpen();
       }
     } catch (err) {

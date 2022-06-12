@@ -58,7 +58,7 @@ export type EncodeImageInput = {
   file: File | Blob;
   modelName: 'the' | string;
   hiddenMessage: string;
-  hiddenImage: File | undefined;
+  hiddenImage: File;
   returnType: 'base64' | string;
 };
 
