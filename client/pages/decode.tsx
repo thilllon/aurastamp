@@ -110,9 +110,10 @@ export default function DecodePage() {
         label: 'secret',
         value: res.data.secret,
       });
-
       // modal을 통해 hidden info display
-      handleModalOpen();
+      if (!res.data.error){
+        handleModalOpen();
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -123,6 +124,7 @@ export default function DecodePage() {
   const onClickRetry = () => {
     setKey((x) => x + 1);
     setHiddenMessage('');
+    setErrorMessage('');
     setEncodedImageBase64String('');
     setCroppedBlob(undefined);
   };
