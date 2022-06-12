@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { ModalDecoder } from '@/components/modal/ModalDecoder';
 import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
@@ -45,12 +46,18 @@ export default function DecodePage() {
   const [originalFile, setOriginalFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [hiddenMessage, setHiddenMessage] = useState('');
+  const [hiddenImageUrl, setHiddenImageUrl] = useState('');
   const [encodedImageBase64String, setEncodedImageBase64String] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
   const [downloadable, setDownloadable] = useState(true);
   const [key, setKey] = useState(1);
+
+  // for Modal
+  const [openModal, setOpenModal] = useState(false);
+  const handleModalOpen = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
 
   useEffect(() => {
     setDownloadable(isDownloadableBrowser(browserName));
@@ -96,12 +103,16 @@ export default function DecodePage() {
       const res = await axios.post(url, formData);
       console.info(res.data);
       setHiddenMessage(res.data.secret ?? '');
+      setHiddenImageUrl(res.data.secret_image ?? '');
       setErrorMessage(res.data.error ?? '');
       sendEvent('button_click', {
         category: 'decode',
         label: 'secret',
         value: res.data.secret,
       });
+
+      // modal을 통해 hidden info display
+      handleModalOpen();
     } catch (err) {
       console.error(err);
     } finally {
@@ -113,6 +124,7 @@ export default function DecodePage() {
     setKey((x) => x + 1);
     setHiddenMessage('');
     setEncodedImageBase64String('');
+    setCroppedBlob(undefined);
   };
 
   return (
@@ -157,19 +169,12 @@ export default function DecodePage() {
             />
           </Box>
         )}
-
-        {hiddenMessage && (
-          <Alert sx={{ mt: 3 }} severity='success'>
-            {hiddenMessage}
-          </Alert>
-        )}
-
         <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
           <Button
             sx={{ flex: 1 }}
             variant={'contained'}
             onClick={onClickDecode}
-            disabled={!!hiddenMessage || isLoading || !croppedBlob}
+            disabled={isLoading || !croppedBlob}
             endIcon={isLoading ? <CircularProgress size={24} /> : null}
           >
             read
@@ -184,6 +189,12 @@ export default function DecodePage() {
             {errorMessage}
           </Alert>
         )}
+        <ModalDecoder
+          open={openModal}
+          hiddenMessage={hiddenMessage}
+          hiddenImageUrl={hiddenImageUrl}
+          handleModalClose={handleModalClose}
+        />
       </Container>
     </>
   );

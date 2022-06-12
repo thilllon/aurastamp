@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { ModalEncoder } from '@/components/modal/ModalEncoder';
 import { useEncodeImage } from '@/services/hooks';
 import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
@@ -42,6 +43,14 @@ export default function EncodePage() {
   const [downloadable, setDownloadable] = useState(true);
   const [key, setKey] = useState(1);
   const encodeImage = useEncodeImage();
+  
+  // for Modal
+  const [openModal, setOpenModal] = useState(false);
+  const handleModalOpen = () => setOpenModal(true);
+  const handleModalClose = () => setOpenModal(false);
+  const handleModalWrite = (hiddenMessage: string, hiddenImage: File | undefined) => {
+    onClickEncode(hiddenMessage, hiddenImage);
+  }
 
   useEffect(() => {
     setDownloadable(isDownloadable());
@@ -74,14 +83,15 @@ export default function EncodePage() {
     setHiddenMessage(msg);
   };
 
-  const onClickEncode = async () => {
+  const onClickEncode = async (hiddenMessage: string, hiddenImage: File | undefined) => {
     if (!croppedBlob) {
       return;
     }
     const encoded = await encodeImage.mutateAsync({
       file: croppedBlob,
       modelName,
-      hiddenMessage,
+      hiddenMessage: hiddenMessage,
+      hiddenImage: hiddenImage,
       returnType: 'base64',
     });
     setEncodedImgSrcBase64(encoded);
@@ -97,6 +107,7 @@ export default function EncodePage() {
     setKey((x) => x + 1); // gorgeous way to remount
     setHiddenMessage('');
     setEncodedImgSrcBase64('');
+    setCroppedBlob(undefined);
   };
 
   return (
@@ -143,43 +154,40 @@ export default function EncodePage() {
           />
         </Box>
       )}
-      {!encodedImgSrcBase64 && (
-        <TextField
-          sx={{ mt: 3 }}
-          fullWidth
-          value={hiddenMessage}
-          onChange={onChangeMessage}
-          disabled={encodeImage.isLoading}
-          onKeyDown={(ev) => {
-            if (ev.key === 'Enter') {
-              onClickEncode();
-            }
-          }}
-          placeholder={'type message to hide :)'}
-        />
-      )}
+
       <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
         {encodedImgSrcBase64 && (
           <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
-            download
+            Download
           </Button>
         )}
-        {!encodedImgSrcBase64 && (
+        {(!encodedImgSrcBase64 && !encodeImage.isLoading) &&
+            <Button
+              sx={{ flex: 1 }}
+              variant={'contained'}
+              onClick={handleModalOpen}
+              disabled={
+                !croppedBlob
+              }
+              >
+              Add Contents
+            </Button>
+        }
+        {encodeImage.isLoading && (
           <Button
             sx={{ flex: 1 }}
             variant={'contained'}
-            onClick={onClickEncode}
-            disabled={
-              !(croppedBlob && hiddenMessage) || encodeImage.isLoading || !!encodedImgSrcBase64
-            }
+            disabled={true}
             endIcon={encodeImage.isLoading && <CircularProgress size={24} />}
           >
-            write
+            Writing...
           </Button>
         )}
-        <Button sx={{ flex: 1 }} onClick={onClickRetry}>
-          retry
-        </Button>
+        {!encodeImage.isLoading && (
+          <Button sx={{ flex: 1 }} onClick={onClickRetry}>
+          Retry
+          </Button>
+        )}
       </Box>
       {encodedImgSrcBase64 && !downloadable && (
         <Alert severity='warning' sx={{ mt: 3 }}>
@@ -216,6 +224,11 @@ export default function EncodePage() {
           {JSON.stringify(encodeImage.error ?? {})}
         </Alert>
       )}
+      <ModalEncoder
+        open={openModal}
+        handleModalClose={handleModalClose}
+        handleModalWrite={handleModalWrite}
+      />
     </Container>
   );
 }
