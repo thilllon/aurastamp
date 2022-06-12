@@ -58,7 +58,7 @@ export type EncodeImageInput = {
   file: File | Blob;
   modelName: 'the' | string;
   hiddenMessage: string;
-  hiddenImage: File;
+  hiddenImage: File | undefined;
   returnType: 'base64' | string;
 };
 
@@ -71,7 +71,9 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
     formData.append('file', file);
     formData.append('model_name', modelName);
     formData.append('text', hiddenMessage);
-    formData.append('media', hiddenImage);
+    if (hiddenImage) {
+      formData.append('media', hiddenImage);
+    }
     formData.append('return_type', returnType);
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;

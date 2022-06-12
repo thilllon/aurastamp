@@ -87,9 +87,6 @@ export default function EncodePage() {
     if (!croppedBlob) {
       return;
     }
-    if (typeof hiddenImage === 'undefined') {
-      return;
-    }
     const encoded = await encodeImage.mutateAsync({
       file: croppedBlob,
       modelName,
