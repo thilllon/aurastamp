@@ -131,6 +131,7 @@ export const ModalEncoder = ({
                  Cancel
                 </Button>
                 <Button
+                    disabled={!hiddenMessage}
                     variant="contained"
                     component="span"
                     onClick={onClickWriteBtn}>

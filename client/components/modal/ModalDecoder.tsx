@@ -1,5 +1,6 @@
 import { Box, Modal, Alert, IconButton, Button, Input } from '@mui/material';
 import React, { useState, ChangeEventHandler } from 'react';
+import Image from "next/image";
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 
@@ -67,7 +68,7 @@ export const ModalDecoder = ({
                 🎨 Hidden Image
             </Box>
             <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                <img style={{ maxHeight: '40vh', maxWidth: '90%' }} src={hiddenImageUrl} />
+                <Image width={500} height={500} style={{ maxHeight: '40vh', maxWidth: '90%' }} src={hiddenImageUrl} />
             </Box>
             </>
             )}
