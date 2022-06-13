@@ -181,7 +181,7 @@ export default function DecodePage() {
           >
             read
           </Button>
-          <Button sx={{ flex: 1 }} onClick={onClickRetry}>
+          <Button variant='outlined' sx={{ flex: 1 }} onClick={onClickRetry}>
             retry
           </Button>
         </Box>

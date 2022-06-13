@@ -158,7 +158,7 @@ export default function EncodePage() {
       <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
         {encodedImgSrcBase64 && (
           <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
-            Download
+            download
           </Button>
         )}
         {!encodedImgSrcBase64 && !encodeImage.isLoading && (
@@ -168,7 +168,7 @@ export default function EncodePage() {
             onClick={handleModalOpen}
             disabled={!croppedBlob}
           >
-            Add Contents
+            add contents
           </Button>
         )}
         {encodeImage.isLoading && (
@@ -182,8 +182,8 @@ export default function EncodePage() {
           </Button>
         )}
         {!encodeImage.isLoading && (
-          <Button sx={{ flex: 1 }} onClick={onClickRetry}>
-            Retry
+          <Button variant='outlined' sx={{ flex: 1 }} onClick={onClickRetry}>
+            retry
           </Button>
         )}
       </Box>
