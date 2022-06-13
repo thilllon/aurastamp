@@ -73,7 +73,7 @@ export const ModalDecoder = ({
         {hiddenMessage && (
           <>
             <Box sx={{ mt: 3, fontWeight: '600', fontSize: '16px' }}>✍️ Hidden Message</Box>
-            <Alert sx={{ mt: 3 }} severity='success'>
+            <Alert sx={{ mt: 3 , flexDirection: 'column'}} severity='success'>
               <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />
               {/* {hiddenMessage} */}
             </Alert>
