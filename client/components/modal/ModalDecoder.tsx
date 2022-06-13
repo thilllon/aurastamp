@@ -24,6 +24,30 @@ const boxStyle = {
   overflowY: 'auto',
 };
 
+export const replaceURL = (inputText: string) => {
+  // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
+  // const exp =/(?:^|\b)((((https?|ftp|file|):\/\/)|[\w.])+\.[a-z]{2,3}(?:\:[0-9]{1,5})?(?:\/.*)?)([,\s]|$)/ig; /* eslint-disable-line */
+  const exp =
+    /(?:^|\b)(([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?)([,\s]|$)/gi; /* eslint-disable-line */
+  let temp = inputText.replace(exp, '<a href="$1" target="_blank">$1</a>');
+  let result = '';
+
+  while (temp.length > 0) {
+    const pos = temp.indexOf('href="');
+    if (pos == -1) {
+      result += temp;
+      break;
+    }
+    result += temp.substring(0, pos + 6);
+
+    temp = temp.substring(pos + 6, temp.length);
+    if (temp.indexOf('://') > 8 || temp.indexOf('://') == -1) {
+      result += 'http://';
+    }
+  }
+  return result;
+};
+
 export const ModalDecoder = ({
   open = false,
   hiddenMessage,
@@ -50,7 +74,8 @@ export const ModalDecoder = ({
           <>
             <Box sx={{ mt: 3, fontWeight: '600', fontSize: '16px' }}>✍️ Hidden Message</Box>
             <Alert sx={{ mt: 3 }} severity='success'>
-              {hiddenMessage}
+              <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />
+              {/* {hiddenMessage} */}
             </Alert>
           </>
         )}
