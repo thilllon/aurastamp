@@ -85,7 +85,8 @@ export const ModalDecoder = ({
             <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
               <img
                 alt='hidden-image'
-                style={{ maxHeight: '40vh', maxWidth: '90%' }}
+                style={{ maxHeight: '100vh', maxWidth: '100%' }}
+                onclick="window.open(this.src)"
                 src={hiddenImageUrl}
               />
             </Box>
