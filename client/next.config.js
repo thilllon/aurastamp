@@ -44,7 +44,9 @@ let nextConfig = {
     NEXT_PUBLIC_APP_TITLE: '',
     NEXT_PUBLIC_COMPANY_NAME: '',
     NEXT_PUBLIC_DEFAULT_LOCALE: 'en',
-    NEXT_PUBLIC_API_URI: process.env.API_URI ?? 'https://api.aurastamp.com',
+    NEXT_PUBLIC_API_URI: 'https://stamp-fastapi.onrender.com',
+    // NEXT_PUBLIC_API_URI: process.env.API_URI ?? 'https://api.aurastamp.com',
+
     // http://20.41.116.194:8000
     // --------------------------------
     // sentry
