@@ -188,7 +188,7 @@ export default function EncodePage() {
         )}
       </Box>
       {encodedImgSrcBase64 && !downloadable && (
-        <Alert severity='warning' sx={{ mt: 3 }}>
+        <Alert severity='warning' sx={{ mt: 3, wordBreak: 'break-word' }}>
           {downloadGuideMessage}
         </Alert>
       )}

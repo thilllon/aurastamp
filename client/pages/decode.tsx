@@ -152,7 +152,6 @@ export default function DecodePage() {
             onUnload={onUnload}
           />
         </Box>
-
         {encodedImageBase64String && (
           <Box
             sx={{
@@ -185,9 +184,8 @@ export default function DecodePage() {
             retry
           </Button>
         </Box>
-
         {errorMessage && (
-          <Alert severity='error' sx={{ mt: 3 }}>
+          <Alert severity='error' sx={{ mt: 3, wordBreak: 'break-word' }}>
             {errorMessage}
           </Alert>
         )}
