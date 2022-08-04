@@ -14,8 +14,8 @@ const boxStyle = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '80vw',
-  maxWidth: '380px',
+  width: '95vw',
+  maxWidth: '395px',
   maxHeight: '80vh',
   bgcolor: 'background.paper',
   borderRadius: '10px',
@@ -73,7 +73,7 @@ export const ModalDecoder = ({
         {hiddenMessage && (
           <>
             <Box sx={{ mt: 3, fontWeight: '600', fontSize: '16px' }}>✍️ Hidden Message</Box>
-            <Alert sx={{ mt: 3 , flexDirection: 'column'}} severity='success'>
+            <Alert sx={{ mt: 3, flexDirection: 'column' }} severity='success'>
               <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />
               {/* {hiddenMessage} */}
             </Alert>
