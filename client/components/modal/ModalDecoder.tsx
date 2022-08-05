@@ -195,11 +195,14 @@ export const ModalDecoder = ({
         <Box sx={bottomBoxStyle}>
           <Box sx={viewBoxStyle}>{viewCnt} Views 😎</Box>
           <Box sx={{ display: 'flex' }}>
-            <Box sx={{ cursor: 'pointer', marginRight: '15px' }} onClick={onClickLikeBtn}>
+            <Box
+              sx={{ cursor: 'pointer', marginRight: '10px', fontWeight: 'bold' }}
+              onClick={onClickLikeBtn}
+            >
               <IconButton>{likeBtnClicked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}</IconButton>
               {likeBtnClicked ? likeCnt + 1 : likeCnt}
             </Box>
-            <Box sx={{ cursor: 'pointer' }} onClick={onClickDislikeBtn}>
+            <Box sx={{ cursor: 'pointer', fontWeight: 'bold' }} onClick={onClickDislikeBtn}>
               <IconButton>
                 {dislikeBtnClicked ? <ThumbDownAltIcon /> : <ThumbDownOffAltIcon />}
               </IconButton>
