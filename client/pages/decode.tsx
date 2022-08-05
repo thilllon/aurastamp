@@ -45,8 +45,12 @@ export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512)
 export default function DecodePage() {
   const [originalFile, setOriginalFile] = useState<File>();
   const [modelName, setModelName] = useState<StampModel>(defaultModelName);
+  const [hashString, setHashString] = useState('');
   const [hiddenMessage, setHiddenMessage] = useState('');
   const [hiddenImageUrl, setHiddenImageUrl] = useState('');
+  const [viewCnt, setViewCnt] = useState(0);
+  const [likeCnt, setLikeCnt] = useState(0);
+  const [dislikeCnt, setDislikeCnt] = useState(0);
   const [encodedImageBase64String, setEncodedImageBase64String] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -101,9 +105,12 @@ export default function DecodePage() {
     try {
       setIsLoading(true);
       const res = await axios.post(url, formData);
-      console.info(res.data);
+      setHashString(res.data.hash_string ?? '');
       setHiddenMessage(res.data.secret ?? '');
       setHiddenImageUrl(res.data.secret_image ?? '');
+      setViewCnt(res.data.view_cnt ?? 0);
+      setLikeCnt(res.data.like_cnt ?? 0);
+      setDislikeCnt(res.data.dislike_cnt ?? 0);
       setErrorMessage(res.data.error ?? '');
       sendEvent('button_click', {
         category: 'decode',
@@ -191,8 +198,13 @@ export default function DecodePage() {
         )}
         <ModalDecoder
           open={openModal}
+          modelName={modelName}
+          hashString={hashString}
           hiddenMessage={hiddenMessage}
           hiddenImageUrl={hiddenImageUrl}
+          viewCnt={viewCnt}
+          likeCnt={likeCnt}
+          dislikeCnt={dislikeCnt}
           handleModalClose={handleModalClose}
         />
       </Container>
