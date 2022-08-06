@@ -169,16 +169,7 @@ export const ModalDecoder = ({
           </IconButton>
         </Box>
         <Box sx={contentsBoxStyle}>
-          {hiddenMessage && (
-            <>
-              <Box sx={{ mt: 3, fontWeight: '600', fontSize: '16px' }}>✍️ Hidden Message</Box>
-              <Alert sx={{ mt: 3, flexDirection: 'column' }} severity='success'>
-                <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />
-                {/* {hiddenMessage} */}
-              </Alert>
-            </>
-          )}
-          {hiddenImageUrl && (
+           {hiddenImageUrl && (
             <>
               <Box sx={{ mt: 3, fontWeight: '600', fontSize: '16px' }}>🎨 Hidden Image</Box>
               <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
@@ -191,6 +182,16 @@ export const ModalDecoder = ({
               </Box>
             </>
           )}
+          {hiddenMessage && (
+            <>
+              <Box sx={{ mt: 3, fontWeight: '600', fontSize: '16px' }}>✍️ Hidden Message</Box>
+              <Alert sx={{ mt: 3, flexDirection: 'column' }} severity='success'>
+                <div dangerouslySetInnerHTML={{ __html: replaceURL(hiddenMessage) }} />
+                {/* {hiddenMessage} */}
+              </Alert>
+            </>
+          )}
+         
         </Box>
         <Box sx={bottomBoxStyle}>
           <Box sx={viewBoxStyle}>{viewCnt} Views 😎</Box>
