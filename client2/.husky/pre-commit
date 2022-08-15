@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# must run the command first.
+# $ chmod +x ./.husky/pre-commit
+# Otherwise, hook will not run with the following warning message.
+# $ hint: The 'client/.husky/pre-push' hook was ignored because it's not set as executable.
+
+chmod ug+x ./.git/hooks/*
+chmod ug+x ./api/.husky/*
+chmod ug+x ./client/.husky/*
+
+cd ./client
+
+echo "--------------------------------"
+echo "[pre commit hook] $(pwd)"
+echo "--------------------------------"
+
+yarn lint-staged
+# yarn test:e2e
+
+cd ..

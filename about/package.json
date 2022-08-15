@@ -30,6 +30,7 @@
   },
   "prettier": {
     "arrowParens": "always",
+    "printWidth": 120,
     "semi": true,
     "singleQuote": true,
     "trailingComma": "all"
@@ -43,7 +44,6 @@
     ]
   },
   "dependencies": {
-    "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "express-http-proxy": "^1.6.2"
   },

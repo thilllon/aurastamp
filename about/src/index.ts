@@ -3,12 +3,8 @@ import proxy from 'express-http-proxy';
 import { URL } from 'url';
 import path from 'path';
 
-const PAGE_URL = process.env.PAGE_URL as string;
-const GA_TRACKING_ID = process.env.GA_TRACKING_ID as string;
-
-if (!PAGE_URL) {
-  throw new Error('PAGE_URL is missing');
-}
+const PAGE_URL = 'https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4';
+const GA_TRACKING_ID = '';
 
 const { origin: pageDomain, pathname: pagePath } = new URL(PAGE_URL);
 const pageId = path.basename(pagePath).match(/[^-]*$/);
@@ -78,15 +74,9 @@ app.use(
       if (headers['set-cookie']) {
         // "Domain=notion.site" -> "Domain=mydomain.com"
         // "; Domain=notion.site;' -> '; Domain=mydomain.com;"
-        const domain = (userReq.headers['x-forwarded-host'] as string).replace(
-          /:.*/,
-          '',
-        );
+        const domain = (userReq.headers['x-forwarded-host'] as string).replace(/:.*/, '');
         headers['set-cookie'] = headers['set-cookie'].map((cookie) =>
-          cookie.replace(
-            /((?:^|; )Domain=)((?:[^.]+\.)?notion\.(?:so|site))(;|$)/g,
-            `$1${domain}$3`,
-          ),
+          cookie.replace(/((?:^|; )Domain=)((?:[^.]+\.)?notion\.(?:so|site))(;|$)/g, `$1${domain}$3`),
         );
       }
 
@@ -111,9 +101,7 @@ app.use(
         return proxyResData;
       } else {
         // Assume HTML
-        return proxyResData
-          .toString()
-          .replace('</body>', `${ga}${pageview}</body>`);
+        return proxyResData.toString().replace('</body>', `${ga}${pageview}</body>`);
       }
     },
   }),
@@ -121,9 +109,7 @@ app.use(
 
 if (!process.env.VERCEL_REGION) {
   const port = process.env.PORT || 3000;
-  app.listen(port, () =>
-    console.log(`Server running at http://localhost:${port}`),
-  );
+  app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
 }
 
 export default app;
