@@ -1,6 +1,4 @@
-// import { GreyGooseTheme } from '@/theme/schemes/GreyGooseTheme';
 import { PureLightTheme } from '@/theme/schemes/PureLightTheme';
-// import { PurpleFlowTheme } from '@/theme/schemes/PurpleFlowTheme';
 import { ThemeName } from '@/theme/ThemeProvider';
 import { Theme } from '@mui/material';
 import React from 'react';
