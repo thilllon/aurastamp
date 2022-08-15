@@ -61,9 +61,9 @@ MyDocument.getInitialProps = async (ctx) => {
   // 3. app.render
   // 4. page.render
 
-  console.error('host', ctx?.req?.headers?.host);
-  console.error('referer', ctx?.req?.headers?.referer);
-  console.error('url', ctx?.req?.url);
+  // console.error('host', ctx?.req?.headers?.host);
+  // console.error('referer', ctx?.req?.headers?.referer);
+  // console.error('url', ctx?.req?.url);
 
   if (ctx.req?.headers?.host?.includes?.('.vercel.app')) {
     ctx.res.writeHead(302, { Location: 'https://proved.work' + (ctx.req?.url ?? '') });

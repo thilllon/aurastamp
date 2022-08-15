@@ -1,4 +1,5 @@
 const yup = require('yup');
+
 const isProduction = process.env.NODE_ENV === 'production';
 const isRemote = !!process.env.VERCEL_ENV || !!process.env.NEXT_PUBLIC_VERCEL_ENV;
 
@@ -30,15 +31,6 @@ let config = {
   },
   env: {
     NEXT_PUBLIC_HOTJAR_ID: 3098132,
-    // local: {hjid:3098148,hjsv:6};
-    // dev: {hjid:3098132,hjsv:6}
-    // prod: {hjid:3098069,hjsv:6};
-    // --------------------------------
-    // google analytics
-    // --------------------------------
-    NEXT_PUBLIC_GA_MEASUREMENT_ID: 'G-3T5SZBB0XM',
-    NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: 'CR2YzLNJiygJMN0YUfHSgH6Bv56u7OO-AVAOzbkg7vA', // https://search.google.com/search-console
-    NEXT_PUBLIC_KAKAO_JS_KEY: '6d8f9f6e0cb79e46574f673730a226a7',
   },
 };
 

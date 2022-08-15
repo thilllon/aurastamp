@@ -25,9 +25,6 @@ export default function Status404() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (ev) => {
     ev.preventDefault();
-    // FIXME: 검색기능 구현
-    // console.log(text);
-    // router.push('/');
   };
 
   useEffect(() => {

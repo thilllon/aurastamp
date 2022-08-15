@@ -1,5 +1,4 @@
 import { gaEvent } from '@/components/GoogleAnalytics';
-import { GoogleColor } from '@/components/svgIcons/Google';
 import { isDemo } from '@/utils/common';
 import { GitHub } from '@mui/icons-material';
 import { Box, Button, CircularProgress } from '@mui/material';
@@ -135,26 +134,6 @@ export const LoginNextAuth = ({ sx }: { sx?: SxProps }) => {
       >
         {t('Kakao')}
       </Button>
-      {false && (
-        <Button
-          disabled={disabled}
-          sx={{ display: { xs: 'none', md: 'inline-flex' }, width: '100%', ...googleStyle }}
-          onClick={makeOnClick('google')}
-          startIcon={isLoading['google'] ? <CircularProgress /> : <GoogleColor fontSize='small' />}
-        >
-          {t('Google로 로그인하기')}
-        </Button>
-      )}
-      {false && (
-        <Button
-          disabled={disabled}
-          sx={{ display: { md: 'none' }, width: '48%', ...googleStyle }}
-          onClick={makeOnClick('google')}
-          startIcon={isLoading['google'] ? <CircularProgress /> : <GoogleColor fontSize='small' />}
-        >
-          {t('Google')}
-        </Button>
-      )}
     </Box>
   );
 };

@@ -1,5 +1,4 @@
 // eslint-disable-next-line no-restricted-imports
-import { ChanneltalkScript } from '@/components/dynamicScripts/Channeltalk';
 import { GoogleAnalyticsScript, useGoogleAnalytics } from '@/components/GoogleAnalytics';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import createEmotionCache from '@/createEmotionCache';
@@ -62,26 +61,16 @@ const MyApp = ({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
   useProgress();
   useScrollTop();
   useGoogleAnalytics();
-  // useMixpanel();
   useHotjar();
 
   const getLayout = Component.getLayout ?? ((page) => page);
-
-  // console.log('## _app');
 
   return (
     <>
       <Head>
         <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no' />
-        <meta
-          name='google-site-verification'
-          content={process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION}
-        />
       </Head>
-      {/* <ProvedWork /> */}
       <GoogleAnalyticsScript />
-      <ChanneltalkScript />
-      {/* <MixpanelScript debug={true} /> */}
 
       <CacheProvider value={emotionCache}>
         <QueryClientProvider client={queryClient}>
@@ -120,5 +109,3 @@ const MyApp = ({ Component, emotionCache = clientSideEmotionCache, pageProps }: 
 };
 
 export default appWithTranslation(MyApp);
-
-// export { reportWebVitals } from 'next-axiom';

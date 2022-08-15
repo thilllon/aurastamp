@@ -22,9 +22,6 @@ export const BaseLayout = ({ children }: { children?: ReactNode }) => {
           flex: 1,
           display: 'flex',
           pt: theme.header.height,
-          // [theme.breakpoints.up('md')]: {
-          //   pl: theme.sidebar.width,
-          // },
         }}
       >
         <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', width: '100%' }}>
@@ -32,7 +29,7 @@ export const BaseLayout = ({ children }: { children?: ReactNode }) => {
         </Box>
       </Box>
 
-      <CustomFooter />
+      {/* <CustomFooter /> */}
     </>
   );
 };
