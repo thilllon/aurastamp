@@ -121,7 +121,6 @@ export const ModalDecoder = ({
       const formData = new FormData();
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
-
       const res = await axios.post(url, formData);
     } catch (err) {
       console.error(err);

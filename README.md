@@ -1,1 +1,1 @@
-# picasso-private
+# aurastamp
