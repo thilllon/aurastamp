@@ -96,7 +96,7 @@ export default function DecodePage() {
       return;
     }
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    const url = baseUrl + '/decode_stamp';
+    const url = baseUrl + '/decode';
     const formData = new FormData();
     formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
     if (modelName) {
