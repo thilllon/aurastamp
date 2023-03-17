@@ -1,6 +1,5 @@
-import { client, _QueryOptions } from '@/services/client';
 import axios, { AxiosError } from 'axios';
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from 'react-query';
+import { useMutation, UseMutationOptions, UseQueryOptions } from 'react-query';
 
 export type MutationOptions<Output, Input, Context = unknown> =
   | Omit<UseMutationOptions<Output, AxiosError, Input, Context>, 'mutationFn'>

@@ -15,6 +15,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
   Component: NextPage & { getLayout?: (page: ReactElement) => ReactNode };
+  pageProps: any;
 }
 
 const clientSideEmotionCache = createEmotionCache(); // client-side cache, shared for the whole session of the user in the browser.
@@ -34,7 +35,7 @@ const queryClient = new QueryClient({
 
 const MyApp = ({
   Component,
-  pageProps: { session, dehydratedState, ...pageProps },
+  pageProps: { dehydratedState, ...pageProps },
   emotionCache = clientSideEmotionCache,
 }: MyAppProps) => {
   useGoogleAnalytics();
@@ -57,4 +58,5 @@ const MyApp = ({
     </QueryClientProvider>
   );
 };
+
 export default appWithTranslation(MyApp);

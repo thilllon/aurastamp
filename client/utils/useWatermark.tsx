@@ -12,7 +12,7 @@ const Portal = ({ children, selector, target }: PortalProps) => {
   const ref = useRef<Element>();
   useEffect(() => {
     const portalId = 'portal-root';
-    setHasMounted(true);
+    setHasMounted(true); 
     if (document) {
       const dom = document.createElement('div');
       dom.setAttribute('id', portalId);
