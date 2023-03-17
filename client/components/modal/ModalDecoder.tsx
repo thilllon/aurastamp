@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-import { Box, Modal, Alert, IconButton, Button, Input } from '@mui/material';
-import React, { useState, ChangeEventHandler } from 'react';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import { Alert, Box, IconButton, Modal } from '@mui/material';
+import { useState } from 'react';
 
 type ModalDecoderProps = {
   open?: boolean;
@@ -112,7 +112,7 @@ export const ModalDecoder = ({
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    let url = baseUrl + '/update_like_cnt';
+    let url = baseUrl + '/update_like_count';
     // 버튼 클릭, 클릭 취소
     url += !likeBtnClicked ? '/True' : '/False';
     setLikeBtnClicked((likeBtnClicked) => !likeBtnClicked);
@@ -133,7 +133,7 @@ export const ModalDecoder = ({
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    let url = baseUrl + '/update_dislike_cnt';
+    let url = baseUrl + '/update_dislike_count';
     // 버튼 클릭, 클릭 취소
     url += !dislikeBtnClicked ? '/True' : '/False';
     setDislikeBtnClicked((dislikeBtnClicked) => !dislikeBtnClicked);
@@ -168,7 +168,7 @@ export const ModalDecoder = ({
           </IconButton>
         </Box>
         <Box sx={contentsBoxStyle}>
-           {hiddenImageUrl && (
+          {hiddenImageUrl && (
             <>
               <Box sx={{ mt: 3, fontWeight: '600', fontSize: '16px' }}>🎨 Hidden Image</Box>
               <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
@@ -190,7 +190,6 @@ export const ModalDecoder = ({
               </Alert>
             </>
           )}
-         
         </Box>
         <Box sx={bottomBoxStyle}>
           <Box sx={viewBoxStyle}>{viewCnt} Views 😎</Box>
