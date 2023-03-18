@@ -1,0 +1,7 @@
+curl --location 'https://api.aurastamp.com/encode_stamp' \
+--form 'model_name="the"' \
+--form 'text="this is the message"' \
+--form 'file=@"/Users/jakelee/git/aurastamp-frontend/assets/img1.png"'
+
+###
+

@@ -1,0 +1,30 @@
+name: Periodic HTTP request with POST method
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'
+  schedule:
+    - cron: '0 */4 * * *' # Runs every 4 hours
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: HTTP POST request
+        uses: wei/curl@v1
+        with:
+          args: |
+            -X POST
+            -H "Content-Type: multipart/form-data" 
+            -F "file=@./assets/img1.png"    
+            https://api.aurastamp.com/encode_stamp
+
