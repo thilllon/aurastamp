@@ -10,48 +10,9 @@ export type QueryOptions<Output, Input> = Omit<
   'queryKey' | 'queryFn'
 >;
 
-// --------------------------------
-// get tasks
-// --------------------------------
-// type EncodeImageInput = {
-//   jobId: string;
-//   skip?: number;
-//   take?: number;
-//   status?: string;
-// };
-
-// type Task = {
-//   id: string;
-//   selected: boolean; // 작업완료했는지
-//   order: number;
-//   title: string;
-// };
-
-// export type GetTaskListOutput = {
-//   tasks: Task[];
-// };
-
-// export const useGetTaskList = (
-//   input: EncodeImageInput,
-//   options?: _QueryOptions<EncodeImageInput, GetTaskListOutput>
-// ) => {
-//   const [session] = useCustomSession();
-//   const query = useQuery(
-//     ['TASKS', input],
-//     async ({ queryKey }) => {
-//       client.defaults.headers.common.authorization = session?.user.accessToken as string;
-//       const { jobId, ...params } = queryKey[1];
-//       const response = await client.get<GetTaskListOutput>(`/jobs/${jobId}/tasks`, { params });
-//       return response.data;
-//     },
-//     options
-//   );
-//   return query;
-// };
-
-// --------------------------------
-// encode image
-// --------------------------------
+const client = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URI,
+});
 
 export type EncodeImageInput = {
   file: File | Blob;
@@ -70,14 +31,12 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
     formData.append('file', file);
     formData.append('model_name', modelName);
     formData.append('text', hiddenMessage);
+    formData.append('return_type', returnType);
     if (hiddenImage) {
       formData.append('media', hiddenImage);
     }
-    formData.append('return_type', returnType);
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    const url = baseUrl + '/encode';
-    const response = await axios.post<EncodeImageOutput>(url, formData);
+    const response = await client.post<EncodeImageOutput>('/encode', formData);
     return response.data;
   }, options);
 };

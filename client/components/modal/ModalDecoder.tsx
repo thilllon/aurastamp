@@ -1,11 +1,11 @@
-import axios from 'axios';
-
+import { replaceURL } from '@/utils/common';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { Alert, Box, IconButton, Modal } from '@mui/material';
+import axios from 'axios';
 import { useState } from 'react';
 
 type ModalDecoderProps = {
@@ -63,30 +63,6 @@ const viewBoxStyle = {
   fontWeight: 'bold',
 };
 
-export const replaceURL = (inputText: string) => {
-  // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
-  // const exp =/(?:^|\b)((((https?|ftp|file|):\/\/)|[\w.])+\.[a-z]{2,3}(?:\:[0-9]{1,5})?(?:\/.*)?)([,\s]|$)/ig; /* eslint-disable-line */
-  const exp =
-    /(?:^|\b)(([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?)([,\s]|$)/gi; /* eslint-disable-line */
-  let temp = inputText.replace(exp, '<a href="$1" target="_blank">$1</a>');
-  let result = '';
-
-  while (temp.length > 0) {
-    const pos = temp.indexOf('href="');
-    if (pos == -1) {
-      result += temp;
-      break;
-    }
-    result += temp.substring(0, pos + 6);
-
-    temp = temp.substring(pos + 6, temp.length);
-    if (temp.indexOf('://') > 8 || temp.indexOf('://') == -1) {
-      result += 'http://';
-    }
-  }
-  return result;
-};
-
 export const ModalDecoder = ({
   open = false,
   modelName,
@@ -111,8 +87,7 @@ export const ModalDecoder = ({
       onClickDislikeBtn();
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    let url = baseUrl + '/update_like_count';
+    let url = '/update_like_count';
     // 버튼 클릭, 클릭 취소
     url += !likeBtnClicked ? '/True' : '/False';
     setLikeBtnClicked((likeBtnClicked) => !likeBtnClicked);
@@ -121,7 +96,9 @@ export const ModalDecoder = ({
       const formData = new FormData();
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
-      const res = await axios.post(url, formData);
+      const res = await axios.post(url, formData, {
+        baseURL: process.env.NEXT_PUBLIC_API_URI,
+      });
     } catch (err) {
       console.error(err);
     }
@@ -132,8 +109,7 @@ export const ModalDecoder = ({
       onClickLikeBtn();
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    let url = baseUrl + '/update_dislike_count';
+    let url = '/update_dislike_count';
     // 버튼 클릭, 클릭 취소
     url += !dislikeBtnClicked ? '/True' : '/False';
     setDislikeBtnClicked((dislikeBtnClicked) => !dislikeBtnClicked);
@@ -143,7 +119,9 @@ export const ModalDecoder = ({
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
 
-      const res = await axios.post(url, formData);
+      const res = await axios.post(url, formData, {
+        baseURL: process.env.NEXT_PUBLIC_API_URI,
+      });
     } catch (err) {
       console.error(err);
     }

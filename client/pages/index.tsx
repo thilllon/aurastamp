@@ -8,10 +8,5 @@ export default function IndexPage({}: IndexPageProps) {
 }
 
 export const getServerSideProps: GetServerSideProps<IndexPageProps> = async ({ req, res }) => {
-  return {
-    props: {},
-    redirect: {
-      destination: '/decode',
-    },
-  };
+  return { props: {}, redirect: { destination: '/decode' } };
 };

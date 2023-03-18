@@ -52,23 +52,6 @@ export const vercelClient = axios.create({
   // cancelToken: source.token,
 });
 
-// client.interceptors.request.use(
-//   async (config) => {
-//     // const value = await redisClient.get(rediskey);
-//     // const keys = JSON.parse(value);
-
-//     config.headers = {
-//       // Authorization: `Bearer ${keys.access_token}`,
-//       // Accept: 'application/json',
-//       // 'Content-Type': 'application/x-www-form-urlencoded',
-//     };
-//     return config;
-//   },
-//   (err) => {
-//     Promise.reject(err);
-//   }
-// );
-
 client.interceptors.response.use(
   (response) => {
     return response;
@@ -84,8 +67,6 @@ client.interceptors.response.use(
   }
 );
 
-// TODO: queryKey: (string | TInput)[]; 현재 패키지에 이렇게 정의되어있음. 첫번째 항은 항상 string이고 두번째 항은 항상 input param object 이므로 조금 더 specific한 타입을 사용하는 것이 좋음. 향후 react-query PR할 것.
-
 export type _MutationOptions<TInput, TOutput, Context = unknown> =
   | Omit<UseMutationOptions<TOutput, AxiosError, TInput, Context>, 'mutationFn'>
   | undefined;
@@ -94,34 +75,6 @@ export type _QueryOptions<TInput, TOutput> = Omit<
   UseQueryOptions<TOutput, AxiosError, TOutput, [string, TInput]>,
   'queryKey' | 'queryFn'
 >;
-
-// 샘플
-// useQuery<
-//   GetTaskListOutput,
-//   AxiosError,
-//   GetTaskListOutput,
-//   [string, GetTaskListInput]
-// >();
-
-// type TQueryFn<TInput, TOutput> = ({ queryKey }: { queryKey: [string, TInput] }) => Promise<TOutput>;
-
-// const makeQueryHook = <TInput, TOutput>(queryKey: string, queryFn: TQueryFn<TInput, TOutput>) => {
-//   return (input: TInput, options?: QueryOptions<TInput, TOutput>) => {
-//     const { data: session } = useSessionTmp();
-//     client.defaults.headers.common.Authorization = session?.user.accessToken as string;
-//     return useQuery<TOutput, AxiosError, TOutput, [string, TInput]>([queryKey, input], queryFn, {
-//       retry: (failureCount, error) => {
-//         if (error?.response?.status === 403) {
-//           return true;
-//         }
-//         return true;
-//       },
-//       onError: async (err: AxiosError) => {
-//       },둣
-//       ...options,
-//     });
-//   };
-// };
 
 export const makeMutationHook = <TInput, TOutput>(
   callback: (input: TInput) => Promise<TOutput>

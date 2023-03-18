@@ -11,36 +11,8 @@ import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState 
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
 
-const MAX_MESSAGE_LENGTH = 255;
 const footerHeight = 120;
 const defaultModelName = 'the';
-
-export const downloadBase64String = (b64String: string) => {
-  const fileName = 'aurastamp_' + Date.now() + '.png';
-  const downloadLink = document.createElement('a');
-  downloadLink.download = fileName;
-  downloadLink.innerHTML = 'Download File';
-  downloadLink.href = 'data:image/png;base64,' + b64String;
-  downloadLink.click();
-};
-
-export const base64ToBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-  const byteCharacters = atob(b64Data); // TODO: deprecated. Buffer.from으로 변경할 예정
-  // const byteCharacters = Buffer.from(b64Data, 'base64');
-  const byteArrays = [];
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
-};
 
 export default function DecodePage() {
   const [originalFile, setOriginalFile] = useState<File>();
@@ -95,8 +67,6 @@ export default function DecodePage() {
     if (!croppedBlob) {
       return;
     }
-    const baseUrl = process.env.NEXT_PUBLIC_API_URI;
-    const url = baseUrl + '/decode';
     const formData = new FormData();
     formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
     if (modelName) {
@@ -104,7 +74,9 @@ export default function DecodePage() {
     }
     try {
       setIsLoading(true);
-      const res = await axios.post(url, formData);
+      const res = await axios.post('/decode', formData, {
+        baseURL: process.env.NEXT_PUBLIC_API_URI,
+      });
       setHashString(res.data.hash_string ?? '');
       setHiddenMessage(res.data.secret ?? '');
       setHiddenImageUrl(res.data.secret_image ?? '');
