@@ -9,8 +9,8 @@ on:
         default: 'warning'
       tags:
         description: 'Test scenario tags'
-  schedule:
-    - cron: '0 */4 * * *' # Runs every 4 hours
+  # schedule:
+  #   - cron: '0 */4 * * *' # Runs every 4 hours
 
 jobs:
   request:
@@ -26,5 +26,4 @@ jobs:
             -X POST
             -H "Content-Type: multipart/form-data" 
             -F "file=@./assets/img1.png"    
-            https://api.aurastamp.com/encode_stamp
-
+            https://api.aurastamp.com/encode
