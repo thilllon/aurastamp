@@ -1,4 +1,1 @@
-import axios from 'axios';
-
-
-clas
+export * from './aurastamp';
