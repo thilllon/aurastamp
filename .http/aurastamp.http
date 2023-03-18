@@ -1,7 +1,0 @@
-###
-curl --location --request POST 'https://api.aurastamp.com/encode' \
---form 'model_name="the"' \
---form 'text="this is the message"' \
---form 'file=@"../assets/img1.png"'
-
-
