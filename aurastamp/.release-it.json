@@ -3,8 +3,9 @@
     "commitMessage": "chore: release ${version}"
   },
   "github": {
-    "release": true,
-    "autoGenerate": true,
-    "web": true
+    "release": true
+  },
+  "npm": {
+    "publish": true
   }
 }
