@@ -41,6 +41,7 @@ const MyApp = ({
   useGoogleAnalytics();
 
   const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={dehydratedState}>

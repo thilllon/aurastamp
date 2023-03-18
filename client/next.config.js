@@ -10,20 +10,6 @@ const isLocal = typeof process.env.NEXT_PUBLIC_VERCEL_ENV === 'undefined';
 const sentryDsn = 'https://b24dc675d1984f0d9a139ec1635897f8@o1216080.ingest.sentry.io/6358027';
 const sentryEnv = isLocal ? 'local' : process.env.NEXT_PUBLIC_VERCEL_ENV;
 
-const essentialEnvVars = [
-  // --------------------------------
-  // NEXTAUTH
-  // --------------------------------
-  'NEXTAUTH_URL',
-  'NEXTAUTH_SECRET',
-];
-
-essentialEnvVars.forEach((envVar) => {
-  if (!process.env[envVar]) {
-    throw new Error('Not Found: ' + envVar);
-  }
-});
-
 /** @type {import('next').NextConfig} */
 let nextConfig = {
   reactStrictMode: true,
@@ -44,10 +30,7 @@ let nextConfig = {
     NEXT_PUBLIC_APP_TITLE: '',
     NEXT_PUBLIC_COMPANY_NAME: '',
     NEXT_PUBLIC_DEFAULT_LOCALE: 'en',
-    NEXT_PUBLIC_API_URI: 'https://stamp-fastapi.onrender.com',
-    // NEXT_PUBLIC_API_URI: process.env.API_URI ?? 'https://api.aurastamp.com',
-
-    // http://20.41.116.194:8000
+    NEXT_PUBLIC_API_URI: 'https://api.aurastamp.com',
     // --------------------------------
     // sentry
     // --------------------------------
@@ -57,14 +40,10 @@ let nextConfig = {
     NEXT_PUBLIC_SENTRY_ENV: sentryEnv,
     SENTRY_ENV: sentryEnv,
     // --------------------------------
-    // middleware
-    // --------------------------------
-    MIDDLEWARE_ACCESS_KEY: process.env.VERCEL_GITHUB_COMMIT_SHA ?? 'carillon',
-    // --------------------------------
     // google analytics
     // --------------------------------
     NEXT_PUBLIC_GA_TRACKING_ID: 'G-JQVMS5Z7S3',
-    NEXT_PUBLIC_GOOGLE_TAG_MANAGER: 'https://www.googletagmanager.com/ns.html?id=GTM-K7BC3T2',
+    NEXT_PUBLIC_GOOGLE_TAG_MANAGER: 'https://www.googletagmanager.com/gtag/js?id=G-JQVMS5Z7S3',
   },
   images: {
     // deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
