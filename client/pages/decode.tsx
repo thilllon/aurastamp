@@ -2,11 +2,11 @@
 import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalDecoder } from '@/components/modal/ModalDecoder';
+import { axiosClient } from '@/services/hooks';
 import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
-import axios from 'axios';
 import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
@@ -48,7 +48,7 @@ export default function DecodePage() {
     // event handler for file load, unload
     const file = ev.target.files?.[0] ?? undefined;
     setOriginalFile(file);
-    // FIXME: blob=>file 변환할것
+    // FIXME: blob => file 변환할것
     setCroppedBlob(file);
   };
 
@@ -68,15 +68,13 @@ export default function DecodePage() {
       return;
     }
     const formData = new FormData();
-    formData.append('file', croppedBlob); // FIX: file에서 croppedBlob으로 변경
+    formData.append('file', croppedBlob); // FIXME: file에서 croppedBlob으로 변경
     if (modelName) {
       formData.append('model_name', modelName);
     }
     try {
       setIsLoading(true);
-      const res = await axios.post('/decode', formData, {
-        baseURL: process.env.NEXT_PUBLIC_API_URI,
-      });
+      const res = await axiosClient.post('/decode', formData);
       setHashString(res.data.hash_string ?? '');
       setHiddenMessage(res.data.secret ?? '');
       setHiddenImageUrl(res.data.secret_image ?? '');

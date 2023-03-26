@@ -10,7 +10,7 @@ export type QueryOptions<Output, Input> = Omit<
   'queryKey' | 'queryFn'
 >;
 
-const client = axios.create({
+export const axiosClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URI,
 });
 
@@ -36,7 +36,7 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
       formData.append('media', hiddenImage);
     }
 
-    const response = await client.post<EncodeImageOutput>('/encode', formData);
+    const response = await axiosClient.post<EncodeImageOutput>('/encode', formData);
     return response.data;
   }, options);
 };

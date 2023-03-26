@@ -1,3 +1,4 @@
+import { axiosClient } from '@/services/hooks';
 import { replaceURL } from '@/utils/common';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
@@ -5,7 +6,6 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { Alert, Box, IconButton, Modal } from '@mui/material';
-import axios from 'axios';
 import { useState } from 'react';
 
 type ModalDecoderProps = {
@@ -91,14 +91,11 @@ export const ModalDecoder = ({
     // 버튼 클릭, 클릭 취소
     url += !likeBtnClicked ? '/True' : '/False';
     setLikeBtnClicked((likeBtnClicked) => !likeBtnClicked);
-
     try {
       const formData = new FormData();
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
-      const res = await axios.post(url, formData, {
-        baseURL: process.env.NEXT_PUBLIC_API_URI,
-      });
+      await axiosClient.post(url, formData);
     } catch (err) {
       console.error(err);
     }
@@ -119,9 +116,7 @@ export const ModalDecoder = ({
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
 
-      const res = await axios.post(url, formData, {
-        baseURL: process.env.NEXT_PUBLIC_API_URI,
-      });
+      await axiosClient.post(url, formData);
     } catch (err) {
       console.error(err);
     }

@@ -31,7 +31,7 @@ export const ModalEncoder = ({
 }: ModalEncoderProps) => {
   const maxMessageLength = 255;
   const [hiddenMessage, setHiddenMessage] = useState('');
-  const [hiddenImage, setHiddenImage] = useState<File | undefined>(undefined);
+  const [hiddenImage, setHiddenImage] = useState<File | undefined>();
   const [hiddenImagePreviewUrl, setHiddenImagePreviewUrl] = useState<string>('');
 
   const resetAllContents = () => {

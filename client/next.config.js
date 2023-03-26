@@ -27,8 +27,6 @@ let nextConfig = {
     // public
     // --------------------------------
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_APP_TITLE: '',
-    NEXT_PUBLIC_COMPANY_NAME: '',
     NEXT_PUBLIC_DEFAULT_LOCALE: 'en',
     NEXT_PUBLIC_API_URI: 'https://api.aurastamp.com',
     // --------------------------------

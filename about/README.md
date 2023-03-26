@@ -1,5 +1,7 @@
 # Notion Custom Domain
 
+Visit [https://about.aurastamp.com](https://about.aurastamp.com)
+
 ```sh
 # deploy to vercel production
 vc --prod
