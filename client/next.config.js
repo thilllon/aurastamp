@@ -29,6 +29,9 @@ let nextConfig = {
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_DEFAULT_LOCALE: 'en',
     NEXT_PUBLIC_API_URI: 'https://api.aurastamp.com',
+    NEXT_PUBLIC_ABOUTUS_URL:
+      'https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4',
+    // NEXT_PUBLIC_ABOUTUS_URL: 'https://about.aurastamp.com',
     // --------------------------------
     // sentry
     // --------------------------------

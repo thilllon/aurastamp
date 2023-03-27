@@ -10,7 +10,7 @@ import {
   OutlinedInput,
   Typography,
 } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface CommandPaletteProps {
   cssProps?: SerializedStyles;

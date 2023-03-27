@@ -1,15 +1,7 @@
 import { Logout as LogoutIcon, Person } from '@mui/icons-material';
-import {
-  Avatar,
-  Box,
-  CircularProgress,
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-} from '@mui/material';
+import { Avatar, Box, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { useRouter } from 'next/router';
-import React, { MouseEvent, useCallback, useState } from 'react';
+import { MouseEvent, useCallback, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 export const IconButtonMenu = () => {

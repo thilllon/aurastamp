@@ -15,6 +15,7 @@ export const FRNCC = {
   justifyContent: 'center',
   alignItems: 'center',
 };
+
 export const frnce = css`
   display: flex;
   flex-flow: row nowrap;
@@ -147,9 +148,3 @@ export const FRNSC = {
   justifyContent: 'flex-start',
   alignItems: 'center',
 };
-
-// white-space: nowrap;
-// text-overflow: ellipsis;
-// width: 100px;
-// overflow: hidden;
-// background: gainsboro;

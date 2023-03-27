@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Cropper } from '@/components/Cropper';
+import { Cropper } from '@/components/cropper/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalDecoder } from '@/components/modal/ModalDecoder';
 import { axiosClient } from '@/services/hooks';
@@ -7,7 +7,7 @@ import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
-import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
+import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
 

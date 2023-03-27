@@ -1,8 +1,8 @@
 import { Add as AddIcon, Edit as EditIcon, KeyboardArrowUp } from '@mui/icons-material';
-import { Box, Fab, FabProps, Zoom } from '@mui/material';
+import { Fab, FabProps, Zoom } from '@mui/material';
 import { green } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
-import React, { ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 const fabStyle = {
   position: 'absolute',

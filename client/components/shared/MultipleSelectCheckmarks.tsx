@@ -11,7 +11,7 @@ import {
   SelectChangeEvent,
   SelectProps,
 } from '@mui/material';
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 
 const ITEM_HEIGHT = 48;

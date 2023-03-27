@@ -25,7 +25,6 @@
     "next": "^12.1.5",
     "next-i18next": "^11.0.0",
     "next-images": "^1.8.4",
-    "next-pwa": "^5.5.2",
     "react": "^18.0.0",
     "react-device-detect": "^2.2.2",
     "react-dom": "^18.0.0",
@@ -35,10 +34,8 @@
     "react-query": "^3.38.0",
     "react-use": "^17.3.2",
     "react-web-share": "^1.1.6",
-    "sharp": "^0.30.4",
     "ts-essentials": "^9.1.2",
-    "uuid": "^8.3.2",
-    "yup": "^0.32.11"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",

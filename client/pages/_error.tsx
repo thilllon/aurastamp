@@ -1,6 +1,6 @@
+import * as Sentry from '@sentry/nextjs';
 import { NextPage } from 'next';
 import NextErrorComponent from 'next/error';
-import * as Sentry from '@sentry/nextjs';
 
 type MyErrorProps = any;
 

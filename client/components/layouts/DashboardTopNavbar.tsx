@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { AppBar, AppBarProps, Box, Typography } from '@mui/material';
+import { AppBar, AppBarProps, Box } from '@mui/material';
 import Image from 'next/image';
 
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {

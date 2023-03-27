@@ -1,4 +1,2 @@
 .next
-storybook-static
-mockServiceWorker.js
-ckeditor5/**
+pnpm-lock.yaml

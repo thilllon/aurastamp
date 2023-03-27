@@ -4,7 +4,7 @@ import {
   canvasToBlob,
   centerAspectCrop,
   toReadableSize,
-} from '@/components/CropperHelper';
+} from '@/components/cropper/CropperHelper';
 import {
   ArrowBack as ArrowBackIcon,
   Check as CheckIcon,
@@ -22,8 +22,7 @@ import {
   Input,
   Typography,
 } from '@mui/material';
-import Image from 'next/image';
-import React, { ChangeEventHandler, SyntheticEvent, useRef, useState } from 'react';
+import { ChangeEventHandler, SyntheticEvent, useRef, useState } from 'react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useDebounce } from 'react-use';

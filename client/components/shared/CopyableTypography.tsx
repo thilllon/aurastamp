@@ -1,9 +1,4 @@
-import React, { ReactNode, useState, useEffect, useContext } from 'react';
-import { css, SerializedStyles } from '@emotion/react';
-import { Box, Typography, Container, TypographyProps } from '@mui/material';
-import { useRouter } from 'next/router';
-import { Link } from '@/components/shared/Link';
-import Image from 'next/image';
+import { Typography, TypographyProps } from '@mui/material';
 
 type CopyableTypographyProps = TypographyProps;
 

@@ -69,8 +69,6 @@ export const canvasPreview = async (
 
 let previewUrl = '';
 
-console.log('🚀 ~ file: tmp.tsx ~ line 86 ~ previewUrl', previewUrl);
-
 export const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | null> => {
   console.info('## canvasToBlob');
 

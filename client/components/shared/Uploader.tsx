@@ -1,17 +1,8 @@
-import { Link } from '@/components/shared/Link';
 import { toReadableSize } from '@/utils/common';
 import { SerializedStyles } from '@emotion/react';
 import { Delete } from '@mui/icons-material';
-import {
-  Box,
-  ButtonBase,
-  Card,
-  CardActionArea,
-  CardContent,
-  IconButton,
-  Typography,
-} from '@mui/material';
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import { Box, Card, CardActionArea, CardContent, IconButton, Typography } from '@mui/material';
+import { MouseEventHandler, useEffect, useState } from 'react';
 import { DropzoneOptions, useDropzone } from 'react-dropzone';
 import { v4 as uuid } from 'uuid';
 

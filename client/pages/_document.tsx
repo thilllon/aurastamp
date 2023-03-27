@@ -1,8 +1,8 @@
-import Document, { Html, Head as DocumentHead, Main, NextScript } from 'next/document';
-import React from 'react';
-import createEmotionServer from '@emotion/server/create-instance';
 import { createEmotionCache } from '@/styles/emotion';
 import { GoogleAnalysisScript } from '@/utils/useGoogleAnalytics';
+import createEmotionServer from '@emotion/server/create-instance';
+import Document, { Head as DocumentHead, Html, Main, NextScript } from 'next/document';
+import React from 'react';
 
 export default class MyDocument extends Document {
   render() {

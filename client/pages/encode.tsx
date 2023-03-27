@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { Cropper } from '@/components/Cropper';
+import { Cropper } from '@/components/cropper/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalEncoder } from '@/components/modal/ModalEncoder';
-import { useEncodeImage } from '@/services/hooks';
+import { useEncodeImage } from '@/services/useEncodeImage';
 import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
-import { Alert, Box, Button, CircularProgress, Container, TextField } from '@mui/material';
-import React, { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
+import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
+import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName, isDesktop } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
 

@@ -1,14 +1,13 @@
 import { Footer } from '@/components/Footer';
 import { DashboardTopNavbar } from '@/components/layouts/DashboardTopNavbar';
-import { WorkOutlineOutlined } from '@mui/icons-material';
-import HelpIcon from '@mui/icons-material/Help';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import HelpIcon from '@mui/icons-material/Help';
 import SearchIcon from '@mui/icons-material/Search';
-import { BottomNavigation, BottomNavigationAction, Box, Paper, SxProps, Fab } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Box, Fab, Paper, SxProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
+import { ReactElement, ReactNode } from 'react';
 import { isMobile } from 'react-device-detect';
-import React, { ReactElement, ReactNode } from 'react';
 
 const DashboardLayoutRoot = styled('main')(({ theme }) => ({
   display: 'flex',
