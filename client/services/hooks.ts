@@ -30,7 +30,7 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
     const formData = new FormData();
     formData.append('file', file);
     formData.append('model_name', modelName);
-    formData.append('text', hiddenMessage);
+    formData.append('message', hiddenMessage);
     formData.append('return_type', returnType);
     if (hiddenImage) {
       formData.append('media', hiddenImage);
