@@ -15,15 +15,21 @@ export const toReadableSize = (bytes: number, decimalPlace = 1) => {
   return bytes.toFixed(decimalPlace) + ' ' + units[idx];
 };
 
-export const download = (blob: Blob | MediaSource, fileName: string) => {
-  const previewUrl = window?.URL?.createObjectURL?.(blob);
-  const anchor = window?.document?.createElement('a');
+export const download = async (blob: Blob | MediaSource, fileName: string) => {
+  if (!window) {
+    return;
+  }
+  const previewUrl = window.URL.createObjectURL(blob);
+  const anchor = window.document.createElement('a');
   anchor.download = fileName;
   anchor.href = previewUrl;
   anchor.click();
-  setTimeout(() => window?.URL?.revokeObjectURL?.(previewUrl), 0);
-  window?.URL?.revokeObjectURL?.(previewUrl);
+  return new Promise<void>((res) => {
+    window.URL.revokeObjectURL(previewUrl);
+    res();
+  });
 };
+
 export const downloadBuffer = (
   arrayBuffer: any,
   fileName: string,
