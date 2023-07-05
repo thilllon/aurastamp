@@ -1,4 +1,4 @@
-import { axiosClient, MutationOptions } from '@/services/hooks';
+import { httpClient, MutationOptions } from '@/services/httpClient';
 import { AxiosError } from 'axios';
 import { useMutation } from 'react-query';
 
@@ -24,7 +24,7 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
       formData.append('media', hiddenImage);
     }
 
-    const response = await axiosClient.post<EncodeImageOutput>('/encode', formData);
+    const response = await httpClient.post<EncodeImageOutput>('/encode', formData);
     return response.data;
   }, options);
 };

@@ -1,4 +1,4 @@
-import { axiosClient } from '@/services/hooks';
+import { httpClient } from '@/services/httpClient';
 import { replaceURL } from '@/utils/common';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
@@ -95,7 +95,7 @@ export const ModalDecoder = ({
       const formData = new FormData();
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
-      await axiosClient.post(url, formData);
+      await httpClient.post(url, formData);
     } catch (err) {
       console.error(err);
     }
@@ -116,7 +116,7 @@ export const ModalDecoder = ({
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
 
-      await axiosClient.post(url, formData);
+      await httpClient.post(url, formData);
     } catch (err) {
       console.error(err);
     }

@@ -56,8 +56,8 @@
 
 # deployment
 
-# mui datatables 사용하기위해
+# mui datatables 사용하기위해 이전 버전의 material 패키지 설치 필요
 
-```
-yarn add @material-ui/core @material-ui/icons
+```sh
+pnpm add @material-ui/core @material-ui/icons
 ```

@@ -10,6 +10,6 @@ export type QueryOptions<Output, Input> = Omit<
   'queryKey' | 'queryFn'
 >;
 
-export const axiosClient = axios.create({
+export const httpClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URI,
 });

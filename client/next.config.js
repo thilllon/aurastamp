@@ -1,31 +1,30 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/
 const { i18n } = require('./next-i18next.config');
 const { withSentryConfig } = require('@sentry/nextjs');
 const withImages = require('next-images');
 
 const isProduction = process.env.NODE_ENV === 'production';
-const isLocal = typeof process.env.NEXT_PUBLIC_VERCEL_ENV === 'undefined';
-const sentryDsn = 'https://b24dc675d1984f0d9a139ec1635897f8@o1216080.ingest.sentry.io/6358027';
-const sentryEnv = isLocal ? 'local' : process.env.NEXT_PUBLIC_VERCEL_ENV;
+
+const sentryConfig = {
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/
+  dsn: 'https://b24dc675d1984f0d9a139ec1635897f8@o1216080.ingest.sentry.io/6358027',
+  env: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'local',
+};
 
 /** @type {import('next').NextConfig} */
 let nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   productionBrowserSourceMaps: true,
   compiler: {
     removeConsole: { exclude: isProduction ? [] : ['log', 'info', 'error'] },
-  },
-  publicRuntimeConfig: {
-    //
   },
   env: {
     // https://vercel.com/docs/concepts/projects/environment-variables#system-environment-variables
     // --------------------------------
     // public
     // --------------------------------
+    NEXT_PUBLIC_APP_TITLE: 'aurastamp',
+
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_DEFAULT_LOCALE: 'en',
     NEXT_PUBLIC_API_URI: 'https://api.aurastamp.com',
@@ -35,11 +34,10 @@ let nextConfig = {
     // --------------------------------
     // sentry
     // --------------------------------
-    // eslint-disable-next-line no-dupe-keys
-    NEXT_PUBLIC_SENTRY_DSN: sentryDsn,
-    SENTRY_DSN: sentryDsn,
-    NEXT_PUBLIC_SENTRY_ENV: sentryEnv,
-    SENTRY_ENV: sentryEnv,
+    NEXT_PUBLIC_SENTRY_DSN: sentryConfig.dsn,
+    SENTRY_DSN: sentryConfig.dsn,
+    NEXT_PUBLIC_SENTRY_ENV: sentryConfig.env,
+    SENTRY_ENV: sentryConfig.env,
     // --------------------------------
     // google analytics
     // --------------------------------
@@ -91,17 +89,10 @@ let nextConfig = {
 };
 
 // NOTE: gif, png, svg 등 이용시 필요
-// nextConfig = withImages(nextConfig);
 
-// FIXME: next-pwa 사용시 windows 10에서 빌드 안되는 문제 발생. 해결방법 못찾음.
-// const withPwa = require('next-pwa');
-// nextConfig = withPwa(nextConfig);
-
-const sentryWebpackPluginOptions = {
-  silent: true,
-};
-
+nextConfig = withImages(nextConfig);
 // Make sure adding Sentry options is the last code to run before exporting, to ensure that your source maps include changes from all other Webpack plugins
-// module.exports = isLocal ? nextConfig : withSentryConfig(nextConfig, sentryWebpackPluginOptions);
-// module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions);
+module.exports = withSentryConfig(nextConfig, {
+  silent: true,
+});
 module.exports = nextConfig;

@@ -59,5 +59,5 @@ module.exports = {
     '@typescript-eslint/ban-types': 'off',
     // '@next/next/no-img-element': 'off',
   },
-  ignorePatterns: ['**/.scripts/**/*.{ts,tsx}'],
+  ignorePatterns: ['**/.scripts/**/*.{ts,tsx}', 'next.config.js'],
 };

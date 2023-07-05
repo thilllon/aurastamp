@@ -2,7 +2,7 @@
 import { Cropper } from '@/components/cropper/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalDecoder } from '@/components/modal/ModalDecoder';
-import { axiosClient } from '@/services/hooks';
+import { httpClient } from '@/services/httpClient';
 import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
@@ -74,7 +74,7 @@ export default function DecodePage() {
     }
     try {
       setIsLoading(true);
-      const res = await axiosClient.post('/decode', formData);
+      const res = await httpClient.post('/decode', formData);
       setHashString(res.data.hash_string ?? '');
       setHiddenMessage(res.data.secret ?? '');
       setHiddenImageUrl(res.data.secret_image ?? '');

@@ -2,7 +2,7 @@
 import { Cropper } from '@/components/cropper/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalEncoder } from '@/components/modal/ModalEncoder';
-import { useEncodeImage } from '@/services/useEncodeImage';
+import { useEncodeImage } from '@/hooks/useEncodeImage';
 import { StampModel } from '@/types/types';
 import { FRNCC } from '@/utils/styles';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
