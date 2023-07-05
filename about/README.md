@@ -7,8 +7,8 @@ Visit [https://about.aurastamp.com](https://about.aurastamp.com)
 vc --prod
 
 ## local dev
-yarn dev
+pnpm dev
 
 ## local debug
-yarn debug
+pnpm debug
 ```
