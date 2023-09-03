@@ -4,3 +4,4 @@ node_modules/
 .cache
 .next
 .vercel
+.DS_store
