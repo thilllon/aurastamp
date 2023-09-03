@@ -12,3 +12,6 @@ node_modules
 
 /app/styles/tailwind.css
 .DS_Store
+
+*.firebase.json
+admin-service-account.firebase.json

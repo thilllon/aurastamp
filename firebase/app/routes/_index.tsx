@@ -17,10 +17,12 @@ export default function Index() {
             </Link>
             <Link to="/og">
               <Button>Original frontpage</Button>
-            </Link>
+            </Link> 
             <Link to="/login">
               <Button>Login</Button>
             </Link>
+            <Link to="/profile">Profile</Link>
+            <Link to="/logout">Logout</Link>
             <Link to="/dashboard">
               <Button>Dashboard Sample</Button>
             </Link>
