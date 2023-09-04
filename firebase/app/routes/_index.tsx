@@ -1,37 +1,14 @@
-import { Box, Button, ButtonGroup, Container, Heading, VStack } from '@chakra-ui/react';
 import type { V2_MetaFunction } from '@remix-run/react';
-import { Link } from '@remix-run/react';
+import { Button } from '../components/ui/button';
 
 export const meta: V2_MetaFunction = () => [{ title: 'Remix Notes' }];
 
 export default function Index() {
   return (
-    <Container as="main" sx={{}}>
-      <VStack>
-        <Heading as={'h1'}>links</Heading>
-
-        <Box>
-          <ButtonGroup>
-            <Link to="/admin">
-              <Button>Admin Dashboard</Button>
-            </Link>
-            <Link to="/og">
-              <Button>Original frontpage</Button>
-            </Link>
-            <Link to="/login">
-              <Button>Login</Button>
-            </Link>
-            <Link to="/profile">Profile</Link>
-            <Link to="/logout">Logout</Link>
-            <Link to="/dashboard">
-              <Button>Dashboard Sample</Button>
-            </Link>
-            <Link to="/chaos">
-              <Button>Chaos</Button>
-            </Link>
-          </ButtonGroup>
-        </Box>
-      </VStack>
-    </Container>
+    <div>
+      <Button color="" variant="outline" size=''>
+        button
+      </Button>
+    </div>
   );
 }
