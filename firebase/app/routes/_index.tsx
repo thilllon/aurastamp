@@ -1,12 +1,12 @@
 import { Box, Button, ButtonGroup, Container, Heading, VStack } from '@chakra-ui/react';
-import type { V2_MetaFunction } from '@remix-run/node';
+import type { V2_MetaFunction } from '@remix-run/react';
 import { Link } from '@remix-run/react';
 
 export const meta: V2_MetaFunction = () => [{ title: 'Remix Notes' }];
 
 export default function Index() {
   return (
-    <Container as="main" sx={{ display: 'flex' }}>
+    <Container as="main" sx={{}}>
       <VStack>
         <Heading as={'h1'}>links</Heading>
 
@@ -17,7 +17,7 @@ export default function Index() {
             </Link>
             <Link to="/og">
               <Button>Original frontpage</Button>
-            </Link> 
+            </Link>
             <Link to="/login">
               <Button>Login</Button>
             </Link>

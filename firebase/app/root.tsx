@@ -17,11 +17,6 @@ export const links: LinksFunction = () => [
   },
 ];
 
-// export const meta: V2_MetaFunction = () => [
-//   { charSet: 'utf-8' },
-//   { name: 'viewport', content: 'width=device-width,initial-scale=1' },
-// ];
-
 interface DocumentProps {
   children: ReactNode;
 }
@@ -46,10 +41,10 @@ const Document = withEmotionCache(({ children }: DocumentProps, emotionCache) =>
   }, []);
 
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
-        {/* <meta charSet="utf-8" /> */}
-        {/* <meta name="viewport" content="width=device-width,initial-scale=1" /> */}
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
         {serverStyleData?.map(({ key, ids, css }) => (
