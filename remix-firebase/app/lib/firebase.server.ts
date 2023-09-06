@@ -5,17 +5,6 @@ import {
 } from 'firebase-admin/app';
 import { isRestError, restApiService } from './services';
 
-export type RestConfigType = {
-  apiKey: string;
-  domain: string;
-};
-
-// Warning: though getRestConfig is only run server side, its return value may be sent to the client
-export const restConfig: RestConfigType = {
-  apiKey: process.env.API_KEY ?? '',
-  domain: 'https://identitytoolkit.googleapis.com',
-};
-
 if (getAdminApps().length === 0) {
   let config;
   if (process.env.NODE_ENV === 'development' && !process.env.SERVICE_ACCOUNT) {
@@ -42,7 +31,10 @@ if (getAdminApps().length === 0) {
 export const signInWithPassword = async (email: string, password: string) => {
   const signInResponse = await restApiService.signInWithPassword(
     { email, password, returnSecureToken: true },
-    restConfig
+    {
+      apiKey: process.env.API_KEY ?? '',
+      domain: 'https://identitytoolkit.googleapis.com',
+    }
   );
 
   if (isRestError(signInResponse)) {

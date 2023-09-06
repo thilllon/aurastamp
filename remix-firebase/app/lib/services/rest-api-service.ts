@@ -1,5 +1,4 @@
 import axios from 'axios';
-import type { RestConfigType } from '../firebase.server';
 
 interface RestError {
   error: {
@@ -39,21 +38,29 @@ type RestSuccess = {
   registered: boolean;
 };
 
+type RestConfigType = {
+  apiKey: string;
+  domain: string;
+};
+
 type SignInWithPasswordBody = {
   email: string;
   password: string;
   returnSecureToken: true;
 };
 
+/**
+ * CAN BE USED IN BOTH SERVER AND BROWSER ENVIRONMENTS
+ */
 export const restApiService = {
   // https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
   signInWithPassword: async (
     body: SignInWithPasswordBody,
-    restConfig: RestConfigType
+    config: RestConfigType
   ): Promise<RestError | RestSuccess> => {
     const { data } = await axios.post<RestSuccess, any>('/v1/accounts:signInWithPassword', body, {
-      baseURL: restConfig.domain,
-      params: { key: restConfig.apiKey },
+      baseURL: config.domain,
+      params: { key: config.apiKey },
     });
     return data;
   },
