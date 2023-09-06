@@ -1,7 +1,6 @@
 import type { ActionArgs } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { Form } from '@remix-run/react';
-
 import { destroySession, getSession } from '~/sessions';
 
 export const action = async ({ request }: ActionArgs) => {
@@ -16,8 +15,8 @@ export default function Logout() {
     <div>
       <h1>Logout</h1>
       <p>Press the button below to log out.</p>
-      <Form method='post'>
-        <button type='submit'>Logout</button>
+      <Form method="post">
+        <button type="submit">Logout</button>
       </Form>
     </div>
   );

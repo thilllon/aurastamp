@@ -2,12 +2,12 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData } from '@remix-run/react';
 
-import { checkSessionCookie, signUp } from '~/server/auth.server';
 import { commitSession, getSession } from '~/sessions';
+import { authService } from '../server';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await getSession(request.headers.get('cookie'));
-  const { uid } = await checkSessionCookie(session);
+  const { uid } = await authService.checkSessionCookie(session);
   const headers = {
     'Set-Cookie': await commitSession(session),
   };
@@ -27,14 +27,10 @@ export const action = async ({ request }: ActionArgs) => {
   if (typeof email !== 'string') return formError;
   if (typeof password !== 'string') return formError;
   try {
-    const sessionCookie = await signUp(name, email, password);
+    const sessionCookie = await authService.signUp(name, email, password);
     const session = await getSession(request.headers.get('cookie'));
     session.set('session', sessionCookie);
-    return redirect('/', {
-      headers: {
-        'Set-Cookie': await commitSession(session),
-      },
-    });
+    return redirect('/', { headers: { 'Set-Cookie': await commitSession(session) } });
   } catch (error) {
     console.error(error);
     return json({ error: String(error) }, { status: 401 });
@@ -47,16 +43,26 @@ export default function Login() {
     <div>
       <h1>Join</h1>
       {actionData?.error ? <p>{actionData.error}</p> : null}
-      <Form method='post'>
-        <input style={{ display: 'block' }} name='name' placeholder='Peter' type='text' />
-        <input style={{ display: 'block' }} name='email' placeholder='you@example.com' type='email' />
-        <input style={{ display: 'block' }} name='password' placeholder='password' type='password' />
-        <button style={{ display: 'block' }} type='submit'>
+      <Form method="post">
+        <input style={{ display: 'block' }} name="name" placeholder="Peter" type="text" />
+        <input
+          style={{ display: 'block' }}
+          name="email"
+          placeholder="you@example.com"
+          type="email"
+        />
+        <input
+          style={{ display: 'block' }}
+          name="password"
+          placeholder="password"
+          type="password"
+        />
+        <button style={{ display: 'block' }} type="submit">
           Join
         </button>
       </Form>
       <p>
-        Do you want to <Link to='/login'>login</Link>?
+        Do you want to <Link to="/login">login</Link>?
       </p>
     </div>
   );

@@ -3,13 +3,11 @@ import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
 import type { FunctionComponent } from 'react';
 import { useEffect, useRef } from 'react';
-
-import { requireAuth } from '~/server/auth.server';
-import { addTodo, getUserTodos, removeTodo } from '~/server/db.server';
+import { authService, todoService } from '../server';
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const user = await requireAuth(request);
-  const todos = await getUserTodos(user.uid);
+  const user = await authService.requireAuth(request);
+  const todos = await todoService.getTodosByUid(user.uid);
   return json({
     message: `Hello ${user.displayName || 'unknown'}!`,
     todos,
@@ -17,7 +15,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const { uid } = await requireAuth(request);
+  const { uid } = await authService.requireAuth(request);
   const form = await request.formData();
   const intent = form.get('intent');
   if (intent === 'create') {
@@ -26,7 +24,7 @@ export const action = async ({ request }: ActionArgs) => {
       return json({ error: 'title is required' }, { status: 400 });
     }
 
-    await addTodo(uid, title);
+    await todoService.addTodo(uid, title);
     return redirect('/');
   }
   if (intent === 'delete') {
@@ -34,7 +32,7 @@ export const action = async ({ request }: ActionArgs) => {
     if (typeof id !== 'string') {
       return json({ error: 'id is required' }, { status: 400 });
     }
-    await removeTodo(uid, id);
+    await todoService.removeTodo(uid, id);
     return redirect('/');
   }
   return json({ error: 'unknown method' }, { status: 400 });
@@ -44,10 +42,10 @@ const TodoComponent: FunctionComponent<{ id: string; title: string }> = ({ id, t
   const fetcher = useFetcher();
   return (
     <li>
-      <fetcher.Form method='post'>
-        <input type='hidden' name='id' value={id} />
+      <fetcher.Form method="post">
+        <input type="hidden" name="id" value={id} />
         <span>{title}</span>
-        <button type='submit' name='intent' value='delete'>
+        <button type="submit" name="intent" value="delete">
           Delete
         </button>
       </fetcher.Form>
@@ -66,13 +64,13 @@ export default function Index() {
     <div>
       <h1>{data.message}</h1>
       <p>
-        Want to <Link to='/logout'>log out</Link>?
+        Want to <Link to="/logout">log out</Link>?
       </p>
       {actionData?.error ? <p style={{ color: 'red' }}>{actionData.error}</p> : null}
-      <Form method='post'>
+      <Form method="post">
         <h2>Create new Todo:</h2>
-        <input ref={ref} name='title' type='text' placeholder='Get Milk' />
-        <button type='submit' name='intent' value='create'>
+        <input ref={ref} name="title" type="text" placeholder="Get Milk" />
+        <button type="submit" name="intent" value="create">
           Create
         </button>
       </Form>

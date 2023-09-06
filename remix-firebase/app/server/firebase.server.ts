@@ -1,21 +1,21 @@
-import { getApps as getServerApps, initializeApp as initializeServerApp, cert as serverCert } from 'firebase-admin/app';
-import { getAuth as getServerAuth } from 'firebase-admin/auth';
+import {
+  cert as adminCert,
+  getApps as getAdminApps,
+  initializeApp as initializeAdminApp,
+} from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { isRestError, restApiService } from '../firebase-rest-service';
 
-import * as firebaseRest from '../firebase-rest';
+// import * as firebaseRest from '../firebase-rest-service';
 
 // Warning: though getRestConfig is only run server side, its return value may be sent to the client
-export const getRestConfig = (): {
-  apiKey: string;
-  domain: string;
-} => {
-  return {
-    apiKey: process.env.API_KEY,
-    domain: 'https://identitytoolkit.googleapis.com',
-  };
+export const getRestConfig = (): { apiKey: string; domain: string } => {
+  return { apiKey: process.env.API_KEY ?? '', domain: 'https://identitytoolkit.googleapis.com' };
 };
+
 const restConfig = getRestConfig();
 
-if (getServerApps().length === 0) {
+if (getAdminApps().length === 0) {
   let config;
   if (process.env.NODE_ENV === 'development' && !process.env.SERVICE_ACCOUNT) {
     console.warn('Missing SERVICE_ACCOUNT environment variable, using local emulator');
@@ -31,22 +31,22 @@ if (getServerApps().length === 0) {
     try {
       const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
       config = {
-        credential: serverCert(serviceAccount),
+        credential: adminCert(serviceAccount),
       };
     } catch {
       throw Error('Invalid SERVICE_ACCOUNT environment variable');
     }
   }
-  initializeServerApp(config);
+  initializeAdminApp(config);
 }
 
 const signInWithPassword = async (email: string, password: string) => {
-  const signInResponse = await firebaseRest.signInWithPassword(
+  const signInResponse = await restApiService.signInWithPassword(
     { email, password, returnSecureToken: true },
     restConfig
   );
 
-  if (firebaseRest.isError(signInResponse)) {
+  if (isRestError(signInResponse)) {
     throw new Error(signInResponse.error.message);
   }
 
@@ -54,6 +54,6 @@ const signInWithPassword = async (email: string, password: string) => {
 };
 
 export const auth = {
-  server: getServerAuth(),
+  server1234: getAuth(),
   signInWithPassword,
 };

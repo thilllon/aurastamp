@@ -2,6 +2,7 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
+    "format": "prettier -w -l .",
     "build": "remix build",
     "dev": "remix dev",
     "start": "remix-serve build",
@@ -11,6 +12,7 @@
     "@remix-run/node": "^1.19.3",
     "@remix-run/react": "^1.19.3",
     "@remix-run/serve": "^1.19.3",
+    "axios": "^1.5.0",
     "firebase-admin": "^11.10.1",
     "firebase-functions": "^4.4.1",
     "isbot": "^3.6.13",
