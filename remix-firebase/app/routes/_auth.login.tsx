@@ -3,9 +3,7 @@ import { json, redirect } from '@remix-run/node';
 import { Link, useActionData, useLoaderData, useSubmit } from '@remix-run/react';
 import { useCallback, useState } from 'react';
 import { commitSession, getSession } from '~/sessions';
-import { isRestError, restApiService } from '../firebase-rest-service';
-import { authService, getRestConfig } from '../server';
-// import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { authService, isRestError, restApiService, restConfig } from '../lib';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await getSession(request.headers.get('cookie'));
@@ -14,8 +12,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   if (uid) {
     return redirect('/', { headers });
   }
-  const { apiKey, domain } = getRestConfig();
-  return json({ apiKey, domain }, { headers });
+  return json(restConfig, { headers });
 };
 
 type ActionData = {
@@ -28,6 +25,10 @@ export const action = async ({ request }: ActionArgs) => {
   let sessionCookie;
   try {
     if (typeof idToken === 'string') {
+      console.log(idToken);
+      console.log(idToken);
+      console.log(idToken);
+      console.log(idToken);
       sessionCookie = await authService.signInWithToken(idToken);
     } else {
       const email = form.get('email');
@@ -80,9 +81,9 @@ export default function Login() {
   return (
     <div>
       <h1>Login</h1>
-      {clientAction?.error || actionData?.error ? (
+      {(clientAction?.error || actionData?.error) && (
         <p>{clientAction?.error || actionData?.error}</p>
-      ) : null}
+      )}
       <form method="post" onSubmit={handleSubmit}>
         <input
           style={{ display: 'block' }}

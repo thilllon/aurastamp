@@ -1,9 +1,8 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData } from '@remix-run/react';
-
 import { commitSession, getSession } from '~/sessions';
-import { authService } from '../server';
+import { authService } from '../lib';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await getSession(request.headers.get('cookie'));
@@ -23,9 +22,11 @@ export const action = async ({ request }: ActionArgs) => {
   const email = form.get('email');
   const password = form.get('password');
   const formError = json({ error: 'Please fill all fields!' }, { status: 400 });
+
   if (typeof name !== 'string') return formError;
   if (typeof email !== 'string') return formError;
   if (typeof password !== 'string') return formError;
+
   try {
     const sessionCookie = await authService.signUp(name, email, password);
     const session = await getSession(request.headers.get('cookie'));

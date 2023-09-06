@@ -3,7 +3,7 @@ import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
 import type { FunctionComponent } from 'react';
 import { useEffect, useRef } from 'react';
-import { authService, todoService } from '../server';
+import { authService, todoService } from '../lib';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await authService.requireAuth(request);
