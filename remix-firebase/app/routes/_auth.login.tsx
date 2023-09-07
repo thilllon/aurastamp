@@ -3,7 +3,7 @@ import { json, redirect } from '@remix-run/node';
 import { Link, useActionData, useLoaderData, useSubmit } from '@remix-run/react';
 import { useCallback, useState } from 'react';
 import { commitSession, getSession } from '~/sessions';
-import { authService, isRestError, restApiService, restConfig } from '../lib';
+import { authService, isRestError, restApiService } from '../lib';
 
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await getSession(request.headers.get('cookie'));
@@ -12,7 +12,13 @@ export const loader = async ({ request }: LoaderArgs) => {
   if (uid) {
     return redirect('/', { headers });
   }
-  return json(restConfig, { headers });
+  return json(
+    {
+      apiKey: process.env.API_KEY ?? '',
+      domain: 'https://identitytoolkit.googleapis.com',
+    },
+    { headers }
+  );
 };
 
 type ActionData = {
