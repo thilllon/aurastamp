@@ -1,17 +1,7 @@
+import type { AxiosError } from 'axios';
 import axios from 'axios';
 
-interface RestError {
-  error: {
-    code: number;
-    message: string;
-    errors: any[];
-  };
-}
-
-export const isRestError = (input: unknown): input is RestError =>
-  !!input && typeof input === 'object' && 'error' in input;
-
-type RestSuccess = {
+type SignInResponse = {
   /**
    * A Firebase Auth ID token for the authenticated user.
    */
@@ -38,11 +28,6 @@ type RestSuccess = {
   registered: boolean;
 };
 
-type RestConfigType = {
-  apiKey: string;
-  domain: string;
-};
-
 type SignInWithPasswordBody = {
   email: string;
   password: string;
@@ -54,14 +39,15 @@ type SignInWithPasswordBody = {
  */
 export const restApiService = {
   // https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
-  signInWithPassword: async (
-    body: SignInWithPasswordBody,
-    config: RestConfigType
-  ): Promise<RestError | RestSuccess> => {
-    const { data } = await axios.post<RestSuccess, any>('/v1/accounts:signInWithPassword', body, {
-      baseURL: config.domain,
-      params: { key: config.apiKey },
-    });
-    return data;
+  signInWithPassword: async (body: SignInWithPasswordBody, apiKey: string) => {
+    try {
+      return axios.post<SignInResponse>('/v1/accounts:signInWithPassword', body, {
+        baseURL: 'https://identitytoolkit.googleapis.com',
+        params: { key: apiKey },
+      });
+    } catch (err) {
+      console.error(err);
+      return err as AxiosError;
+    }
   },
 };

@@ -1,13 +1,15 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
+import { config } from '../constants';
 
 export const { getSession, commitSession, destroySession } = createCookieSessionStorage({
   cookie: {
     name: '__session',
-    secrets: ['fancy-secret-key'],
-    maxAge: 60 * 60 * 24 * 7, // 1 week
+    secrets: [process.env.COOKIE_SECRET ?? ''],
+    maxAge: config.expiresIn,
     sameSite: 'lax',
     path: '/',
     httpOnly: true,
+    secure: config.isProduction,
   },
 });
 

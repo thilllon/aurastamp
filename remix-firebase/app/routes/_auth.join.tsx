@@ -2,11 +2,11 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData } from '@remix-run/react';
 import { CONST, authService } from '../lib';
-import { commitSession, sessionService } from '../sessions.server';
+import { commitSession, sessionService } from '../lib/services/session-service.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await sessionService.getSessionFromCookie(request);
-  const { uid } = await authService.firebase_verifySessionCookie(session);
+  const { uid } = await authService.verifySessionCookie(session);
   const headers = { 'Set-Cookie': await commitSession(session) };
   if (uid) {
     return redirect('/', { headers });
@@ -26,7 +26,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (typeof password !== 'string') return formError;
 
   try {
-    const sessionCookie = await authService.firebase_signUp(name, email, password);
+    const sessionCookie = await authService.signUp(name, email, password);
     const session = await sessionService.getSessionFromCookie(request);
     session.set(CONST.SESSION_KEY, sessionCookie);
     return redirect('/', { headers: { 'Set-Cookie': await commitSession(session) } });

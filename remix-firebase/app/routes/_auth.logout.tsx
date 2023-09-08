@@ -1,6 +1,6 @@
 import { type ActionFunction } from '@remix-run/node';
 import { Form } from '@remix-run/react';
-import { sessionService } from '~/sessions.server';
+import { sessionService } from '~/lib/services/session-service.server';
 
 export const action: ActionFunction = async ({ request }) => {
   return sessionService.destroySessionCookie(request, '/login');

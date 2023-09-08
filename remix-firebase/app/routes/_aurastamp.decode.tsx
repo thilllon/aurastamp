@@ -1,6 +1,9 @@
 import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from 'firebase/storage';
 import { useEffect, useState } from 'react';
 import { firebaseApp } from '../lib';
+import type { V2_MetaFunction } from '@remix-run/react';
+
+export const meta: V2_MetaFunction = () => [{ title: 'Decode' }];
 
 export default function FireBaseExample() {
   const [imageUpload, setImageUpload] = useState<any | undefined>();

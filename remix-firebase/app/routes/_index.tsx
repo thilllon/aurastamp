@@ -1,20 +1,19 @@
-import { Box, Flex, TextFieldInput } from '@radix-ui/themes';
+import { Box, Button, Flex, TextFieldInput } from '@radix-ui/themes';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
 import type { FunctionComponent } from 'react';
 import { useEffect, useRef } from 'react';
-import { Button } from '../components/ui/button';
 import { authService, todoService } from '../lib';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await authService.firebase_requireAuth(request);
+  const user = await authService.requireAuth(request);
   const todos = await todoService.getTodosByUid(user.uid);
   return json({ message: `Hello ${user.displayName || 'unknown'}!`, todos });
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const { uid } = await authService.firebase_requireAuth(request);
+  const { uid } = await authService.requireAuth(request);
   const form = await request.formData();
   const intent = form.get('intent');
   if (intent === 'create') {
@@ -45,7 +44,7 @@ const TodoComponent: FunctionComponent<{ id: string; title: string }> = ({ id, t
       <fetcher.Form method="POST">
         <TextFieldInput type="hidden" name="id" value={id} />
         <Box>{title}</Box>
-        <Button type="submit" name="intent" value="delete" variant="destructive">
+        <Button type="submit" name="intent" value="delete" variant="outline" color="gold">
           delete
         </Button>
       </fetcher.Form>
@@ -79,7 +78,7 @@ export default function Index() {
       </Form>
 
       <ul>
-        {data.todos.map((todo) => (
+        {data.todos.map((todo: any) => (
           <TodoComponent key={todo.id} {...todo} />
         ))}
       </ul>

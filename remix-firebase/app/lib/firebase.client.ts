@@ -1,21 +1,14 @@
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 import { getAuth, inMemoryPersistence, setPersistence } from 'firebase/auth';
+import { config } from './constants';
 
 // Additional SDK
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: 'AIzaSyAA-qPzq2a-jqptIQrb02wuthLZvgPmy0Q',
-  appId: '1:574642274751:web:8a2b60b16038056494e10a',
-  authDomain: 'stegato-app.firebaseapp.com',
-  projectId: 'stegato-app',
-  messagingSenderId: '574642274751',
-  storageBucket: 'stegato-app.appspot.com',
-  measurementId: 'G-B9ZW9G9LKS',
-};
+const firebaseConfig = config.firebase;
 
 console.log('firebaseConfig', firebaseConfig);
 const firebaseApp = initializeApp(firebaseConfig);

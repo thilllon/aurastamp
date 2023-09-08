@@ -1,22 +1,24 @@
-import { Button, RadioGroupItem, Text } from '@radix-ui/themes';
+import { Button, Flex, RadioGroupItem, Text, TextFieldInput } from '@radix-ui/themes';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { Link, useActionData, useLoaderData, useSubmit } from '@remix-run/react';
+import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
+import { isAxiosError } from 'axios';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useCallback, useState } from 'react';
 import { TabsDemo } from '../components/tabs-demo';
 import { Label } from '../components/ui/label';
 import { RadioGroup } from '../components/ui/radio-group';
-import { CONST, authService, isRestError, restApiService } from '../lib';
-import { commitSession, sessionService } from '../sessions.server';
+import { CONST, authService, firebaseAuth, restApiService } from '../lib';
+import { commitSession, sessionService } from '../lib/services/session-service.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await sessionService.getSessionFromCookie(request);
-  const { uid } = await authService.firebase_verifySessionCookie(session);
+  const { uid } = await authService.verifySessionCookie(session);
   if (uid) {
     return redirect('/', { headers: { 'Set-Cookie': await commitSession(session) } });
   }
   return json(
-    { apiKey: process.env.API_KEY ?? '', domain: 'https://identitytoolkit.googleapis.com' },
+    { apiKey: process.env.API_KEY ?? '' },
     { headers: { 'Set-Cookie': await commitSession(session) } }
   );
 };
@@ -31,14 +33,14 @@ export const action: ActionFunction = async ({ request }) => {
   let sessionCookie;
   try {
     if (typeof idToken === 'string') {
-      sessionCookie = await authService.firebase_signInWithToken(idToken);
+      sessionCookie = await authService.signInWithToken(idToken);
     } else {
       const email = form.get('email');
       const password = form.get('password');
       const formError = json({ error: 'Please fill all fields!' }, { status: 400 });
       if (typeof email !== 'string') return formError;
       if (typeof password !== 'string') return formError;
-      sessionCookie = await authService.firebase_signIn(email, password);
+      sessionCookie = await authService.signIn(email, password);
     }
     const session = await sessionService.getSessionFromCookie(request);
     session.set(CONST.SESSION_KEY, sessionCookie);
@@ -53,31 +55,34 @@ export default function LoginRoute() {
   const [clientAction, setClientAction] = useState<ActionData>();
   const actionData = useActionData<typeof action>();
   const restConfig = useLoaderData<typeof loader>();
-  const submit = useSubmit();
+  // const submit = useSubmit();
+  const { submit } = useFetcher();
 
-  const handleSubmit = useCallback(
+  const onSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       // To avoid rate limiting, we sign in client side if we can.
-      const login = await restApiService.signInWithPassword(
+      const response = await restApiService.signInWithPassword(
         {
           email: event.currentTarget.email.value,
           password: event.currentTarget.password.value,
           returnSecureToken: true,
         },
-        restConfig
+        restConfig.apiKey
       );
-      if (isRestError(login)) {
-        setClientAction({ error: login.error.message });
+      if (isAxiosError(response)) {
+        setClientAction({ error: response.message });
         return;
       }
-      submit({ idToken: login.idToken }, { method: 'post' });
+      submit({ idToken: response.data.idToken }, { method: 'POST' });
     },
     [submit, restConfig]
   );
 
   const onClickGoogle = async () => {
-    // await signInWithPopup(firebaseAuth, new GoogleAuthProvider()).then(onProviderSignIn).catch(console.error);
+    const credential = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+    const idToken = await credential.user.getIdToken();
+    submit({ idToken }, { method: 'POST' });
   };
 
   return (
@@ -102,28 +107,19 @@ export default function LoginRoute() {
       {(clientAction?.error || actionData?.error) && (
         <p>{clientAction?.error || actionData?.error}</p>
       )}
-      <form method="post" onSubmit={handleSubmit}>
-        <input
-          style={{ display: 'block' }}
-          name="email"
-          placeholder="you@example.com"
-          type="email"
-        />
-        <input
-          style={{ display: 'block' }}
-          name="password"
-          placeholder="password"
-          type="password"
-        />
-        <button style={{ display: 'block' }} type="submit">
-          Login
-        </button>
-      </form>
+      <Flex>
+        <Form method="POST" onSubmit={onSubmit}>
+          <TextFieldInput name="email" placeholder="you@example.com" type="email" />
+          <TextFieldInput name="password" placeholder="password" type="password" />
+          <Button type="submit" className="">
+            Login
+          </Button>
+        </Form>
+      </Flex>
       <p>
         Do you want to <Link to="/join">join</Link>?
       </p>
-
-      <button onClick={onClickGoogle}>google</button>
+      <Button onClick={onClickGoogle}>google</Button>
     </div>
   );
 }

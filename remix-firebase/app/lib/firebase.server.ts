@@ -3,7 +3,8 @@ import {
   getApps as getAdminApps,
   initializeApp as initializeAdminApp,
 } from 'firebase-admin/app';
-import { isRestError, restApiService } from './services';
+import { restApiService } from './services';
+import { isAxiosError } from 'axios';
 
 if (getAdminApps().length === 0) {
   let config;
@@ -28,18 +29,14 @@ if (getAdminApps().length === 0) {
   initializeAdminApp(config);
 }
 
+// FIXME: auth-service로 이동
 export const signInWithPassword = async (email: string, password: string) => {
-  const signInResponse = await restApiService.signInWithPassword(
+  const response = await restApiService.signInWithPassword(
     { email, password, returnSecureToken: true },
-    {
-      apiKey: process.env.API_KEY ?? '',
-      domain: 'https://identitytoolkit.googleapis.com',
-    }
+    process.env.API_KEY ?? ''
   );
-
-  if (isRestError(signInResponse)) {
-    throw new Error(signInResponse.error.message);
+  if (isAxiosError(response)) {
+    throw new Error(response.message);
   }
-
-  return signInResponse;
+  return response.data;
 };
