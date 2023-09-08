@@ -41,7 +41,7 @@ export default function JoinRoute() {
   return (
     <div>
       <h1>Join</h1>
-      {actionData?.error ? <p>{actionData.error}</p> : null}
+      {actionData?.error && <p>{actionData.error}</p>}
       <Form method="post">
         <input style={{ display: 'block' }} name="name" placeholder="Peter" type="text" />
         <input

@@ -1,3 +1,4 @@
+import { Box, Flex, TextFieldInput } from '@radix-ui/themes';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
@@ -38,14 +39,15 @@ export const action: ActionFunction = async ({ request }) => {
 
 const TodoComponent: FunctionComponent<{ id: string; title: string }> = ({ id, title }) => {
   const fetcher = useFetcher();
+
   return (
     <li>
-      <fetcher.Form method="post">
-        <input type="hidden" name="id" value={id} />
-        <span>{title}</span>
-        <button type="submit" name="intent" value="delete">
-          Delete
-        </button>
+      <fetcher.Form method="POST">
+        <TextFieldInput type="hidden" name="id" value={id} />
+        <Box>{title}</Box>
+        <Button type="submit" name="intent" value="delete" variant="destructive">
+          delete
+        </Button>
       </fetcher.Form>
     </li>
   );
@@ -65,14 +67,17 @@ export default function Index() {
       <p>
         Want to <Link to="/logout">log out</Link>?
       </p>
-      {actionData?.error ? <p style={{ color: 'red' }}>{actionData.error}</p> : null}
+      {actionData?.error && <p style={{ color: 'red' }}>{actionData.error}</p>}
       <Form method="post">
         <h2>Create new Todo:</h2>
-        <input ref={ref} name="title" type="text" placeholder="Get Milk" />
-        <button type="submit" name="intent" value="create">
-          Create
-        </button>
+        <Flex>
+          <TextFieldInput name="title" placeholder="Get milk" />
+          <Button type="submit" name="intent" value="create">
+            Create
+          </Button>
+        </Flex>
       </Form>
+
       <ul>
         {data.todos.map((todo) => (
           <TodoComponent key={todo.id} {...todo} />
