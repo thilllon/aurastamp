@@ -10,4 +10,6 @@ module.exports = {
     v2_routeConvention: true,
     v2_meta: true,
   },
+  tailwind: true,
+  postcss: true,
 };

@@ -1,11 +1,16 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import type { ActionArgs, ActionFunction, LoaderArgs, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Link, useActionData, useLoaderData, useSubmit } from '@remix-run/react';
 import { useCallback, useState } from 'react';
 import { commitSession, getSession } from '~/sessions';
 import { authService, isRestError, restApiService } from '../lib';
+import { Button as Button2 } from '../components/ui/button';
+import { Button, RadioGroupItem, Text } from '@radix-ui/themes';
+import { RadioGroup } from '../components/ui/radio-group';
+import { Label } from '../components/ui/label';
+import { TabsDemo } from '../components/tabs-demo';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('cookie'));
   const { uid } = await authService.checkSessionCookie(session);
   const headers = { 'Set-Cookie': await commitSession(session) };
@@ -25,7 +30,7 @@ type ActionData = {
   error?: string;
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const idToken = form.get('idToken');
   let sessionCookie;
@@ -86,7 +91,23 @@ export default function Login() {
 
   return (
     <div>
+      <TabsDemo />
+      <Button2>button</Button2>
+      <Button>button radix</Button>
+      <RadioGroup defaultValue="option-one">
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="option-one" id="option-one" />
+          <Label htmlFor="option-one">Option One</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="option-two" id="option-two" />
+          <Label htmlFor="option-two">Option Two</Label>
+        </div>
+      </RadioGroup>
+
       <h1>Login</h1>
+      <Text size={'6'}>sdfsd</Text>
+
       {(clientAction?.error || actionData?.error) && (
         <p>{clientAction?.error || actionData?.error}</p>
       )}

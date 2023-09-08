@@ -1,10 +1,10 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import type { ActionArgs, ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData } from '@remix-run/react';
 import { commitSession, getSession } from '~/sessions';
 import { authService } from '../lib';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('cookie'));
   const { uid } = await authService.checkSessionCookie(session);
   const headers = {
@@ -16,7 +16,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json(null, { headers });
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const name = form.get('name');
   const email = form.get('email');

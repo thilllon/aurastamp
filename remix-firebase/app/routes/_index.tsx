@@ -1,11 +1,12 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
 import type { FunctionComponent } from 'react';
 import { useEffect, useRef } from 'react';
+import { Button } from '../components/ui/button';
 import { authService, todoService } from '../lib';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const user = await authService.requireAuth(request);
   const todos = await todoService.getTodosByUid(user.uid);
   return json({
@@ -14,7 +15,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   });
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action: ActionFunction = async ({ request }) => {
   const { uid } = await authService.requireAuth(request);
   const form = await request.formData();
   const intent = form.get('intent');
@@ -62,6 +63,7 @@ export default function Index() {
   }, [ref]);
   return (
     <div>
+      <Button>button</Button>
       <h1>{data.message}</h1>
       <p>
         Want to <Link to="/logout">log out</Link>?
