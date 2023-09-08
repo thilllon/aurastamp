@@ -1,38 +1,38 @@
 import type { Session } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
 import type { DecodedIdToken, UserRecord } from 'firebase-admin/auth';
 import { getAuth } from 'firebase-admin/auth';
-import { destroySession, getSession } from '~/sessions';
+import { sessionService } from '../../sessions.server';
+import { CONST, config } from '../constants';
 import { signInWithPassword } from '../firebase.server';
 
 export const authService = {
-  checkSessionCookie: async (session: Session): Promise<DecodedIdToken | { uid: undefined }> => {
+  firebase_verifySessionCookie: async (
+    session: Session
+  ): Promise<DecodedIdToken | { uid: undefined }> => {
     try {
-      const decodedIdToken = await getAuth().verifySessionCookie(session.get('session') || '');
-      return decodedIdToken;
+      const sessionCookie = session.get(CONST.SESSION_KEY);
+      return getAuth().verifySessionCookie(sessionCookie);
     } catch {
       return { uid: undefined };
     }
   },
-  requireAuth: async (request: Request): Promise<UserRecord> => {
-    const session = await getSession(request.headers.get('cookie'));
-    const { uid } = await authService.checkSessionCookie(session);
+  firebase_requireAuth: async (request: Request): Promise<UserRecord> => {
+    const session = await sessionService.getSessionFromCookie(request);
+    const { uid } = await authService.firebase_verifySessionCookie(session);
     if (!uid) {
-      throw redirect('/login', { headers: { 'Set-Cookie': await destroySession(session) } });
+      throw await sessionService.destroySessionCookie(request, '/login');
     }
     return getAuth().getUser(uid);
   },
-  signIn: async (email: string, password: string): Promise<string> => {
+  firebase_signIn: async (email: string, password: string): Promise<string> => {
     const { idToken } = await signInWithPassword(email, password);
-    return authService.signInWithToken(idToken);
+    return authService.firebase_signInWithToken(idToken);
   },
-  signInWithToken: async (idToken: string): Promise<string> => {
-    const expiresIn = 1000 * 60 * 60 * 24 * 7;
-    const sessionCookie = await getAuth().createSessionCookie(idToken, { expiresIn });
-    return sessionCookie;
+  firebase_signInWithToken: async (idToken: string): Promise<string> => {
+    return getAuth().createSessionCookie(idToken, { expiresIn: config.expiresIn });
   },
-  signUp: async (name: string, email: string, password: string): Promise<string> => {
+  firebase_signUp: async (name: string, email: string, password: string): Promise<string> => {
     await getAuth().createUser({ email, password, displayName: name });
-    return authService.signIn(email, password);
+    return authService.firebase_signIn(email, password);
   },
 };

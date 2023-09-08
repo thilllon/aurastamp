@@ -1,13 +1,9 @@
-import type { ActionFunction } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import { type ActionFunction } from '@remix-run/node';
 import { Form } from '@remix-run/react';
-import { destroySession, getSession } from '~/sessions';
+import { sessionService } from '~/sessions.server';
 
 export const action: ActionFunction = async ({ request }) => {
-  const session = await getSession(request.headers.get('Cookie'));
-  return redirect('/', {
-    headers: { 'Set-Cookie': await destroySession(session) },
-  });
+  return sessionService.destroySessionCookie(request, '/login');
 };
 
 export default function Logout() {

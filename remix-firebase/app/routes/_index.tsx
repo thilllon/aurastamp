@@ -7,16 +7,13 @@ import { Button } from '../components/ui/button';
 import { authService, todoService } from '../lib';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await authService.requireAuth(request);
+  const user = await authService.firebase_requireAuth(request);
   const todos = await todoService.getTodosByUid(user.uid);
-  return json({
-    message: `Hello ${user.displayName || 'unknown'}!`,
-    todos,
-  });
+  return json({ message: `Hello ${user.displayName || 'unknown'}!`, todos });
 };
 
 export const action: ActionFunction = async ({ request }) => {
-  const { uid } = await authService.requireAuth(request);
+  const { uid } = await authService.firebase_requireAuth(request);
   const form = await request.formData();
   const intent = form.get('intent');
   if (intent === 'create') {

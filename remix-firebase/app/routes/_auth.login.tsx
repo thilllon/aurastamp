@@ -1,28 +1,23 @@
-import type { ActionArgs, ActionFunction, LoaderArgs, LoaderFunction } from '@remix-run/node';
+import { Button, RadioGroupItem, Text } from '@radix-ui/themes';
+import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Link, useActionData, useLoaderData, useSubmit } from '@remix-run/react';
 import { useCallback, useState } from 'react';
-import { commitSession, getSession } from '~/sessions';
-import { authService, isRestError, restApiService } from '../lib';
-import { Button as Button2 } from '../components/ui/button';
-import { Button, RadioGroupItem, Text } from '@radix-ui/themes';
-import { RadioGroup } from '../components/ui/radio-group';
-import { Label } from '../components/ui/label';
 import { TabsDemo } from '../components/tabs-demo';
+import { Label } from '../components/ui/label';
+import { RadioGroup } from '../components/ui/radio-group';
+import { CONST, authService, isRestError, restApiService } from '../lib';
+import { commitSession, sessionService } from '../sessions.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await getSession(request.headers.get('cookie'));
-  const { uid } = await authService.checkSessionCookie(session);
-  const headers = { 'Set-Cookie': await commitSession(session) };
+  const session = await sessionService.getSessionFromCookie(request);
+  const { uid } = await authService.firebase_verifySessionCookie(session);
   if (uid) {
-    return redirect('/', { headers });
+    return redirect('/', { headers: { 'Set-Cookie': await commitSession(session) } });
   }
   return json(
-    {
-      apiKey: process.env.API_KEY ?? '',
-      domain: 'https://identitytoolkit.googleapis.com',
-    },
-    { headers }
+    { apiKey: process.env.API_KEY ?? '', domain: 'https://identitytoolkit.googleapis.com' },
+    { headers: { 'Set-Cookie': await commitSession(session) } }
   );
 };
 
@@ -36,21 +31,17 @@ export const action: ActionFunction = async ({ request }) => {
   let sessionCookie;
   try {
     if (typeof idToken === 'string') {
-      console.log(idToken);
-      console.log(idToken);
-      console.log(idToken);
-      console.log(idToken);
-      sessionCookie = await authService.signInWithToken(idToken);
+      sessionCookie = await authService.firebase_signInWithToken(idToken);
     } else {
       const email = form.get('email');
       const password = form.get('password');
       const formError = json({ error: 'Please fill all fields!' }, { status: 400 });
       if (typeof email !== 'string') return formError;
       if (typeof password !== 'string') return formError;
-      sessionCookie = await authService.signIn(email, password);
+      sessionCookie = await authService.firebase_signIn(email, password);
     }
-    const session = await getSession(request.headers.get('cookie'));
-    session.set('session', sessionCookie);
+    const session = await sessionService.getSessionFromCookie(request);
+    session.set(CONST.SESSION_KEY, sessionCookie);
     return redirect('/', { headers: { 'Set-Cookie': await commitSession(session) } });
   } catch (error) {
     console.error(error);
@@ -58,7 +49,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export default function Login() {
+export default function LoginRoute() {
   const [clientAction, setClientAction] = useState<ActionData>();
   const actionData = useActionData<typeof action>();
   const restConfig = useLoaderData<typeof loader>();
@@ -92,8 +83,8 @@ export default function Login() {
   return (
     <div>
       <TabsDemo />
-      <Button2>button</Button2>
-      <Button>button radix</Button>
+      {/* <Button2>button222</Button2> */}
+      <Button variant="outline">button radix</Button>
       <RadioGroup defaultValue="option-one">
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="option-one" id="option-one" />

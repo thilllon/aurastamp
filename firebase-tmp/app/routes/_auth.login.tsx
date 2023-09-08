@@ -3,10 +3,10 @@ import { redirect, type ActionFunction } from '@remix-run/server-runtime';
 import type { UserCredential } from 'firebase/auth';
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import type { SyntheticEvent } from 'react';
-import { firebaseAuth } from '~/firebase.client';
-import { firebaseAdminAuth } from '~/firebase.server';
-import { cookie } from '../cookies';
 import { Button } from '../components/ui/button';
+import { cookie } from '../cookies';
+import { firebaseAuth } from '../firebase.client';
+import { firebaseAdminAuth } from '../firebase.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
