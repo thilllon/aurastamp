@@ -1,13 +1,15 @@
+import { isAxiosError } from 'axios';
+import { storage } from 'firebase-admin';
+import type { AppOptions } from 'firebase-admin/app';
 import {
   cert as adminCert,
   getApps as getAdminApps,
   initializeApp as initializeAdminApp,
 } from 'firebase-admin/app';
 import { restApiService } from './services';
-import { isAxiosError } from 'axios';
 
 if (getAdminApps().length === 0) {
-  let config;
+  let config: AppOptions;
   if (process.env.NODE_ENV === 'development' && !process.env.SERVICE_ACCOUNT) {
     console.warn('Missing SERVICE_ACCOUNT environment variable, using local emulator');
     // https://github.com/firebase/firebase-admin-node/issues/776
@@ -21,6 +23,7 @@ if (getAdminApps().length === 0) {
       const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
       config = {
         credential: adminCert(serviceAccount),
+        storageBucket: 'stegato-app.appspot.com',
       };
     } catch {
       throw Error('Invalid SERVICE_ACCOUNT environment variable');
@@ -28,6 +31,32 @@ if (getAdminApps().length === 0) {
   }
   initializeAdminApp(config);
 }
+
+const appStorage = storage();
+const bucket = appStorage.bucket();
+
+// TODO: 업로드할때 이런식으로 권한설정도 가능
+// // Define a new access policy for a specific path
+// const filePath = 'path/to/your/object';
+// const file = bucket.file(filePath);
+
+// const metadata = {
+//   contentType: 'application/pdf', // Set the content type if needed
+// };
+
+// file.setMetadata(metadata)
+//   .then(() => {
+//     return file.acl.add({
+//       entity: 'user-email@example.com',
+//       role: admin.storage().bucket(bucket.name).acl.READER_ROLE,
+//     });
+//   })
+//   .then(() => {
+//     console.log('Access policy updated.');
+//   })
+//   .catch((error) => {
+//     console.error('Error setting access policy:', error);
+//   });
 
 // FIXME: auth-service로 이동
 export const signInWithPassword = async (email: string, password: string) => {

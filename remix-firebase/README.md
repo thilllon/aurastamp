@@ -1,5 +1,9 @@
 # Firebase
 
+This repository is from official REMIX repo
+
+https://github.com/remix-run/examples/tree/main/firebase
+
 This project demonstrates how to use Firebase with Remix.
 
 ## Preview

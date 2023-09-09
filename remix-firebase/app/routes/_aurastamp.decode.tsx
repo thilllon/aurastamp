@@ -2,6 +2,7 @@ import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from 'firebase/
 import { useEffect, useState } from 'react';
 import { firebaseApp } from '../lib';
 import type { V2_MetaFunction } from '@remix-run/react';
+import { getAuth } from 'firebase/auth';
 
 export const meta: V2_MetaFunction = () => [{ title: 'Decode' }];
 
@@ -25,9 +26,9 @@ export default function FireBaseExample() {
     if (!imageUpload) {
       return;
     }
+    const uid = getAuth()?.currentUser?.uid;
     const storage = getStorage(firebaseApp);
-
-    const imageRef = ref(storage, `images/${imageUpload.name}`);
+    const imageRef = ref(storage, `images/${uid}/${imageUpload.name}`);
     uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
         setImageList((prev) => [...prev, url]);
