@@ -1,15 +1,26 @@
-import { Box, Button, Flex, TextFieldInput } from '@radix-ui/themes';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  TextFieldInput,
+  TextField,
+  IconButton,
+} from '@radix-ui/themes';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run/react';
 import type { FunctionComponent } from 'react';
 import { useEffect, useRef } from 'react';
 import { authService, todoService } from '../lib';
+import { UpdateIcon } from '@radix-ui/react-icons';
+import { Cropper } from '../components/radix-cropper';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await authService.requireAuth(request);
   const todos = await todoService.getTodosByUid(user.uid);
-  return json({ message: `Hello ${user.displayName || 'unknown'}!`, todos });
+  return json({ message: `Hello ${user.displayName || 'stranger'}!`, todos });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -37,43 +48,54 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const TodoComponent: FunctionComponent<{ id: string; title: string }> = ({ id, title }) => {
-  const fetcher = useFetcher();
+  const { Form } = useFetcher();
 
   return (
     <li>
-      <fetcher.Form method="POST">
+      <Form method="POST">
         <TextFieldInput type="hidden" name="id" value={id} />
         <Box>{title}</Box>
         <Button type="submit" name="intent" value="delete" variant="outline" color="gold">
           delete
         </Button>
-      </fetcher.Form>
+      </Form>
     </li>
   );
 };
 
-export default function Index() {
+const TodoBoard: FunctionComponent = () => {
   const actionData = useActionData<typeof action>();
   const data = useLoaderData<typeof loader>();
+
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => {
     ref.current?.focus();
   }, [ref]);
   return (
-    <div>
-      <Button>button</Button>
-      <h1>{data.message}</h1>
-      <p>
+    <>
+      <Heading>{data.message}</Heading>
+      <Text>
         Want to <Link to="/logout">log out</Link>?
-      </p>
+      </Text>
       {actionData?.error && <p style={{ color: 'red' }}>{actionData.error}</p>}
       <Form method="post">
-        <h2>Create new Todo:</h2>
+        <Heading>Create new Todo:</Heading>
         <Flex>
           <TextFieldInput name="title" placeholder="Get milk" />
           <Button type="submit" name="intent" value="create">
             Create
           </Button>
+        </Flex>
+
+        <Flex>
+          <TextField.Root>
+            <TextField.Input placeholder="get milk" />
+            <TextField.Slot>
+              <IconButton variant="ghost">
+                <UpdateIcon />
+              </IconButton>
+            </TextField.Slot>
+          </TextField.Root>
         </Flex>
       </Form>
 
@@ -82,6 +104,15 @@ export default function Index() {
           <TodoComponent key={todo.id} {...todo} />
         ))}
       </ul>
+    </>
+  );
+};
+
+export default function Index() {
+  return (
+    <div>
+      {/* <TodoBoard /> */}
+      <Cropper />
     </div>
   );
 }

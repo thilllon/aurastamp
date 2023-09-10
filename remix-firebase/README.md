@@ -6,6 +6,10 @@ https://github.com/remix-run/examples/tree/main/firebase
 
 This project demonstrates how to use Firebase with Remix.
 
+## TODO
+
+- [ ] firebase emulator 환경 구성
+
 ## Preview
 
 See the screen recording at `./screen_recording.gif` or Open this example on [CodeSandbox](https://codesandbox.com):

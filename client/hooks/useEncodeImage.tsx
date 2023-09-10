@@ -22,9 +22,7 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
     formData.append('return_type', returnType);
     if (hiddenImage) {
       formData.append('media', hiddenImage);
-    }
-
-    const response = await httpClient.post<EncodeImageOutput>('/encode', formData);
+    }    const response = await httpClient.post<EncodeImageOutput>('/encode', formData);
     return response.data;
   }, options);
 };
