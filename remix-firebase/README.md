@@ -9,6 +9,8 @@ This project demonstrates how to use Firebase with Remix.
 ## TODO
 
 - [ ] firebase emulator 환경 구성
+- [ ] sentry
+- [ ] logtail
 
 ## Preview
 
