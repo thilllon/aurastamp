@@ -5,9 +5,9 @@ import { Form, Link, useActionData, useFetcher, useLoaderData } from '@remix-run
 import { isAxiosError } from 'axios';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useCallback, useState } from 'react';
-import { TabsDemo } from '../components/tabs-demo';
-import { Label } from '../components/ui/label';
-import { RadioGroup } from '../components/ui/radio-group';
+import { TabsDemo } from '../components/radix-demo/tabs-demo';
+import { Label } from '../components/radix-ui/label';
+import { RadioGroup } from '../components/radix-ui/radio-group';
 import { CONST, authService, firebaseAuth, restApiService } from '../lib';
 import { commitSession, sessionService } from '../lib/services/session-service.server';
 
