@@ -29,7 +29,9 @@ export const action: ActionFunction = async ({ request }) => {
     const sessionCookie = await authService.signUp(name, email, password);
     const session = await sessionService.getSessionFromCookie(request);
     session.set(CONST.SESSION_KEY, sessionCookie);
-    return redirect('/', { headers: { 'Set-Cookie': await commitSession(session) } });
+    return redirect('/', {
+      headers: { 'Set-Cookie': await commitSession(session) },
+    });
   } catch (error) {
     console.error(error);
     return json({ error: String(error) }, { status: 401 });
@@ -42,26 +44,16 @@ export default function JoinRoute() {
     <div>
       <h1>Join</h1>
       {actionData?.error && <p>{actionData.error}</p>}
-      <Form method="post">
-        <input style={{ display: 'block' }} name="name" placeholder="Peter" type="text" />
-        <input
-          style={{ display: 'block' }}
-          name="email"
-          placeholder="you@example.com"
-          type="email"
-        />
-        <input
-          style={{ display: 'block' }}
-          name="password"
-          placeholder="password"
-          type="password"
-        />
-        <button style={{ display: 'block' }} type="submit">
+      <Form method='post'>
+        <input style={{ display: 'block' }} name='name' placeholder='Peter' type='text' />
+        <input style={{ display: 'block' }} name='email' placeholder='you@example.com' type='email' />
+        <input style={{ display: 'block' }} name='password' placeholder='password' type='password' />
+        <button style={{ display: 'block' }} type='submit'>
           Join
         </button>
       </Form>
       <p>
-        Do you want to <Link to="/login">login</Link>?
+        Do you want to <Link to='/login'>login</Link>?
       </p>
     </div>
   );

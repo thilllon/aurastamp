@@ -52,17 +52,7 @@ export const canvasPreview = async (
   ctx.scale(scale, scale);
   // 1) Move the center of the image to the origin (0,0)
   ctx.translate(-centerX, -centerY);
-  ctx.drawImage(
-    image,
-    0,
-    0,
-    image.naturalWidth,
-    image.naturalHeight,
-    0,
-    0,
-    image.naturalWidth,
-    image.naturalHeight
-  );
+  ctx.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, image.naturalWidth, image.naturalHeight);
 
   ctx.restore();
 };
@@ -79,12 +69,7 @@ let previewUrl = '';
 
 // Returns an image source you should set to state and pass
 // `{previewSrc && <img alt="Crop preview" src={previewSrc} />}`
-export const imagePreview = async (
-  image: HTMLImageElement,
-  crop: PixelCrop,
-  scale = 1,
-  rotate = 0
-) => {
+export const imagePreview = async (image: HTMLImageElement, crop: PixelCrop, scale = 1, rotate = 0) => {
   const canvas = document.createElement('canvas');
   canvasPreview(image, canvas, crop, scale, rotate);
   const blob = await canvasToBlob(canvas);

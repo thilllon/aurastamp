@@ -1,21 +1,21 @@
 import { isAxiosError } from 'axios';
 import { storage } from 'firebase-admin';
 import type { AppOptions } from 'firebase-admin/app';
-import {
-  cert as adminCert,
-  getApps as getAdminApps,
-  initializeApp as initializeAdminApp,
-} from 'firebase-admin/app';
+import { cert as adminCert, getApps as getAdminApps, initializeApp as initializeAdminApp } from 'firebase-admin/app';
 import { restApiService } from './services';
 
 if (getAdminApps().length === 0) {
   let config: AppOptions;
+  console.log(process.env.SERVICE_ACCOUNT);
+
   if (process.env.NODE_ENV === 'development' && !process.env.SERVICE_ACCOUNT) {
     console.warn('Missing SERVICE_ACCOUNT environment variable, using local emulator');
     // https://github.com/firebase/firebase-admin-node/issues/776
     process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
     process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
-    config = { projectId: 'remix-emulator' };
+    config = {
+      projectId: 'remix-emulator',
+    };
   } else if (!process.env.SERVICE_ACCOUNT) {
     throw new Error('Missing SERVICE_ACCOUNT environment variable');
   } else {
@@ -23,10 +23,11 @@ if (getAdminApps().length === 0) {
       const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
       config = {
         credential: adminCert(serviceAccount),
-        storageBucket: 'stegato-app.appspot.com',
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
       };
-    } catch {
-      throw Error('Invalid SERVICE_ACCOUNT environment variable');
+    } catch (err) {
+      console.error(err);
+      throw new Error('Invalid SERVICE_ACCOUNT environment variable');
     }
   }
   initializeAdminApp(config);

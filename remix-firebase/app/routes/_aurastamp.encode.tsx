@@ -102,7 +102,7 @@ export default function EncodePage() {
       {!encodedImgSrcBase64 && (
         <Box key={key}>
           <Cropper
-            message="Pick an image to stamp"
+            message='Pick an image to stamp'
             defaultAspect={1}
             onChangeFile={onChange}
             onCropEnd={onCropEnd}
@@ -124,9 +124,8 @@ export default function EncodePage() {
             justifyContent: 'center',
             alignItems: 'center',
             marginTop: 3,
-          }}
-        >
-          <img src={'data:image/png;base64,' + encodedImgSrcBase64} alt="encoded" />
+          }}>
+          <img src={'data:image/png;base64,' + encodedImgSrcBase64} alt='encoded' />
         </Box>
       )}
       <Box>
@@ -143,18 +142,18 @@ export default function EncodePage() {
           </Button>
         )}
         {!encodeImage.isLoading && (
-          <Button variant="outline" style={{ flex: 1 }} onClick={onClickRetry}>
+          <Button variant='outline' style={{ flex: 1 }} onClick={onClickRetry}>
             retry
           </Button>
         )}
       </Box>
       {encodedImgSrcBase64 && !downloadable && (
-        <Text color="red" style={{ marginTop: 3, wordBreak: 'break-word' }}>
+        <Text color='red' style={{ marginTop: 3, wordBreak: 'break-word' }}>
           {downloadGuideMessage}
         </Text>
       )}
       {encodeImage.error && (
-        <Text color="red" style={{ marginTop: 3 }}>
+        <Text color='red' style={{ marginTop: 3 }}>
           {JSON.stringify(encodeImage.error ?? {})}
         </Text>
       )}
