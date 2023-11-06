@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { faker } from '@faker-js/faker';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query } from 'firebase/firestore';
-import { FormEventHandler, MouseEventHandler, useEffect, useState } from 'react';
-import { db } from './firebase';
-import { deleteAppClientCache } from 'next/dist/server/lib/render-server';
+import { faker } from "@faker-js/faker";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
+import { FormEventHandler, useEffect, useState } from "react";
+import { db } from "./firebase";
 
 type Item = {
   id: string;
@@ -15,22 +21,23 @@ type Item = {
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
 
-  const [newItem, setNewItem] = useState({ name: '', price: 0 });
+  const [newItem, setNewItem] = useState({ name: "", price: 0 });
   const [total, setTotal] = useState(0);
+
   useEffect(() => {
     setNewItem({
       name: faker.lorem.word(),
       price: faker.number.int(),
     });
 
-    const q = query(collection(db, 'items'));
+    const q = query(collection(db, "items"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let itemList: any[] = [];
 
       querySnapshot.forEach((doc) => {
         itemList.push({
           id: doc.id,
-          ...doc.data({ serverTimestamps: 'previous' }),
+          ...doc.data({ serverTimestamps: "previous" }),
         });
       });
       setItems(itemList);
@@ -45,7 +52,7 @@ export default function Home() {
       return;
     }
 
-    await addDoc(collection(db, 'items'), {
+    await addDoc(collection(db, "items"), {
       name: newItem.name.trim(),
       price: Number(newItem.price),
     });
@@ -56,45 +63,59 @@ export default function Home() {
   };
 
   const deleteItem = (id: string) => {
-    deleteDoc(doc(db, 'items', id));
+    deleteDoc(doc(db, "items", id));
   };
 
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-      <div className='z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex'>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <h1>Expense tracker</h1>
 
-        <div className='bg-slate-800 p-4 rounded-lg'>
-          <form className='grid grid-cols-6 items-center text-black' onSubmit={addItem}>
+        <div className="bg-slate-800 p-4 rounded-lg">
+          <form
+            className="grid grid-cols-6 items-center text-black"
+            onSubmit={addItem}
+          >
             <input
-              onChange={(event) => setNewItem({ ...newItem, name: event.target.value })}
+              onChange={(event) =>
+                setNewItem({ ...newItem, name: event.target.value })
+              }
               value={newItem.name}
-              className='col-span-3 p-3 border mx-3'
-              type='text'
-              placeholder='enter item'
+              className="col-span-3 p-3 border mx-3"
+              type="text"
+              placeholder="enter item"
             />
             <input
-              onChange={(event) => setNewItem({ ...newItem, price: Number(event.target.value) })}
+              onChange={(event) =>
+                setNewItem({ ...newItem, price: Number(event.target.value) })
+              }
               value={newItem.price}
-              className='col-span-2 p-3 border mx-3'
-              type='number'
-              placeholder='enter $'
+              className="col-span-2 p-3 border mx-3"
+              type="number"
+              placeholder="enter $"
             />
-            <button className='text-white bg-slate-950 hover:bg-slate-900 p-3 text-xl' type='submit'>
+            <button
+              className="text-white bg-slate-950 hover:bg-slate-900 p-3 text-xl"
+              type="submit"
+            >
               +
             </button>
           </form>
           <ul>
             {items.map((item, id) => {
               return (
-                <li key={id} className='my-4 w-full flex justify-between bg-slate-950'>
-                  <div className='p-4 w-full flex justify-between'>
-                    <span className='capitalize'>{item.name}</span>
+                <li
+                  key={id}
+                  className="my-4 w-full flex justify-between bg-slate-950"
+                >
+                  <div className="p-4 w-full flex justify-between">
+                    <span className="capitalize">{item.name}</span>
                     <span>{item.price}</span>
                   </div>
                   <button
                     onClick={() => deleteItem(item.id)}
-                    className='ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16'>
+                    className="ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16"
+                  >
                     X
                   </button>
                 </li>
@@ -102,7 +123,7 @@ export default function Home() {
             })}
           </ul>
           {items.length > 0 && (
-            <div className='my-4 w-full flex justify-between p-4'>
+            <div className="my-4 w-full flex justify-between p-4">
               <span>total</span>
               <span>${total}</span>
             </div>
