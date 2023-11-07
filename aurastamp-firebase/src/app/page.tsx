@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '../components/ui/button';
 import { db } from './firebase';
+import { WaitDemo } from './components/wait-demo';
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -121,6 +122,8 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <WaitDemo />
+
       <ProfileForm />
 
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
