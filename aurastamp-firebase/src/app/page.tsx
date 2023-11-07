@@ -1,16 +1,29 @@
-"use client";
+'use client';
 
-import { faker } from "@faker-js/faker";
 import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  query,
-} from "firebase/firestore";
-import { FormEventHandler, useEffect, useState } from "react";
-import { db } from "./firebase";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { faker } from '@faker-js/faker';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query } from 'firebase/firestore';
+import { FormEventHandler, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { Button } from '../components/ui/button';
+import { db } from './firebase';
+
+const formSchema = z.object({
+  username: z.string().min(2, {
+    message: 'Username must be at least 2 characters.',
+  }),
+});
 
 type Item = {
   id: string;
@@ -18,10 +31,49 @@ type Item = {
   price: number;
 };
 
+function ProfileForm() {
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+    },
+  });
+
+  // 2. Define a submit handler.
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="shadcn" {...field} />
+              </FormControl>
+              <FormDescription>This is your public display name.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+}
+
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
 
-  const [newItem, setNewItem] = useState({ name: "", price: 0 });
+  const [newItem, setNewItem] = useState({ name: '', price: 0 });
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
@@ -30,20 +82,21 @@ export default function Home() {
       price: faker.number.int(),
     });
 
-    const q = query(collection(db, "items"));
+    const q = query(collection(db, 'items'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let itemList: any[] = [];
 
       querySnapshot.forEach((doc) => {
         itemList.push({
           id: doc.id,
-          ...doc.data({ serverTimestamps: "previous" }),
+          ...doc.data({ serverTimestamps: 'previous' }),
         });
       });
       setItems(itemList);
     });
     setTotal(items.reduce((sum, { price }) => sum + price, 0));
     return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addItem: FormEventHandler = async (event) => {
@@ -52,7 +105,7 @@ export default function Home() {
       return;
     }
 
-    await addDoc(collection(db, "items"), {
+    await addDoc(collection(db, 'items'), {
       name: newItem.name.trim(),
       price: Number(newItem.price),
     });
@@ -63,61 +116,48 @@ export default function Home() {
   };
 
   const deleteItem = (id: string) => {
-    deleteDoc(doc(db, "items", id));
+    deleteDoc(doc(db, 'items', id));
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <h1>Expense tracker</h1>
+      <ProfileForm />
 
-        <div className="bg-slate-800 p-4 rounded-lg">
-          <form
-            className="grid grid-cols-6 items-center text-black"
-            onSubmit={addItem}
-          >
+      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+        <h1 className="font-medium text-4xl">Expense tracker</h1>
+
+        <div className="p-4 rounded-lg">
+          <form className="grid grid-cols-6 items-center" onSubmit={addItem}>
             <input
-              onChange={(event) =>
-                setNewItem({ ...newItem, name: event.target.value })
-              }
+              onChange={(event) => setNewItem({ ...newItem, name: event.target.value })}
               value={newItem.name}
               className="col-span-3 p-3 border mx-3"
               type="text"
               placeholder="enter item"
             />
             <input
-              onChange={(event) =>
-                setNewItem({ ...newItem, price: Number(event.target.value) })
-              }
+              onChange={(event) => setNewItem({ ...newItem, price: Number(event.target.value) })}
               value={newItem.price}
               className="col-span-2 p-3 border mx-3"
               type="number"
               placeholder="enter $"
             />
-            <button
-              className="text-white bg-slate-950 hover:bg-slate-900 p-3 text-xl"
-              type="submit"
-            >
-              +
-            </button>
+            <Button type="submit">+</Button>
           </form>
           <ul>
             {items.map((item, id) => {
               return (
-                <li
-                  key={id}
-                  className="my-4 w-full flex justify-between bg-slate-950"
-                >
+                <li key={id} className="my-4 w-full flex justify-between">
                   <div className="p-4 w-full flex justify-between">
                     <span className="capitalize">{item.name}</span>
                     <span>{item.price}</span>
                   </div>
-                  <button
+                  <Button
                     onClick={() => deleteItem(item.id)}
-                    className="ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16"
+                    // className='ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16'
                   >
                     X
-                  </button>
+                  </Button>
                 </li>
               );
             })}
