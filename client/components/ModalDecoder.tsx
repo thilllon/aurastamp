@@ -1,4 +1,3 @@
-import { httpClient } from '@/services/httpClient';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
@@ -6,6 +5,7 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import { Alert, Box, IconButton, Modal } from '@mui/material';
 import { useState } from 'react';
+import { client } from '../libs/services';
 
 const replaceURL = (inputText: string) => {
   // const exp = /(?:(?:https?|ftp):\/\/|\b(?:[a-z\d]+\.))(?:(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))?\))+(?:\((?:[^\s()<>]+|(?:\(?:[^\s()<>]+\)))?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))?/ig;
@@ -118,7 +118,7 @@ export const ModalDecoder = ({
       const formData = new FormData();
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
-      await httpClient.post(url, formData);
+      await client.post(url, formData);
     } catch (err) {
       console.error(err);
     }
@@ -139,7 +139,7 @@ export const ModalDecoder = ({
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
 
-      await httpClient.post(url, formData);
+      await client.post(url, formData);
     } catch (err) {
       console.error(err);
     }

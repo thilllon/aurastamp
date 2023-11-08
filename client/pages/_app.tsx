@@ -1,6 +1,6 @@
-import { MuiThemeProvider } from '@/contexts/MuiThemeContext';
-import { createEmotionCache } from '@/styles/emotion';
-import { useGoogleAnalytics } from '@/utils/useGoogleAnalytics';
+import { MuiThemeProvider } from 'libs/MuiThemeContext';
+import { createEmotionCache } from 'libs/emotion';
+import { useGoogleAnalytics } from 'libs/useGoogleAnalytics';
 import { EmotionCache } from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';

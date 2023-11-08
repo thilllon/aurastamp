@@ -1,5 +1,5 @@
-import { createEmotionCache } from '@/styles/emotion';
-import { GoogleAnalysisScript } from '@/utils/useGoogleAnalytics';
+import { createEmotionCache } from 'libs/emotion';
+import { GoogleAnalysisScript } from 'libs/useGoogleAnalytics';
 import createEmotionServer from '@emotion/server/create-instance';
 import Document, { Head as DocumentHead, Html, Main, NextScript } from 'next/document';
 import React from 'react';

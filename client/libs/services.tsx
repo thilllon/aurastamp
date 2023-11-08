@@ -1,6 +1,9 @@
-import { httpClient, MutationOptions } from '@/services/httpClient';
-import { AxiosError } from 'axios';
-import { useMutation } from 'react-query';
+import axios, { AxiosError } from 'axios';
+import { useMutation, UseMutationOptions } from 'react-query';
+
+type MutationOptions<Output, Input, Context = unknown> =
+  | Omit<UseMutationOptions<Output, AxiosError, Input, Context>, 'mutationFn'>
+  | undefined;
 
 type EncodeImageInput = {
   file: File | Blob;
@@ -11,6 +14,8 @@ type EncodeImageInput = {
 };
 
 type EncodeImageOutput = string;
+
+export const client = axios.create({ baseURL: process.env.NEXT_PUBLIC_API_URI });
 
 export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, EncodeImageInput>) => {
   return useMutation<EncodeImageOutput, AxiosError, EncodeImageInput>(async (input) => {
@@ -23,7 +28,7 @@ export const useEncodeImage = (options?: MutationOptions<EncodeImageOutput, Enco
     if (hiddenImage) {
       formData.append('media', hiddenImage);
     }
-    const response = await httpClient.post<EncodeImageOutput>('/encode', formData);
+    const response = await client.post<EncodeImageOutput>('/encode', formData);
     return response.data;
   }, options);
 };

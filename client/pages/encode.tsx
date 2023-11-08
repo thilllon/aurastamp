@@ -1,7 +1,7 @@
 import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalEncoder } from '@/components/ModalEncoder';
-import { useEncodeImage } from '@/services/useEncodeImage';
+import { useEncodeImage } from 'libs/services';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName, isDesktop } from 'react-device-detect';

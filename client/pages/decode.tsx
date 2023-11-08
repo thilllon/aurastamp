@@ -1,14 +1,12 @@
 import { Cropper } from '@/components/Cropper';
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalDecoder } from '@/components/ModalDecoder';
-import { httpClient } from '@/services/httpClient';
-import { sendEvent } from '@/utils/useGoogleAnalytics';
+import { DashboardLayout } from '@/components/layouts/DashboardLayout';
+import { sendEvent } from 'libs/useGoogleAnalytics';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
-
-const footerHeight = 120;
+import { client } from '../libs/services';
 
 export default function DecodePage() {
   const [originalFile, setOriginalFile] = useState<File>();
@@ -67,7 +65,7 @@ export default function DecodePage() {
     formData.append('model_name', 'the');
     try {
       setIsLoading(true);
-      const res = await httpClient.post('/decode', formData);
+      const res = await client.post('/decode', formData);
       setHashString(res.data.hash_string ?? '');
       setHiddenMessage(res.data.secret ?? '');
       setHiddenImageUrl(res.data.secret_image ?? '');
@@ -107,7 +105,7 @@ export default function DecodePage() {
           flexFlow: 'column nowrap',
           justifyContent: 'center',
           minHeight: (theme) =>
-            `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + footerHeight}px)`,
+            `calc(100vh - ${Number(theme.mixins.toolbar.minHeight) + 8 + 120}px)`,
         }}
       >
         <Box key={key} sx={{ mt: 0 }}>
