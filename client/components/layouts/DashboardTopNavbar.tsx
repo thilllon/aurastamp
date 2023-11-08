@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 import { AppBar, AppBarProps, Box } from '@mui/material';
 import Image from 'next/image';
 
+type DashboardTopNavbarProps = AppBarProps;
+
 const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
   return {
     backgroundColor: theme.palette.background.default,
@@ -14,8 +16,6 @@ const DashboardTopNavbarRoot = styled(AppBar)(({ theme }: any) => {
     margin: '0 auto',
   };
 });
-
-type DashboardTopNavbarProps = AppBarProps;
 
 export const DashboardTopNavbar = ({ sx, ...others }: DashboardTopNavbarProps) => {
   return (
