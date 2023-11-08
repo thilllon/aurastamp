@@ -1,11 +1,9 @@
 import { GetServerSideProps } from 'next';
 
-interface IndexPageProps {}
-
-export default function IndexPage({}: IndexPageProps) {
-  return <div></div>;
+export default function IndexPage() {
+  return null;
 }
 
-export const getServerSideProps: GetServerSideProps<IndexPageProps> = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   return { props: {}, redirect: { destination: '/decode' } };
 };

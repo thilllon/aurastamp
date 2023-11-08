@@ -27,12 +27,7 @@ export default class MyDocument extends Document {
 }
 
 MyDocument.getInitialProps = async (ctx) => {
-  // console.info('document.getInitialProps');
-  // console.info(Date.now());
-
   const originalRenderPage = ctx.renderPage;
-
-  // You can consider sharing the same emotion cache between all the SSR requests to speed up performance. However, be aware that it can have global side effects.
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
   ctx.renderPage = () =>

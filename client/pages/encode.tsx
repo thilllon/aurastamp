@@ -1,10 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
-import { Cropper } from '@/components/cropper/Cropper';
+import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalEncoder } from '@/components/modal/ModalEncoder';
-import { useEncodeImage } from '@/hooks/useEncodeImage';
-import { StampModel } from '@/types/types';
-import { FRNCC } from '@/utils/styles';
+import { useEncodeImage } from '@/services/useEncodeImage';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName, isDesktop } from 'react-device-detect';
@@ -36,7 +33,6 @@ const isDownloadable = () => {
 };
 
 export default function EncodePage() {
-  const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [croppedBlob, setCroppedBlob] = useState<Blob>();
   const [hiddenMessage, setHiddenMessage] = useState('');
   const [encodedImgSrcBase64, setEncodedImgSrcBase64] = useState('');
@@ -89,7 +85,7 @@ export default function EncodePage() {
     }
     const encoded = await encodeImage.mutateAsync({
       file: croppedBlob,
-      modelName,
+      modelName: defaultModelName,
       hiddenMessage,
       hiddenImage,
       returnType: 'base64',
@@ -155,7 +151,17 @@ export default function EncodePage() {
         </Box>
       )}
 
-      <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
+      <Box
+        sx={{
+          width: '100%',
+          gap: 1,
+          mt: 3,
+          display: 'flex',
+          flexFlow: 'row nowrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         {encodedImgSrcBase64 && (
           <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
             download
@@ -193,7 +199,17 @@ export default function EncodePage() {
         </Alert>
       )}
       {encodedImgSrcBase64 && (
-        <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
+        <Box
+          sx={{
+            width: '100%',
+            gap: 1,
+            mt: 3,
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           {/* <Button sx={{ flex: 1 }} variant='contained' onClick={onClickDownload}>
             download
           </Button> */}

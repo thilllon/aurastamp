@@ -10,6 +10,11 @@ export const Encoder = () => {
         <div>{'txt'}</div>
       </div>
       <div>
+        <form>
+          <label>upload image</label>
+          <input type="file" />
+        </form>
+
         <Button>pick an image</Button>
       </div>
     </div>

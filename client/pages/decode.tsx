@@ -1,10 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
-import { Cropper } from '@/components/cropper/Cropper';
+import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
 import { ModalDecoder } from '@/components/modal/ModalDecoder';
 import { httpClient } from '@/services/httpClient';
-import { StampModel } from '@/types/types';
-import { FRNCC } from '@/utils/styles';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
@@ -12,11 +9,9 @@ import { browserName } from 'react-device-detect';
 import { PixelCrop } from 'react-image-crop';
 
 const footerHeight = 120;
-const defaultModelName = 'the';
 
 export default function DecodePage() {
   const [originalFile, setOriginalFile] = useState<File>();
-  const [modelName, setModelName] = useState<StampModel>(defaultModelName);
   const [hashString, setHashString] = useState('');
   const [hiddenMessage, setHiddenMessage] = useState('');
   const [hiddenImageUrl, setHiddenImageUrl] = useState('');
@@ -69,9 +64,7 @@ export default function DecodePage() {
     }
     const formData = new FormData();
     formData.append('file', croppedBlob); // FIXME: file에서 croppedBlob으로 변경
-    if (modelName) {
-      formData.append('model_name', modelName);
-    }
+    formData.append('model_name', 'the');
     try {
       setIsLoading(true);
       const res = await httpClient.post('/decode', formData);
@@ -141,13 +134,23 @@ export default function DecodePage() {
             }}
           >
             <img
-              src={'data:image/png;base64,' + encodedImageBase64String}
+              src={`data:image/png;base64,${encodedImageBase64String}`}
               alt={'result'}
               style={{ width: '100%' }}
             />
           </Box>
         )}
-        <Box sx={{ width: '100%', gap: 1, mt: 3, ...FRNCC }}>
+        <Box
+          sx={{
+            width: '100%',
+            gap: 1,
+            mt: 3,
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <Button
             sx={{ flex: 1 }}
             variant={'contained'}
@@ -168,7 +171,7 @@ export default function DecodePage() {
         )}
         <ModalDecoder
           open={openModal}
-          modelName={modelName}
+          modelName={'the'}
           hashString={hashString}
           hiddenMessage={hiddenMessage}
           hiddenImageUrl={hiddenImageUrl}

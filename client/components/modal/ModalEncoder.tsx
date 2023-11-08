@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { Box, Button, IconButton, Input, Modal, TextField } from '@mui/material';
 import React, { ChangeEventHandler, useState } from 'react';

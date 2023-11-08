@@ -26,9 +26,6 @@ out
 # typescript
 *.tsbuildinfo
 
-# Sentry
-.sentryclirc
-
 # Storybook
 storybook-static
 
@@ -59,6 +56,3 @@ dist
 **/public/worker-*.js.map
 
 .vercel
-
-# Sentry
-.sentryclirc

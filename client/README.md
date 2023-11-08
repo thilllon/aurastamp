@@ -2,7 +2,6 @@
 
 - [ ] dark mode
 - [ ] google analytics
-- [ ] sentry
 - [ x ] playwright
 - [ x ] eslint 설정
 - [ x ] husky + lint staged

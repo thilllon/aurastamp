@@ -7,6 +7,9 @@ export default function AboutPage() {
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: {},
-    redirect: { destination: process.env.NEXT_PUBLIC_ABOUTUS_URL, permanent: true },
+    redirect: {
+      destination: process.env.NEXT_PUBLIC_NOTION_MOBILE,
+      permanent: true,
+    },
   };
 };

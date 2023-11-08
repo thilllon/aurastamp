@@ -1,48 +1,30 @@
-import { Footer } from '@/components/Footer';
 import { DashboardTopNavbar } from '@/components/layouts/DashboardTopNavbar';
+import { Footer } from '@/components/layouts/Footer';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import HelpIcon from '@mui/icons-material/Help';
 import SearchIcon from '@mui/icons-material/Search';
 import { BottomNavigation, BottomNavigationAction, Box, Fab, Paper, SxProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useRouter } from 'next/router';
-import { ReactElement, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { isMobile } from 'react-device-detect';
 
-const DashboardLayoutRoot = styled('main')(({ theme }) => ({
+const DashboardLayoutRoot = styled('main')(() => ({
   display: 'flex',
   flex: '1 1 auto',
   maxWidth: '420px',
   width: '100%',
   paddingTop: 70,
   margin: '0 auto',
-  // [theme.breakpoints.up(defaultBreakpoint)]: { paddingLeft: sidebarWidth },
 }));
 
-type DashboardLayoutProps = {
-  children: ReactNode;
-  sx?: SxProps;
-};
-
-export type NavData = {
-  id: string;
-  href: string;
-  icon: ReactElement;
-  title: string;
-  visible: boolean; // default visiblity
-};
-
-export const DashboardLayout = ({ children, sx }: DashboardLayoutProps) => {
+export const DashboardLayout = ({ children, sx }: { children: ReactNode; sx?: SxProps }) => {
   const router = useRouter();
   const onClickFab = () => {
-    const url1 =
-      'https://able-eater-423.notion.site/aura-stamp-mobile-61704cbc68764d209308fe8b78598b18';
-    const url2 = 'https://able-eater-423.notion.site/aura-stamp-ae4a7568bf534d36a47a404c8aad28c4';
-
     if (isMobile) {
-      window.open(url1);
+      window.open(process.env.NEXT_PUBLIC_NOTION_MOBILE);
     } else {
-      window.open(url2);
+      window.open(process.env.NEXT_PUBLIC_NOTION_PC);
     }
   };
 
