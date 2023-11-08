@@ -1,6 +1,6 @@
 import { Cropper } from '@/components/Cropper';
 import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { ModalDecoder } from '@/components/modal/ModalDecoder';
+import { ModalDecoder } from '@/components/ModalDecoder';
 import { httpClient } from '@/services/httpClient';
 import { sendEvent } from '@/utils/useGoogleAnalytics';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
