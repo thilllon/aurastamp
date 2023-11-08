@@ -1,21 +1,20 @@
 import 'react-image-crop/dist/ReactCrop.css';
 
 import { ArrowUturnLeftIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { Indicator, Root } from '@radix-ui/react-checkbox';
-import { CheckIcon, CheckboxIcon, ScissorsIcon } from '@radix-ui/react-icons';
+import { CheckboxIcon, ScissorsIcon } from '@radix-ui/react-icons';
 import { Button } from '@radix-ui/themes';
-import type { ChangeEventHandler, SyntheticEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import type { ChangeEventHandler, DependencyList, SyntheticEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Crop, PixelCrop } from 'react-image-crop';
-import ReactImageCrop from 'react-image-crop';
-import {
-  STORAGE_KEY,
-  canvasPreview,
-  canvasToBlob,
-  centerAspectCrop,
-  toReadable,
-} from './cropper.helper';
-import { useDebounce } from './cropper.hooks';
+import ReactImageCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
+// import {
+//   STORAGE_KEY,
+//   canvasPreview,
+//   canvasToBlob,
+//   centerAspectCrop,
+//   toReadable,
+// } from './cropper.helper';
+// import { useDebounce } from './cropper.hooks';
 
 const uploadButtonSize = 200 as const;
 
@@ -130,7 +129,7 @@ export const Cropper = ({
           previewCanvasRef.current,
           effect.cropCompleted,
           effect.scale,
-          effect.rotate
+          effect.rotate,
         );
         const croppedBlob = await canvasToBlob(previewCanvasRef.current);
         if (croppedBlob) {
@@ -140,7 +139,7 @@ export const Cropper = ({
       }
     },
     debounceDelay,
-    [effect.cropCompleted, effect.scale, effect.rotate]
+    [effect.cropCompleted, effect.scale, effect.rotate],
   );
 
   const onCropConfirm = async () => {
@@ -523,7 +522,7 @@ export const Cropper = ({
       {/* preview of cropped image */}
       {/* -------------------------------- */}
       <pre>{JSON.stringify(effect.cropCompleted ?? {}, null, 2)}</pre>
-      
+
       {effect.cropCompleted !== undefined && (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <canvas
@@ -540,4 +539,195 @@ export const Cropper = ({
       )}
     </div>
   );
+};
+
+const TO_RADIANS = Math.PI / 180;
+
+export const canvasPreview = async (
+  image: HTMLImageElement,
+  canvas: HTMLCanvasElement,
+  crop: PixelCrop,
+  scale = 1,
+  rotate = 0,
+) => {
+  console.info('## canvasPreview');
+
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    throw new Error('No 2d context');
+  }
+
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+  // devicePixelRatio slightly increases sharpness on retina devices
+  // at the expense of slightly slower render times and needing to
+  // size the image back down if you want to download/upload and be
+  // true to the images natural size.
+  // const pixelRatio = window.devicePixelRatio;
+  const pixelRatio = 1;
+
+  canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
+  canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
+
+  ctx.scale(pixelRatio, pixelRatio);
+  ctx.imageSmoothingQuality = 'high';
+
+  const cropX = crop.x * scaleX;
+  const cropY = crop.y * scaleY;
+
+  const rotateRads = rotate * TO_RADIANS;
+  const centerX = image.naturalWidth / 2;
+  const centerY = image.naturalHeight / 2;
+
+  ctx.save();
+
+  // 5) Move the crop origin to the canvas origin (0,0)
+  ctx.translate(-cropX, -cropY);
+  // 4) Move the origin to the center of the original position
+  ctx.translate(centerX, centerY);
+  // 3) Rotate around the origin
+  ctx.rotate(rotateRads);
+  // 2) Scale the image
+  ctx.scale(scale, scale);
+  // 1) Move the center of the image to the origin (0,0)
+  ctx.translate(-centerX, -centerY);
+  ctx.drawImage(
+    image,
+    0,
+    0,
+    image.naturalWidth,
+    image.naturalHeight,
+    0,
+    0,
+    image.naturalWidth,
+    image.naturalHeight,
+  );
+
+  ctx.restore();
+};
+
+export const canvasToBlob = async (
+  canvas: HTMLCanvasElement,
+  type = 'image/png',
+  quality = 0.7,
+): Promise<Blob | null> => {
+  return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+};
+
+let previewUrl = '';
+
+// Returns an image source you should set to state and pass
+// `{previewSrc && <img alt="Crop preview" src={previewSrc} />}`
+export const imagePreview = async (
+  image: HTMLImageElement,
+  crop: PixelCrop,
+  scale = 1,
+  rotate = 0,
+) => {
+  const canvas = document.createElement('canvas');
+  canvasPreview(image, canvas, crop, scale, rotate);
+  const blob = await canvasToBlob(canvas);
+
+  // 기존 previewUrl이 있는 경우
+  if (previewUrl) {
+    URL.revokeObjectURL(previewUrl);
+  }
+
+  if (!blob) {
+    return null;
+  }
+
+  previewUrl = URL.createObjectURL(blob);
+  return { previewUrl, blob };
+};
+
+/**
+ *
+ * @param mediaWidth
+ * @param mediaHeight
+ * @param aspect
+ * @returns
+ */
+const centerAspectCrop = (mediaWidth: number, mediaHeight: number, aspect: number) => {
+  const crop = makeAspectCrop({ unit: '%', width: 90 }, aspect, mediaWidth, mediaHeight);
+  return centerCrop(crop, mediaWidth, mediaHeight);
+};
+
+/**
+ * Convert bytes to human readable numbers with unit
+ * @param bytes
+ * @param decimalPlace
+ * @returns
+ */
+const toReadable = (bytes: number, decimalPlace = 1) => {
+  const threshold = 1024;
+  if (Math.abs(bytes) < threshold) {
+    return bytes + ' B';
+  }
+  const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  let idx = -1;
+  const r = 10 ** decimalPlace;
+  do {
+    bytes /= threshold;
+    ++idx;
+  } while (Math.round(Math.abs(bytes) * r) / r >= threshold && idx < units.length - 1);
+  return bytes.toFixed(decimalPlace) + ' ' + units[idx];
+};
+
+export const STORAGE_KEY = '__image__';
+
+export const saveToLocalstorage = (data: ArrayBuffer, key = STORAGE_KEY, type = 'image/png') => {
+  const uint8Array = new Uint8Array(data); // convert to unsigned int8 array
+  const raw = String.fromCharCode(...uint8Array); // take UTF-16 code to binary string
+  const base64 = btoa(raw); // convert binary to ascii(base64)
+  const dataURL = `data:${type};base64,` + base64; // a DataURL is a Base64 string with a header
+  localStorage.setItem(key, dataURL);
+};
+
+// https://github.com/streamich/react-use/blob/master/src/useTimeoutFn.ts
+type UseTimeoutFnReturn = [() => boolean | null, () => void, () => void];
+
+const useTimeoutFn = (fn: Function, ms = 0): UseTimeoutFnReturn => {
+  const ready = useRef<boolean | null>(false);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const callback = useRef(fn);
+
+  const isReady = useCallback(() => ready.current, []);
+
+  const set = useCallback(() => {
+    ready.current = false;
+    timeout.current && clearTimeout(timeout.current);
+
+    timeout.current = setTimeout(() => {
+      ready.current = true;
+      callback.current();
+    }, ms);
+  }, [ms]);
+
+  const clear = useCallback(() => {
+    ready.current = null;
+    timeout.current && clearTimeout(timeout.current);
+  }, []);
+
+  // update ref when function changes
+  useEffect(() => {
+    callback.current = fn;
+  }, [fn]);
+
+  // set on mount, clear on unmount
+  useEffect(() => {
+    set();
+    return clear;
+  }, [clear, ms, set]);
+
+  return [isReady, clear, set];
+};
+
+type UseDebounceReturn = [() => boolean | null, () => void];
+
+const useDebounce = (fn: Function, ms = 0, deps: DependencyList = []): UseDebounceReturn => {
+  const [isReady, cancel, reset] = useTimeoutFn(fn, ms);
+  useEffect(reset, [reset, ...deps]);
+  return [isReady, cancel];
 };

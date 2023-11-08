@@ -1,4 +1,4 @@
-// 'use client'
+// 'use client';
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
