@@ -1,3 +1,5 @@
+import 'react-image-crop/dist/ReactCrop.css';
+
 import {
   ArrowBack as ArrowBackIcon,
   Check as CheckIcon,
@@ -15,23 +17,16 @@ import {
   Input,
   Typography,
 } from '@mui/material';
-import {
-  ChangeEventHandler,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEventHandler, SyntheticEvent, useRef, useState } from 'react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
 import { useDebounce } from 'react-use';
+
+// TODO: undo 기능 추가할 것, 스타일 기능 추가할것
 
 const TO_RADIANS = Math.PI / 180;
 const buttonHeight = 36; // button height in pixel
 const uploadButtonSize = 200;
 const debounceDelay = 200; // ms
-// TODO: undo 기능 추가할 것, 스타일 기능 추가할것
 
 type CropperProps = {
   guideMessage?: string;
@@ -51,34 +46,27 @@ type CropperProps = {
 // const base64ToBlob = (base64String: string, contentType = '', sliceSize = 512) => {
 //   const byteCharacters = atob(base64String); // TODO: deprecated. Buffer.from으로 변경할 예정
 //   // const byteCharacters = Buffer.from(b64Data, 'base64');
-
 //   const byteArrays = [];
-
 //   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
 //     const slice = byteCharacters.slice(offset, offset + sliceSize);
-
 //     const byteNumbers = new Array(slice.length);
 //     for (let i = 0; i < slice.length; i++) {
 //       byteNumbers[i] = slice.charCodeAt(i);
 //     }
-
 //     const byteArray = new Uint8Array(byteNumbers);
 //     byteArrays.push(byteArray);
 //   }
-
 //   const blob = new Blob(byteArrays, { type: contentType });
 //   return blob;
 // };
 
-export const canvasPreview = async (
+const canvasPreview = async (
   image: HTMLImageElement,
   canvas: HTMLCanvasElement,
   crop: PixelCrop,
   scale = 1,
   rotate = 0
 ) => {
-  console.info('## canvasPreview');
-
   const ctx = canvas.getContext('2d');
 
   if (!ctx) {
@@ -134,9 +122,7 @@ export const canvasPreview = async (
   ctx.restore();
 };
 
-let previewUrl = '';
-
-export const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | null> => {
+const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | null> => {
   console.info('## canvasToBlob');
 
   return new Promise((resolve) => {
@@ -144,76 +130,12 @@ export const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | nu
   });
 };
 
-// Returns an image source you should set to state and pass
-// `{previewSrc && <img alt="Crop preview" src={previewSrc} />}`
-export const imgPreview = async (
-  image: HTMLImageElement,
-  crop: PixelCrop,
-  scale = 1,
-  rotate = 0
-) => {
-  const canvas = document.createElement('canvas');
-  canvasPreview(image, canvas, crop, scale, rotate);
-  const blob = await canvasToBlob(canvas);
-
-  // 기존 previewUrl이 있는 경우
-  if (previewUrl) {
-    URL.revokeObjectURL(previewUrl);
-  }
-
-  if (!blob) {
-    return null;
-  }
-
-  previewUrl = URL.createObjectURL(blob);
-  return { previewUrl, blob };
-};
-
-export const centerAspectCrop = (mediaWidth: number, mediaHeight: number, aspect: number) => {
+const centerAspectCrop = (mediaWidth: number, mediaHeight: number, aspect: number) => {
   const crop = makeAspectCrop({ unit: '%', width: 90 }, aspect, mediaWidth, mediaHeight);
   return centerCrop(crop, mediaWidth, mediaHeight);
 };
 
-// https://github.com/streamich/react-use/blob/master/src/useTimeoutFn.ts
-export type UseTimeoutFnReturn = [() => boolean | null, () => void, () => void];
-
-export const useTimeoutFn = (fn: Function, ms = 0): UseTimeoutFnReturn => {
-  const ready = useRef<boolean | null>(false);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
-  const callback = useRef(fn);
-
-  const isReady = useCallback(() => ready.current, []);
-
-  const set = useCallback(() => {
-    ready.current = false;
-    timeout.current && clearTimeout(timeout.current);
-
-    timeout.current = setTimeout(() => {
-      ready.current = true;
-      callback.current();
-    }, ms);
-  }, [ms]);
-
-  const clear = useCallback(() => {
-    ready.current = null;
-    timeout.current && clearTimeout(timeout.current);
-  }, []);
-
-  // update ref when function changes
-  useEffect(() => {
-    callback.current = fn;
-  }, [fn]);
-
-  // set on mount, clear on unmount
-  useEffect(() => {
-    set();
-    return clear;
-  }, [clear, ms, set]);
-
-  return [isReady, clear, set];
-};
-
-export const toReadableSize = (bytes: number, decimalPlace = 1) => {
+const toReadableSize = (bytes: number, decimalPlace = 1) => {
   const threshold = 1024;
   if (Math.abs(bytes) < threshold) {
     return bytes + ' B';
@@ -242,7 +164,6 @@ export const Cropper = ({
   onUnload,
   freeze = false,
 }: CropperProps) => {
-  // all state variables ------------------------------------
   const [imgSrcBase64, setImgSrcBase64] = useState('');
   const [imgSrcBase64Original, setImgSrcBase64Original] = useState('');
   const [originalBlob, setOriginalBlob] = useState<Blob>();
@@ -254,23 +175,15 @@ export const Cropper = ({
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
-  // --------------------------------------------------------
+
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useDebounce(
     async () => {
       if (imgRef.current && previewCanvasRef.current && typeof completedCrop !== 'undefined') {
-        // We use canvasPreview as it's much faster than imgPreview.
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate);
         const croppedBlob = await canvasToBlob(previewCanvasRef.current);
-        // console.info('cropped size', toReadableSize(croppedBlob?.size || 0));
-        // const { previewUrl, blob } = await imgPreview(
-        //   previewImageRef.current,
-        //   completedCrop,
-        //   scale,
-        //   rotate
-        // );
         setCroppedBlobSize(croppedBlob?.size);
         if (croppedBlob) {
           onCropEnd?.(completedCrop, croppedBlob);
@@ -283,7 +196,6 @@ export const Cropper = ({
 
   const onClickConfirmCrop = async () => {
     if (previewCanvasRef.current) {
-      // setIsCropProcessing(true);
       const newBlob = await canvasToBlob(previewCanvasRef.current);
       if (newBlob) {
         // --------------------------------
@@ -295,7 +207,6 @@ export const Cropper = ({
           setImgSrcBase64(imgSrc);
         };
         reader.onloadend = () => {
-          // setIsCropProcessing(false);
           onConfirmCropProp?.(completedCrop, newBlob);
         };
         reader.readAsDataURL(newBlob);
@@ -344,9 +255,7 @@ export const Cropper = ({
       setCrop(undefined); // Makes crop preview update between images.
       setCompletedCrop(undefined);
       setOriginalBlob(newFile);
-      // --------------------------------
       // blob to base64
-      // --------------------------------
       const reader = new FileReader();
       reader.onload = () => {
         const imgSrc = reader.result?.toString() || '';

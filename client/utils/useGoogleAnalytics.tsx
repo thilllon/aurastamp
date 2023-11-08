@@ -133,16 +133,11 @@ export const useGoogleAnalytics = ({
   };
 };
 
+// eslint-disable-next-line react/display-name
 export const GoogleAnalysisScript = React.memo(() => {
   if (!gaId) {
     return null;
   }
-  // const __html = `
-  //           window.dataLayer = window.dataLayer || [];
-  //           function gtag(){dataLayer.push(arguments);}
-  //           gtag('js', new Date());
-  //           gtag('config', '${gaId}', { page_path: window.location.pathname });
-  //         `;
 
   const __html = [
     `window.dataLayer = window.dataLayer || [];`,
