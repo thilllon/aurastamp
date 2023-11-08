@@ -1,1 +1,1 @@
-# Aurastamp Frontend
+# Aurastamp
