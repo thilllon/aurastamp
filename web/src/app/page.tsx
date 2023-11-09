@@ -1,10 +1,5 @@
-import { faker } from '@faker-js/faker';
-import { addDoc, collection, deleteDoc, doc } from 'firebase/firestore';
-import { FormEventHandler } from 'react';
-import { Button } from './components/ui/button';
-import { db } from './firebase';
-import { Encoder } from './components/encoder';
-import { Decoder } from './components/decoder';
+import { Decoder } from '../components/decoder';
+import { Encoder } from '../components/encoder';
 
 export default function Home() {
   return (

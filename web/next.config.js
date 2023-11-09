@@ -1,17 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // eslint: {
-  //   ignoreDuringBuilds: true,
-  // },
+  experimental: {
+    webpackBuildWorker: true,
+  },
   webpack: (config) => {
     if (config.name === 'server') {
       config.optimization.concatenateModules = false;
     }
-
     return config;
-  },
-  experimental: {
-    webpackBuildWorker: true,
   },
 };
 

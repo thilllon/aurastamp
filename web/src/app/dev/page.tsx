@@ -8,15 +8,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/app/components/ui/form';
-import { Input } from '@/app/components/ui/input';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { faker } from '@faker-js/faker';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  increment,
+  onSnapshot,
+  query,
+  updateDoc
+} from 'firebase/firestore';
 import { FormEventHandler, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Button } from '../components/ui/button';
+import { Button } from '../../components/ui/button';
 import { db } from '../firebase';
 
 const formSchema = z.object({
@@ -82,10 +91,8 @@ export default function TestPage() {
       price: faker.number.int(),
     });
 
-    const q = query(collection(db, 'items'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const unsubscribe = onSnapshot(query(collection(db, 'items')), (querySnapshot) => {
       let itemList: any[] = [];
-
       querySnapshot.forEach((doc) => {
         itemList.push({
           id: doc.id,
@@ -109,6 +116,7 @@ export default function TestPage() {
       name: newItem.name.trim(),
       price: Number(newItem.price),
     });
+
     setNewItem({
       name: faker.lorem.word(),
       price: faker.number.int(),
@@ -119,10 +127,41 @@ export default function TestPage() {
     deleteDoc(doc(db, 'items', id));
   };
 
+  const onClickLike = async (id: string) => {
+    // // Add a new document in collection "cities"
+    // await setDoc(doc(db, 'cities', 'LA'), {
+    //   name: 'Los Angeles',
+    //   state: 'CA',
+    //   like: 'USA',
+    // });
+    // 그러나 문서에 유의미한 ID를 두지 않고 Cloud Firestore에서 자동으로 ID를 생성하도록 하는 것이 편리한 때도 있습니다. 이렇게 하려면 다음과 같은 언어별 add() 메서드를 호출하면 됩니다.
+    // const docRef = await addDoc(collection(db, 'cities'), {
+    //   name: 'Tokyo',
+    //   country: 'Japan',
+    // });
+
+    await updateDoc(doc(db, 'items', id), {
+      like: increment(1),
+    });
+  };
+  const onClickDislike = async () => {
+    //
+  };
+
+  const addEncodingCounter = async (id: string) => {
+    await updateDoc(doc(db, 'items', id), {
+      encodingCounter: increment(1),
+    });
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <a href="/encode">encode</a>
       <a href="/decode">decode</a>
+
+      <Button> add encoding image </Button>
+
+      {/* <Button onClick={onClickLike}>like test</Button> */}
 
       {/* <WaitDemo /> */}
 
