@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  fastapi:
+    container_name: fastapi
+    build: fastapi/
+    ports:
+      - 8000:8000
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+    env_file:
+      - .env
+
+  # streamlit:
+  #   container_name: streamlit
+  #   build: streamlit/
+  #   depends_on:
+  #     - fastapi
+  #   ports:
+  #     - 8501:8501
+  #   networks:
+  #     - deploy_network
+# networks:
+#   deploy_network:
+#     driver: bridge

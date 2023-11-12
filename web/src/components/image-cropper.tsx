@@ -4,23 +4,36 @@
 import 'react-image-crop/dist/ReactCrop.css';
 
 import { CheckIcon, CropIcon, Cross1Icon, SunIcon, UploadIcon } from '@radix-ui/react-icons';
-
 import { ChangeEventHandler, SyntheticEvent, useRef, useState } from 'react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import { useDebounce } from 'react-use';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
+import { Input } from './ui/input';
 
-// TODO: undo 기능 추가할 것, 스타일 기능 추가할것
+/**
+ * 기능 추가 건
+ * [ ] undo
+ * [ ] styling
+ */
 
 const TO_RADIANS = Math.PI / 180;
 const uploadButtonSize = 200;
-const debounceDelay = 200; // ms
+const debounceDelayMs = 200;
 
 type CropperProps = {
+  /**
+   *
+   */
   guideMessage?: string;
-  defaultAspect?: number;
+  /**
+   * default aspect ratio
+   * @default 1
+   */
+  defaultAspectRatio?: number;
+  /**
+   *
+   */
   hidePreview?: boolean;
   hideImageSpec?: boolean;
   showScaleController?: boolean;
@@ -113,8 +126,6 @@ const canvasPreview = async (
 };
 
 const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | null> => {
-  console.info('## canvasToBlob');
-
   return new Promise((resolve) => {
     return canvas.toBlob(resolve, 'image/png', 0.7);
   });
@@ -142,7 +153,7 @@ const toReadableSize = (bytes: number, decimalPlace = 1) => {
 
 export const Cropper = ({
   guideMessage,
-  defaultAspect = 1,
+  defaultAspectRatio: defaultAspect = 1,
   hideImageSpec = false,
   hidePreview: hidePreviewCanvas = false,
   showScaleController = false,
@@ -154,7 +165,7 @@ export const Cropper = ({
   onUnload,
   freeze = false,
 }: CropperProps) => {
-  const [imgSrcBase64, setImgSrcBase64] = useState('');
+  const [sourceImageBase64, setImgSrcBase64] = useState('');
   const [imgSrcBase64Original, setImgSrcBase64Original] = useState('');
   const [originalBlob, setOriginalBlob] = useState<Blob>();
   const [croppedBlobSize, setCroppedBlobSize] = useState<number>();
@@ -180,7 +191,7 @@ export const Cropper = ({
         }
       }
     },
-    debounceDelay,
+    debounceDelayMs,
     [completedCrop, scale, rotate],
   );
 
@@ -292,7 +303,7 @@ export const Cropper = ({
       {!hideImageSpec && (
         <>
           <span>
-            {`length: ${imgSrcBase64.length.toLocaleString()} / ${imgSrcBase64Original.length.toLocaleString()}`}
+            {`length: ${sourceImageBase64.length.toLocaleString()} / ${imgSrcBase64Original.length.toLocaleString()}`}
           </span>
           <span>
             {`size: ${toReadableSize(croppedBlobSize ?? 0)} / ${toReadableSize(
@@ -306,7 +317,7 @@ export const Cropper = ({
       {/* Uploader */}
       {/* -------------------------------- */}
 
-      {!imgSrcBase64 && (
+      {!sourceImageBase64 && (
         <label
           htmlFor="uploadbutton"
           className="flex flex-col flex-nowrap justify-center items-center rounded-lg border-2 border-solid border-blue-500 p-1"
@@ -354,7 +365,7 @@ export const Cropper = ({
                 type="number"
                 step="0.1"
                 value={scale}
-                disabled={!imgSrcBase64}
+                disabled={!sourceImageBase64}
                 onChange={(ev) => setScale(Number(ev.target.value))}
               />
             </div>
@@ -367,7 +378,7 @@ export const Cropper = ({
                 id="rotate-input"
                 type="number"
                 value={rotate}
-                disabled={!imgSrcBase64}
+                disabled={!sourceImageBase64}
                 onChange={(ev) => setRotate(Math.min(180, Math.max(-180, Number(ev.target.value))))}
               />
             </div>
@@ -406,25 +417,25 @@ export const Cropper = ({
 
         <div className="mr-auto" />
 
-        {imgSrcBase64 && !isEditMode && (
+        {sourceImageBase64 && !isEditMode && (
           <Button
             className="gap-2"
             onClick={onClickResetImage}
-            disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
+            disabled={freeze || sourceImageBase64 === imgSrcBase64Original}
           >
             <SunIcon />
             사진원본으로 되돌리기
           </Button>
         )}
 
-        {imgSrcBase64 && isEditMode && (
+        {sourceImageBase64 && isEditMode && (
           <Button className="gap-2" disabled={freeze} onClick={onClickCancelCropMode}>
             <Cross1Icon />
             crop 기능 끄기
           </Button>
         )}
 
-        {imgSrcBase64 && !isEditMode && (
+        {sourceImageBase64 && !isEditMode && (
           <Button
             className="gap-2"
             disabled={freeze || isCropProcessing}
@@ -436,7 +447,7 @@ export const Cropper = ({
           </Button>
         )}
 
-        {imgSrcBase64 && isEditMode && (
+        {sourceImageBase64 && isEditMode && (
           <Button className="gap-2" disabled={freeze} onClick={onClickConfirmCrop}>
             <CheckIcon />
             confirm
@@ -448,7 +459,7 @@ export const Cropper = ({
       {/* Cropped image */}
       {/* -------------------------------- */}
 
-      {imgSrcBase64 && (
+      {sourceImageBase64 && (
         <ReactCrop
           locked={!isEditMode}
           onDragStart={onDragStart}
@@ -460,7 +471,7 @@ export const Cropper = ({
           <img
             ref={imgRef}
             alt="Crop me"
-            src={imgSrcBase64}
+            src={sourceImageBase64}
             style={{
               maxHeight: '50vh',
               transform: `scale(${scale}) rotate(${rotate}deg)`,
@@ -493,11 +504,11 @@ export const Cropper = ({
       {/* -------------------------------- */}
 
       <div className="mt-1 flex justify-center gap-1">
-        {imgSrcBase64 && (
+        {sourceImageBase64 && (
           <Button
             className="gap-2"
             onClick={onClickResetImage}
-            disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
+            disabled={freeze || sourceImageBase64 === imgSrcBase64Original}
           >
             <SunIcon />
             reset
@@ -505,18 +516,18 @@ export const Cropper = ({
         )}
 
         {/* TODO: undobutton 기능 */}
-        {false && imgSrcBase64 && (
+        {false && sourceImageBase64 && (
           <Button
             // sx={{ height: buttonHeight }}
             // startIcon={<ArrowBackIcon />}
             onClick={onClickUndoCrop}
-            disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
+            disabled={freeze || sourceImageBase64 === imgSrcBase64Original}
           >
             undo
           </Button>
         )}
 
-        {imgSrcBase64 && (
+        {sourceImageBase64 && (
           <Button className="gap-2" disabled={freeze} onClick={onClickUnloadImage}>
             <Cross1Icon />
             unload
