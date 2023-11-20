@@ -1,1 +1,1 @@
-export * from './cropper';
+export * from './logrocket-cropper';

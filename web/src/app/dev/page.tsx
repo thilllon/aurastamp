@@ -20,7 +20,7 @@ import {
   increment,
   onSnapshot,
   query,
-  updateDoc
+  updateDoc,
 } from 'firebase/firestore';
 import { FormEventHandler, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -58,22 +58,22 @@ function ProfileForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
           control={form.control}
-          name="username"
+          name='username'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder='shadcn' {...field} />
               </FormControl>
               <FormDescription>This is your public display name.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type='submit'>Submit</Button>
       </form>
     </Form>
   );
@@ -155,9 +155,9 @@ export default function TestPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <a href="/encode">encode</a>
-      <a href="/decode">decode</a>
+    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
+      <a href='/encode'>encode</a>
+      <a href='/decode'>decode</a>
 
       <Button> add encoding image </Button>
 
@@ -167,33 +167,33 @@ export default function TestPage() {
 
       <ProfileForm />
 
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <h1 className="font-medium text-4xl">Expense tracker</h1>
+      <div className='z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex'>
+        <h1 className='font-medium text-4xl'>Expense tracker</h1>
 
-        <div className="p-4 rounded-lg">
-          <form className="grid grid-cols-6 items-center" onSubmit={addItem}>
+        <div className='p-4 rounded-lg'>
+          <form className='grid grid-cols-6 items-center' onSubmit={addItem}>
             <input
               onChange={(event) => setNewItem({ ...newItem, name: event.target.value })}
               value={newItem.name}
-              className="col-span-3 p-3 border mx-3"
-              type="text"
-              placeholder="enter item"
+              className='col-span-3 p-3 border mx-3'
+              type='text'
+              placeholder='enter item'
             />
             <input
               onChange={(event) => setNewItem({ ...newItem, price: Number(event.target.value) })}
               value={newItem.price}
-              className="col-span-2 p-3 border mx-3"
-              type="number"
-              placeholder="enter $"
+              className='col-span-2 p-3 border mx-3'
+              type='number'
+              placeholder='enter $'
             />
-            <Button type="submit">+</Button>
+            <Button type='submit'>+</Button>
           </form>
           <ul>
             {items.map((item, id) => {
               return (
-                <li key={id} className="my-4 w-full flex justify-between">
-                  <div className="p-4 w-full flex justify-between">
-                    <span className="capitalize">{item.name}</span>
+                <li key={id} className='my-4 w-full flex justify-between'>
+                  <div className='p-4 w-full flex justify-between'>
+                    <span className='capitalize'>{item.name}</span>
                     <span>{item.price}</span>
                   </div>
                   <Button
@@ -207,7 +207,7 @@ export default function TestPage() {
             })}
           </ul>
           {items.length > 0 && (
-            <div className="my-4 w-full flex justify-between p-4">
+            <div className='my-4 w-full flex justify-between p-4'>
               <span>total</span>
               <span>${total}</span>
             </div>

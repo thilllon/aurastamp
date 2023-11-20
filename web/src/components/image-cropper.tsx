@@ -151,7 +151,7 @@ const toReadableSize = (bytes: number, decimalPlace = 1) => {
   return bytes.toFixed(decimalPlace) + ' ' + units[idx];
 };
 
-export const Cropper = ({
+export const LegacyImageCropper = ({
   guideMessage,
   defaultAspectRatio: defaultAspect = 1,
   hideImageSpec = false,
@@ -299,7 +299,7 @@ export const Cropper = ({
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className='flex flex-col justify-center items-center'>
       {!hideImageSpec && (
         <>
           <span>
@@ -319,8 +319,8 @@ export const Cropper = ({
 
       {!sourceImageBase64 && (
         <label
-          htmlFor="uploadbutton"
-          className="flex flex-col flex-nowrap justify-center items-center rounded-lg border-2 border-solid border-blue-500 p-1"
+          htmlFor='uploadbutton'
+          className='flex flex-col flex-nowrap justify-center items-center rounded-lg border-2 border-solid border-blue-500 p-1'
           style={{
             width: uploadButtonSize,
             height: uploadButtonSize,
@@ -328,19 +328,19 @@ export const Cropper = ({
             maxHeight: uploadButtonSize,
           }}
         >
-          <div className="cursor-pointer flex justify-center items-center w-full h-full rounded-lg border-2 border-dashed border-gray-400 hover:border-gray-500 hover:bg-gray-100 active:bg-gray-200">
+          <div className='cursor-pointer flex justify-center items-center w-full h-full rounded-lg border-2 border-dashed border-gray-400 hover:border-gray-500 hover:bg-gray-100 active:bg-gray-200'>
             <Input
-              id="uploadbutton"
-              type="file"
-              className="hidden"
+              id='uploadbutton'
+              type='file'
+              className='hidden'
               // inputProps={{ accept: 'image/*' }} // 설정시 android에서 동작안함
               onChange={onChange}
             />
-            <div className="flex flex-col flex-nowrap justify-center items-center">
+            <div className='flex flex-col flex-nowrap justify-center items-center'>
               <UploadIcon />
               {guideMessage && (
                 <span
-                  className="select-none text-center text-gray-400 overflow-hidden max-h-10"
+                  className='select-none text-center text-gray-400 overflow-hidden max-h-10'
                   style={{ textOverflow: 'hidden' }}
                 >
                   {guideMessage}
@@ -359,11 +359,11 @@ export const Cropper = ({
         <div>
           {showScaleController && (
             <div>
-              <label htmlFor="scale-input">Scale: </label>
+              <label htmlFor='scale-input'>Scale: </label>
               <input
-                id="scale-input"
-                type="number"
-                step="0.1"
+                id='scale-input'
+                type='number'
+                step='0.1'
                 value={scale}
                 disabled={!sourceImageBase64}
                 onChange={(ev) => setScale(Number(ev.target.value))}
@@ -373,10 +373,10 @@ export const Cropper = ({
 
           {showRotateController && (
             <div>
-              <label htmlFor="rotate-input">Rotate: </label>
+              <label htmlFor='rotate-input'>Rotate: </label>
               <input
-                id="rotate-input"
-                type="number"
+                id='rotate-input'
+                type='number'
                 value={rotate}
                 disabled={!sourceImageBase64}
                 onChange={(ev) => setRotate(Math.min(180, Math.max(-180, Number(ev.target.value))))}
@@ -390,36 +390,36 @@ export const Cropper = ({
       {/* Buttons at the top */}
       {/* -------------------------------- */}
 
-      <div className="flex flex-row flex-nowrap justify-center items-center w-full mb-1 gap-1">
+      <div className='flex flex-row flex-nowrap justify-center items-center w-full mb-1 gap-1'>
         {isEditMode && showAspectRatioController && (
           <div>
-            <div className="items-top flex space-x-2">
+            <div className='items-top flex space-x-2'>
               <Checkbox
-                id="aspect"
+                id='aspect'
                 onChange={onCheckFixAspectRatio}
                 value={'end'}
                 checked={Boolean(aspectRatio)}
                 disabled={freeze}
               />
 
-              <div className="grid gap-1.5 leading-none">
+              <div className='grid gap-1.5 leading-none'>
                 <label
-                  htmlFor="aspect"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  htmlFor='aspect'
+                  className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
                 >
                   Fix aspect ratio
                 </label>
-                <p className="text-sm text-muted-foreground">To fix ratio of width/height</p>
+                <p className='text-sm text-muted-foreground'>To fix ratio of width/height</p>
               </div>
             </div>
           </div>
         )}
 
-        <div className="mr-auto" />
+        <div className='mr-auto' />
 
         {sourceImageBase64 && !isEditMode && (
           <Button
-            className="gap-2"
+            className='gap-2'
             onClick={onClickResetImage}
             disabled={freeze || sourceImageBase64 === imgSrcBase64Original}
           >
@@ -429,7 +429,7 @@ export const Cropper = ({
         )}
 
         {sourceImageBase64 && isEditMode && (
-          <Button className="gap-2" disabled={freeze} onClick={onClickCancelCropMode}>
+          <Button className='gap-2' disabled={freeze} onClick={onClickCancelCropMode}>
             <Cross1Icon />
             crop 기능 끄기
           </Button>
@@ -437,7 +437,7 @@ export const Cropper = ({
 
         {sourceImageBase64 && !isEditMode && (
           <Button
-            className="gap-2"
+            className='gap-2'
             disabled={freeze || isCropProcessing}
             onClick={onClickStartCrop}
           >
@@ -448,7 +448,7 @@ export const Cropper = ({
         )}
 
         {sourceImageBase64 && isEditMode && (
-          <Button className="gap-2" disabled={freeze} onClick={onClickConfirmCrop}>
+          <Button className='gap-2' disabled={freeze} onClick={onClickConfirmCrop}>
             <CheckIcon />
             confirm
           </Button>
@@ -470,7 +470,7 @@ export const Cropper = ({
         >
           <img
             ref={imgRef}
-            alt="Crop me"
+            alt='Crop me'
             src={sourceImageBase64}
             style={{
               maxHeight: '50vh',
@@ -486,11 +486,11 @@ export const Cropper = ({
       {/* -------------------------------- */}
 
       {completedCrop !== undefined && (
-        <div className="flex justify-center items-center">
+        <div className='flex justify-center items-center'>
           <canvas
             hidden={hidePreviewCanvas}
             ref={previewCanvasRef}
-            className="object-contain"
+            className='object-contain'
             style={{
               width: completedCrop.width,
               height: completedCrop.height,
@@ -503,10 +503,10 @@ export const Cropper = ({
       {/* Buttons at the bottom */}
       {/* -------------------------------- */}
 
-      <div className="mt-1 flex justify-center gap-1">
+      <div className='mt-1 flex justify-center gap-1'>
         {sourceImageBase64 && (
           <Button
-            className="gap-2"
+            className='gap-2'
             onClick={onClickResetImage}
             disabled={freeze || sourceImageBase64 === imgSrcBase64Original}
           >
@@ -528,7 +528,7 @@ export const Cropper = ({
         )}
 
         {sourceImageBase64 && (
-          <Button className="gap-2" disabled={freeze} onClick={onClickUnloadImage}>
+          <Button className='gap-2' disabled={freeze} onClick={onClickUnloadImage}>
             <Cross1Icon />
             unload
           </Button>

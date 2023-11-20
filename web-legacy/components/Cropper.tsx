@@ -24,7 +24,6 @@ import { useDebounce } from 'react-use';
 // TODO: undo 기능 추가할 것, 스타일 기능 추가할것
 
 const TO_RADIANS = Math.PI / 180;
-const buttonHeight = 36; // button height in pixel
 const uploadButtonSize = 200;
 const debounceDelay = 200; // ms
 
@@ -467,12 +466,7 @@ export const Cropper = ({
         <Box sx={{ mr: 'auto' }} />
 
         {imgSrcBase64 && isEditMode && (
-          <Button
-            disabled={freeze}
-            sx={{ height: buttonHeight }}
-            startIcon={<CloseOutlinedIcon />}
-            onClick={onClickCancelCrop}
-          >
+          <Button disabled={freeze} startIcon={<CloseOutlinedIcon />} onClick={onClickCancelCrop}>
             cancel
           </Button>
         )}
@@ -480,7 +474,6 @@ export const Cropper = ({
         {imgSrcBase64 && !isEditMode && (
           <Button
             disabled={freeze || isCropProcessing}
-            sx={{ height: buttonHeight }}
             startIcon={<CropIcon />}
             onClick={onClickStartCrop}
             endIcon={isCropProcessing && <CircularProgress />}
@@ -490,12 +483,7 @@ export const Cropper = ({
         )}
 
         {imgSrcBase64 && isEditMode && (
-          <Button
-            disabled={freeze}
-            sx={{ height: buttonHeight }}
-            startIcon={<CheckIcon />}
-            onClick={onClickConfirmCrop}
-          >
+          <Button disabled={freeze} startIcon={<CheckIcon />} onClick={onClickConfirmCrop}>
             confirm
           </Button>
         )}
@@ -558,7 +546,6 @@ export const Cropper = ({
       <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center', gap: 1 }}>
         {imgSrcBase64 && (
           <Button
-            sx={{ height: buttonHeight }}
             startIcon={<RestoreIcon />}
             onClick={onClickResetCrop}
             disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
@@ -570,7 +557,6 @@ export const Cropper = ({
         {/* TODO: undo 기능 */}
         {false && imgSrcBase64 && (
           <Button
-            sx={{ height: buttonHeight }}
             startIcon={<ArrowBackIcon />}
             onClick={onClickUndoCrop}
             disabled={freeze || imgSrcBase64 === imgSrcBase64Original}
@@ -580,12 +566,7 @@ export const Cropper = ({
         )}
 
         {imgSrcBase64 && (
-          <Button
-            disabled={freeze}
-            sx={{ height: buttonHeight }}
-            startIcon={<CloseOutlinedIcon />}
-            onClick={onClickUnloadImage}
-          >
+          <Button disabled={freeze} startIcon={<CloseOutlinedIcon />} onClick={onClickUnloadImage}>
             unload
           </Button>
         )}

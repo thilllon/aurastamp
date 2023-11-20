@@ -97,8 +97,6 @@ export default function EncodePage() {
     downloadBase64String(encodedImgSrcBase64);
   };
 
-  const onClickShare = () => {};
-
   const onClickRetry = () => {
     setKey((x) => x + 1); // gorgeous way to remount
     setHiddenMessage('');

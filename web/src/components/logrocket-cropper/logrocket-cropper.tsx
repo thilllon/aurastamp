@@ -3,122 +3,47 @@
 
 import 'react-image-crop/dist/ReactCrop.css';
 
-import Image from 'next/image';
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  MouseEvent,
-  MouseEventHandler,
-  SyntheticEvent,
-  useRef,
-  useState,
-} from 'react';
-import ReactCrop, {
-  Crop,
-  PercentCrop,
-  PixelCrop,
-  centerCrop,
-  convertToPixelCrop,
-  makeAspectCrop,
-} from 'react-image-crop';
+import clsx from 'clsx';
+import { ChangeEvent, MouseEvent, SyntheticEvent, useRef, useState } from 'react';
+import ReactCrop, { Crop, PercentCrop, PixelCrop, convertToPixelCrop } from 'react-image-crop';
 import { Button } from '../ui/button';
 import { canvasPreview } from './canvas-preview';
 import { useDebounceEffect } from './use-debounce';
+import {
+  ControlFixingAspect,
+  ControlRotate,
+  ControlScale,
+  centerAspectCrop,
+} from './callback-functions';
 
-// This is to demonstate how to make and center a % aspect crop
-// which is a bit trickier so we use some helper functions.
-function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
-  return centerCrop(
-    makeAspectCrop({ unit: '%', width: 90 }, aspect, mediaWidth, mediaHeight),
-    mediaWidth,
-    mediaHeight,
-  );
-}
+const initialControls = { scale: 1, rotate: 0, aspect: undefined };
 
-function ControlScale({
-  disabled,
-  scale,
-  onChange,
-}: {
-  disabled?: boolean;
-  scale?: number;
-  onChange: ChangeEventHandler;
-}) {
-  return (
-    <div>
-      <label htmlFor="scale-input">Scale: </label>
-      <input
-        id="scale-input"
-        type="number"
-        step="0.1"
-        value={scale}
-        disabled={disabled}
-        onChange={onChange}
-      />
-    </div>
-  );
-}
-
-function ControlRotate({
-  disabled,
-  rotate,
-  onChange,
-}: {
-  disabled?: boolean;
-  rotate?: number;
-  onChange: ChangeEventHandler;
-}) {
-  return (
-    <div>
-      <label htmlFor="rotate-input">Rotate: </label>
-      <input
-        id="rotate-input"
-        type="number"
-        value={rotate}
-        disabled={disabled}
-        onChange={onChange}
-      />
-    </div>
-  );
-}
-
-function ControlFixingAspect({
-  fixed,
-  onClick,
-}: {
-  fixed?: boolean;
-  onClick: MouseEventHandler<HTMLButtonElement>;
-}) {
-  return (
-    <Button onClick={onClick} variant={fixed ? 'default' : 'secondary'}>
-      {fixed ? 'fixed' : 'not fixed'}
-    </Button>
-  );
-}
-
-const defaultAspect = 16 / 9;
-
-export default function RocketCropper({
+// logrocket 블로그 참조한 크로퍼
+export default function LogRocketCropper({
   controlScale,
   controlRotate,
   controlAspect,
+  onCropEnd,
 }: {
   controlScale?: boolean;
   controlRotate?: boolean;
   controlAspect?: boolean;
+  onCropEnd: (image: File | Blob) => void;
 }) {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const blobUrlRef = useRef('');
+  const blobUrlRef = useRef<string>('');
   const hiddenAnchorRef = useRef<HTMLAnchorElement>(null);
-  const [imageSource, setImageSource] = useState('');
+  const form1234Ref = useRef<HTMLFormElement>(null);
+
+  const [imageSource, setImageSource] = useState(''); // original image
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [controls, setControls] = useState<{
     scale: number;
     rotate: number;
-    aspect: number | undefined;
-  }>({ scale: 1, rotate: 0, aspect: defaultAspect });
+    aspect: number | undefined; // width/height
+  }>(initialControls);
 
   useDebounceEffect(
     async () => {
@@ -154,7 +79,7 @@ export default function RocketCropper({
   function onImageLoad(event: SyntheticEvent<HTMLImageElement>): void {
     if (controls.aspect) {
       const { width, height } = event.currentTarget;
-      setCrop(centerAspectCrop(width, height, controls.aspect));
+      setCrop(centerAspectCrop(width, height, controls.aspect, 0.9));
     }
   }
 
@@ -191,8 +116,7 @@ export default function RocketCropper({
       offscreen.width,
       offscreen.height,
     );
-    // You might want { type: "image/jpeg", quality: <0 to 1> } to
-    // reduce image size
+    // You might want { type: "image/jpeg", quality: <0 to 1> } to reduce image size
     const blob = await offscreen.convertToBlob({ type: 'image/png' });
     if (blobUrlRef.current) {
       // remove previous image's blobUrlRef
@@ -209,12 +133,12 @@ export default function RocketCropper({
       return;
     }
 
-    // FIXME: defaultAspect 대신 이미지 aspect를 가져오기
-    const aspect = defaultAspect;
-    setControls({ ...controls, aspect });
     if (imageRef.current) {
       const { width, height } = imageRef.current;
-      const newCrop = centerAspectCrop(width, height, aspect);
+      // TODO: 이전에 crop이 있었으면 그것을 기준으로 aspect를 잡아야 한다.
+      const aspect = width / height;
+      const newCrop = centerAspectCrop(width, height, aspect, 0.9);
+      setControls({ ...controls, aspect });
       setCrop(newCrop);
       setCompletedCrop(convertToPixelCrop(newCrop, width, height));
     }
@@ -231,32 +155,93 @@ export default function RocketCropper({
     });
   }
 
-  function onClickLeaveCrop(event: MouseEvent): void {
+  function onClickCancelCrop(event: MouseEvent): void {
     console.log(event);
+    // TODO: crop을 끝내고,
   }
 
   function onClickConfirmCrop(event: MouseEvent): void {
     console.log(event);
+    // onCropEnd();
   }
 
   function onChangeCrop(crop: PixelCrop, percentCrop: PercentCrop): void {
+    // console.warn(crop, percentCrop);
+    // PixelCrop: width, ehight, x, y, unit='px'
+    // PercentCrop
     setCrop(percentCrop);
   }
 
   function onCompleteCrop(crop: PixelCrop, percentCrop: PercentCrop): void {
     setCompletedCrop(crop);
+    console.warn(crop, percentCrop);
+  }
+
+  function onClickReset() {
+    // previewCanvasRef.current = null;
+    // imageRef.current = null;
+    // hiddenAnchorRef.current?.href = null;
+
+    if (blobUrlRef.current) {
+      // remove previous image's blobUrlRef
+      URL.revokeObjectURL(blobUrlRef.current);
+    }
+    blobUrlRef.current = '';
+    setImageSource('');
+    setCrop(undefined);
+    setCompletedCrop(undefined);
+    setControls(initialControls);
+    form1234Ref.current?.reset();
   }
 
   return (
     <div>
-      <div className="" aria-description="crop controls">
-        <input type="file" accept="image/*" onChange={onSelectFile} />
+      <div className='' aria-description='crop controls'>
+        <label
+          htmlFor='uploadButton'
+          className={clsx(
+            'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
+            'w-[8rem]',
+            'h-[8rem]',
+            'min-w-[8rem]',
+            'min-h-[8rem]',
+          )}
+        >
+          <form
+            name='form1234'
+            ref={form1234Ref}
+            className={clsx(
+              'cursor-pointer flex justify-center items-center w-full h-full border-2 border-dashed border-slate-700 m-auto min-h-[100px]',
+              // 'w-[8rem]',
+              // 'h-[8rem]',
+              // 'min-w-[8rem]',
+              // 'min-h-[8rem]',
+            )}
+          >
+            <input
+              id='uploadButton'
+              className='hidden'
+              type='file'
+              accept='image/*'
+              onChange={onSelectFile}
+            />
+            <div className='flex flex-col flex-nowrap justify-center items-center'>
+              <span className='text-center select-none text-slate-600 overflow-hidden over'>
+                Click to upload image
+              </span>
+            </div>
+          </form>
+        </label>
         {controlScale && (
-          <ControlScale disabled={!imageSource} scale={controls.scale} onChange={onChangeScale} />
+          <ControlScale
+            disabled={Boolean(imageSource)}
+            scale={controls.scale}
+            onChange={onChangeScale}
+          />
         )}
         {controlRotate && (
           <ControlRotate
-            disabled={!imageSource}
+            disabled={Boolean(imageSource)}
             rotate={controls.rotate}
             onChange={onChangeRotate}
           />
@@ -271,19 +256,23 @@ export default function RocketCropper({
           <Button onClick={onClickDownloadImage}>Download Crop</Button>
           <a
             download
-            href="#hidden"
+            href='#hidden'
             ref={hiddenAnchorRef}
-            className="hidden absolute -top-96 -left-96"
+            className='hidden absolute -top-96 -left-96'
           />
         </div>
       )}
 
       {Boolean(completedCrop) && (
         <div>
-          <Button onClick={onClickLeaveCrop}>나가기</Button>
-          <Button onClick={onClickConfirmCrop}>확인</Button>
+          <Button onClick={onClickCancelCrop}>크롭 나가기</Button>
+          <Button onClick={onClickConfirmCrop}>크롭 확인</Button>
         </div>
       )}
+
+      <div>
+        <Button onClick={onClickReset}>Reset All</Button>
+      </div>
 
       {Boolean(imageSource) && (
         <ReactCrop
@@ -292,7 +281,6 @@ export default function RocketCropper({
           onComplete={onCompleteCrop}
           aspect={controls.aspect}
           keepSelection={true}
-
           // minWidth={400}
           // minHeight={200}
         >
@@ -300,11 +288,7 @@ export default function RocketCropper({
             src={imageSource}
             alt={'target image'}
             ref={imageRef}
-            style={{
-              scale: controls.scale,
-              rotate: `${controls.rotate}deg`,
-              // transform: `scale(${controlValues.scale}) rotate(${controlValues.rotate}deg)`,
-            }}
+            style={{ scale: controls.scale, rotate: `${controls.rotate}deg` }}
             onLoad={onImageLoad}
           />
         </ReactCrop>
@@ -313,11 +297,8 @@ export default function RocketCropper({
       {Boolean(completedCrop) && (
         <canvas
           ref={previewCanvasRef}
-          className="object-contain"
-          style={{
-            width: completedCrop?.width,
-            height: completedCrop?.height,
-          }}
+          className='object-contain'
+          style={{ width: completedCrop?.width, height: completedCrop?.height }}
         />
       )}
     </div>
