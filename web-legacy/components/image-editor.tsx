@@ -8,15 +8,7 @@ import {
   Restore as RestoreIcon,
   Upload as UploadIcon,
 } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  FormControlLabel,
-  Input,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Input, Typography } from '@mui/material';
 import { ChangeEventHandler, SyntheticEvent, useRef, useState } from 'react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import { useDebounce } from 'react-use';
@@ -149,7 +141,7 @@ const toReadableSize = (bytes: number, decimalPlace = 1) => {
   return bytes.toFixed(decimalPlace) + ' ' + units[idx];
 };
 
-export const Cropper = ({
+export const ImageEditor = ({
   guideMessage,
   defaultAspect = 1,
   hideImageSpec = false,
@@ -170,7 +162,6 @@ export const Cropper = ({
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isCropProcessing, setIsCropProcessing] = useState(false); // for better UX
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
@@ -472,12 +463,7 @@ export const Cropper = ({
         )}
 
         {imgSrcBase64 && !isEditMode && (
-          <Button
-            disabled={freeze || isCropProcessing}
-            startIcon={<CropIcon />}
-            onClick={onClickStartCrop}
-            endIcon={isCropProcessing && <CircularProgress />}
-          >
+          <Button disabled={freeze} startIcon={<CropIcon />} onClick={onClickStartCrop}>
             crop
           </Button>
         )}

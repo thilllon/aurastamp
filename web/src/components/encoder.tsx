@@ -45,18 +45,28 @@ export const Encoder = () => {
         <Input id="picture" type="file" />
       </div> */}
 
-      <LogRocketCropper controlAspect onCropEnd={onCropEnd} />
+      {/* <LogRocketCropper controlAspect onCropEnd={onCropEnd} /> */}
 
-      {/* TODO: hidden image */}
-      {/* <input type="file" placeholder="hidden image" /> */}
+      {/* 업로더 */}
+      <DragAndDropUploader onLoad />
 
+      {/* 편집창 */}
+      <EditorDialog image onEditEnd />
+
+      {/* 히든메세지 */}
       <div className='grid w-full max-w-sm items-center gap-1.5'>
         <Label htmlFor='picture'>Secret Message</Label>
         <Input id='picture' type='text' placeholder='Jot down a message to hide' />
       </div>
 
+      {/* 히든 이미지 */}
+      <div className='grid w-full max-w-sm items-center gap-1.5'>
+        <Label htmlFor='picture'>Another Secret message</Label>
+        <Input id='picture' type='file' placeholder='hide another secret image' />
+      </div>
+
       <Button className='w-full' onClick={onClickHideMessage} disabled={encode.isPending}>
-        Hide a secret message
+        Go hide!
       </Button>
     </div>
   );

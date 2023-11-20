@@ -1,6 +1,6 @@
-import { Cropper } from '@/components/Cropper';
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { ModalEncoder } from '@/components/ModalEncoder';
+import { ImageEditor } from '@/components/image-editor';
+import { DashboardLayout } from '@/components/dashboard-layout';
+import { ModalEncoder } from '@/components/modal-encoder';
 import { useEncodeImage } from 'libs/services';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
@@ -117,7 +117,7 @@ export default function EncodePage() {
     >
       {!encodedImgSrcBase64 && (
         <Box key={key} sx={{ mt: 0 }}>
-          <Cropper
+          <ImageEditor
             guideMessage='Pick an image to stamp'
             defaultAspect={1}
             onChangeFile={onChange}

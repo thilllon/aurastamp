@@ -8,21 +8,6 @@ type ModalEncoderProps = {
   handleModalWrite?: (hiddenMessage: string, hiddenImage: File | undefined) => void;
 };
 
-const boxStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '95vw',
-  maxWidth: '395px',
-  maxHeight: '80vh',
-  bgcolor: 'background.paper',
-  borderRadius: '10px',
-  boxShadow: '0px 0px 21px -5px rgba(0,0,0,0.63)',
-  p: 4,
-  overflowY: 'auto',
-};
-
 export const ModalEncoder = ({
   open = false,
   handleModalClose,
@@ -67,7 +52,22 @@ export const ModalEncoder = ({
 
   return (
     <Modal open={open}>
-      <Box sx={boxStyle}>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '95vw',
+          maxWidth: '395px',
+          maxHeight: '80vh',
+          bgcolor: 'background.paper',
+          borderRadius: '10px',
+          boxShadow: '0px 0px 21px -5px rgba(0,0,0,0.63)',
+          p: 4,
+          overflowY: 'auto',
+        }}
+      >
         <IconButton
           aria-label='close'
           sx={{

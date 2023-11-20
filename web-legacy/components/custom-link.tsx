@@ -48,7 +48,7 @@ type CustomLinkProps = {
 
 // A styled version of the Next.js Link component:
 // https://nextjs.org/docs/#with-link
-export const Link = React.forwardRef<HTMLAnchorElement, CustomLinkProps>(
+export const CustomLink = React.forwardRef<HTMLAnchorElement, CustomLinkProps>(
   (
     {
       href,
@@ -107,4 +107,4 @@ export const Link = React.forwardRef<HTMLAnchorElement, CustomLinkProps>(
   }
 );
 
-Link.displayName = 'Link';
+CustomLink.displayName = 'Link';

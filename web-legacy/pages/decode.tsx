@@ -1,7 +1,7 @@
-import { Cropper } from '@/components/Cropper';
-import { ModalDecoder } from '@/components/ModalDecoder';
-import { DashboardLayout } from '@/components/layouts/DashboardLayout';
-import { sendEvent } from 'libs/useGoogleAnalytics';
+import { ImageEditor } from '@/components/image-editor';
+import { ModalDecoder } from '@/components/modal-decoder';
+import { DashboardLayout } from '@/components/dashboard-layout';
+import { sendEvent } from 'libs/use-google-analytics';
 import { Alert, Box, Button, CircularProgress, Container } from '@mui/material';
 import { ChangeEventHandler, ReactNode, useCallback, useEffect, useState } from 'react';
 import { browserName } from 'react-device-detect';
@@ -109,7 +109,7 @@ export default function DecodePage() {
         }}
       >
         <Box key={key} sx={{ mt: 0 }}>
-          <Cropper
+          <ImageEditor
             guideMessage='Pick an image to find a message'
             defaultAspect={1}
             onChangeFile={onChange}

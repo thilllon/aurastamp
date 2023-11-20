@@ -1,4 +1,8 @@
-import { Button } from '@/components/ui/button';
+/* eslint-disable @next/next/no-img-element */
+'use client';
+
+import 'react-image-crop/dist/ReactCrop.css';
+
 import {
   Dialog,
   DialogContent,
@@ -10,8 +14,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import ReactCrop from 'react-image-crop';
+import { Button } from '../ui/button';
 
-export function DialogDemo() {
+export function DialogDemo({ image, onEditEnd }: { image: any; onEditEnd: any }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -19,11 +25,19 @@ export function DialogDemo() {
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Edit Image</DialogTitle>
           <DialogDescription>
             {`Make changes to your profile here. Click save when you're done.`}
           </DialogDescription>
         </DialogHeader>
+
+        {/* // -------------------------------- */}
+        {/* crop */}
+        {/* // -------------------------------- */}
+
+        {/* // -------------------------------- */}
+        {/* // -------------------------------- */}
+
         <div className='grid gap-4 py-4'>
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='name' className='text-right'>

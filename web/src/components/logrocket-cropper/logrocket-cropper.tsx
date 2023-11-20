@@ -15,6 +15,7 @@ import {
   ControlScale,
   centerAspectCrop,
 } from './callback-functions';
+import { DialogDemo } from '../demo/demo-dialog';
 
 const initialControls = { scale: 1, rotate: 0, aspect: undefined };
 
@@ -196,60 +197,60 @@ export default function LogRocketCropper({
 
   return (
     <div>
-      <div className='' aria-description='crop controls'>
-        <label
-          htmlFor='uploadButton'
+      <DialogDemo />
+
+      <label
+        htmlFor='uploadButton'
+        className={clsx(
+          'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
+          'w-[8rem]',
+          'h-[8rem]',
+          'min-w-[8rem]',
+          'min-h-[8rem]',
+        )}
+      >
+        <form
+          name='form1234'
+          ref={form1234Ref}
           className={clsx(
-            'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
-            'w-[8rem]',
-            'h-[8rem]',
-            'min-w-[8rem]',
-            'min-h-[8rem]',
+            'cursor-pointer flex justify-center items-center w-full h-full border-2 border-dashed border-slate-700 m-auto min-h-[100px]',
+            // 'w-[8rem]',
+            // 'h-[8rem]',
+            // 'min-w-[8rem]',
+            // 'min-h-[8rem]',
           )}
         >
-          <form
-            name='form1234'
-            ref={form1234Ref}
-            className={clsx(
-              'cursor-pointer flex justify-center items-center w-full h-full border-2 border-dashed border-slate-700 m-auto min-h-[100px]',
-              // 'w-[8rem]',
-              // 'h-[8rem]',
-              // 'min-w-[8rem]',
-              // 'min-h-[8rem]',
-            )}
-          >
-            <input
-              id='uploadButton'
-              className='hidden'
-              type='file'
-              accept='image/*'
-              onChange={onSelectFile}
-            />
-            <div className='flex flex-col flex-nowrap justify-center items-center'>
-              <span className='text-center select-none text-slate-600 overflow-hidden over'>
-                Click to upload image
-              </span>
-            </div>
-          </form>
-        </label>
-        {controlScale && (
-          <ControlScale
-            disabled={Boolean(imageSource)}
-            scale={controls.scale}
-            onChange={onChangeScale}
+          <input
+            id='uploadButton'
+            className='hidden'
+            type='file'
+            accept='image/*'
+            onChange={onSelectFile}
           />
-        )}
-        {controlRotate && (
-          <ControlRotate
-            disabled={Boolean(imageSource)}
-            rotate={controls.rotate}
-            onChange={onChangeRotate}
-          />
-        )}
-        {controlAspect && (
-          <ControlFixingAspect fixed={Boolean(controls.aspect)} onClick={onClickToggleAspect} />
-        )}
-      </div>
+          <div className='flex flex-col flex-nowrap justify-center items-center'>
+            <span className='text-center select-none text-slate-600 overflow-hidden over'>
+              Click to upload image
+            </span>
+          </div>
+        </form>
+      </label>
+      {controlScale && (
+        <ControlScale
+          disabled={Boolean(imageSource)}
+          scale={controls.scale}
+          onChange={onChangeScale}
+        />
+      )}
+      {controlRotate && (
+        <ControlRotate
+          disabled={Boolean(imageSource)}
+          rotate={controls.rotate}
+          onChange={onChangeRotate}
+        />
+      )}
+      {controlAspect && (
+        <ControlFixingAspect fixed={Boolean(controls.aspect)} onClick={onClickToggleAspect} />
+      )}
 
       {Boolean(completedCrop) && (
         <div>
