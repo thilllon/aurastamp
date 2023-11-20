@@ -100,8 +100,9 @@ export default function TestPage() {
         });
       });
       setItems(itemList);
+      setTotal(itemList.reduce((sum, { price }) => sum + price, 0));
     });
-    setTotal(items.reduce((sum, { price }) => sum + price, 0));
+
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -156,13 +157,6 @@ export default function TestPage() {
 
   return (
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-      <a href='/encode'>encode</a>
-      <a href='/decode'>decode</a>
-
-      <Button> add encoding image </Button>
-
-      {/* <Button onClick={onClickLike}>like test</Button> */}
-
       {/* <WaitDemo /> */}
 
       <ProfileForm />
@@ -171,6 +165,13 @@ export default function TestPage() {
         <h1 className='font-medium text-4xl'>Expense tracker</h1>
 
         <div className='p-4 rounded-lg'>
+          {items.length > 0 && (
+            <div className='my-4 w-full flex justify-between p-4'>
+              <span>total</span>
+              <span>${total.toLocaleString()}</span>
+            </div>
+          )}
+
           <form className='grid grid-cols-6 items-center' onSubmit={addItem}>
             <input
               onChange={(event) => setNewItem({ ...newItem, name: event.target.value })}
@@ -206,12 +207,6 @@ export default function TestPage() {
               );
             })}
           </ul>
-          {items.length > 0 && (
-            <div className='my-4 w-full flex justify-between p-4'>
-              <span>total</span>
-              <span>${total}</span>
-            </div>
-          )}
         </div>
 
         {/* <p className='fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30'>

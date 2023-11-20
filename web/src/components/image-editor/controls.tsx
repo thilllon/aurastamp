@@ -1,6 +1,5 @@
-import { ChangeEventHandler, MouseEventHandler } from 'react';
+import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from 'react';
 import { centerCrop, makeAspectCrop } from 'react-image-crop';
-import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 
 export function ControlRotate({
@@ -27,18 +26,21 @@ export function ControlRotate({
 }
 
 export function ControlFixingAspect({
-  fixed,
-  onClick,
+  checked,
+  onChange,
 }: {
-  fixed?: boolean;
-  onClick: MouseEventHandler<HTMLButtonElement>;
+  checked?: boolean;
+  onChange: FormEventHandler<HTMLButtonElement>;
 }) {
   return (
-    <div>
-      <Checkbox />
-      <Button onClick={onClick} variant={fixed ? 'default' : 'secondary'}>
-        {fixed ? 'fixed' : 'not fixed'}
-      </Button>
+    <div className='flex items-center space-x-2 p-4'>
+      <Checkbox id='aspect' checked={checked} onChange={onChange} />
+      <label
+        htmlFor='aspect'
+        className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+      >
+        Fix aspect{' '}
+      </label>
     </div>
   );
 }
