@@ -4,6 +4,7 @@ import os
 import sys
 
 from fastapi import FastAPI, File, Form, Response, UploadFile
+from starlette.middleware.cors import CORSMiddleware
 
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -20,7 +21,6 @@ import api
 # /usr/bin/env ${path_to_python_file_in_venv_is} /Users/john/.vscode/extensions/ms-python.python-2023.14.0/pythonFiles/lib/python/debugpy/launcher 49154(this is a process number, so it will be changed) -- -m uvicorn app.main:app --reload
 # ```
 
-
 # docker run --port 8000:8000
 
 
@@ -28,6 +28,21 @@ app = FastAPI(
     title="Aurastamp API",
     description="""Visit this URL at port $PORT for the streamlit interface.""",
     version="0.0.0",
+)
+
+
+origins = ["*"]
+
+origins_specific = [
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
