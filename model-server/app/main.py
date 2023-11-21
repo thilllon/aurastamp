@@ -21,8 +21,10 @@ import api
 # /usr/bin/env ${path_to_python_file_in_venv_is} /Users/john/.vscode/extensions/ms-python.python-2023.14.0/pythonFiles/lib/python/debugpy/launcher 49154(this is a process number, so it will be changed) -- -m uvicorn app.main:app --reload
 # ```
 
+# Must run with port forward flag
 # docker run --port 8000:8000
-
+# or
+# set environment variable PORT=8000
 
 app = FastAPI(
     title="Aurastamp API",

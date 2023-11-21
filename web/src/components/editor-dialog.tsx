@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { LogRocketCropper, OnConfirmEdit } from './image-editor/editor';
+import { ImageEditor, OnConfirmEdit } from './image-editor/image-editor';
 import { Button } from './ui/button';
 
 export function EditorDialog({
@@ -38,11 +38,7 @@ export function EditorDialog({
         </DialogHeader>
 
         {Boolean(image) && (
-          <LogRocketCropper
-            onConfirmEdit={onConfirmEdit}
-            image={image}
-            originalImage={originalImage}
-          />
+          <ImageEditor onConfirmEdit={onConfirmEdit} image={image} originalImage={originalImage} />
         )}
 
         {/* <DialogFooter>

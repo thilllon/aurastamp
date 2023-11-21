@@ -1,191 +1,150 @@
-/* eslint-disable @next/next/no-img-element */
-
 'use client';
 
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
 import { Label } from '@radix-ui/react-label';
-import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { cn, useEncodeImage } from '../lib/utils';
+import { ChangeEvent, SyntheticEvent, useRef } from 'react';
+import { Base64, ImageMetadata, downloadByteArray, useEncodeImage } from '../lib/utils';
+import { DndUploader } from './dnd-uploader';
 import { EditorDialog } from './editor-dialog';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
+
+const formSchema = z.object({
+  secretMessage: z
+    .string()
+    .min(1, { message: 'Secret message must be at least 1 characters.' })
+    .max(1000, { message: 'Secret message must be at most 1000 characters.' }),
+});
 
 export const Encoder = () => {
-  const originalImageRef = useRef('');
-
-  // const [dialogOpen, setDialogOpen] = useState(false);
-  const [imageSource, setImageSource] = useState('');
+  const originalImageRef = useRef<Base64>('');
+  const [imageSource, setImageSource] = useState<Base64>('');
+  const [hiddenImageSource, setHiddenImageSource] = useState<Base64>('');
+  const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
   const [encodedImage, setEncodedImage] = useState(null);
-
   const encode = useEncodeImage();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      secretMessage: '',
+    },
+  });
 
   useEffect(() => {
     if (encode.isSuccess) {
-      // TODO:
+      downloadByteArray(encode.data, `aurastamp_${Date.now()}.png`);
     }
-  }, [encode.isSuccess]);
+  }, [encode.isSuccess, encode.data]);
 
-  function onConfirmEdit(image: File | Blob) {
-    // 크롭이 끝난 이미지 정보만 가져오면됨
-    // setImage();
-    // file, hiddenImage
+  function onConfirmEditor(transformedImage: File | Blob) {
     // TODO: 자동으로 에디터 닫히게 하기
   }
 
-  async function onClickHideMessage() {
-    if (!imageSource) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!imageMetadata || !imageSource) {
       return;
     }
-    const [typePart, dataPart] = imageSource.split(','); // image = data:image/png;base64,[base64-encoded-image]
-    const mimeType = typePart.replace(/image\/*.;/, ''); // Remove the data: prefix from the MIME type
-    // Remove the data:image/<image-type>;base64, prefix from the string
-    // Decode the Base64 string into a Uint8Array
-    const byteArray = Uint8Array.from(atob(dataPart), (c) => c.charCodeAt(0));
-    // Create a Blob object from the Uint8Array
-    const blob = new Blob([byteArray], { type: mimeType }); // Replace 'image/png' with the appropriate MIME type
-
-    const encoded = await encode.mutateAsync({
-      file: imageSource as unknown as any,
-      // hiddenMessage,
-      modelName: 'the',
-      message: 'asdfsdfsdfsdfsdasdf',
-      returnType: '',
-      hiddenImage: undefined,
+    encode.mutate({
+      message: values.secretMessage,
+      imageSource,
+      metadata: imageMetadata,
+      hiddenImageSource,
     });
-    // setEncodedImage(encoded);
   }
 
-  async function onResetCallback() {
-    setImageSource('');
-    originalImageRef.current = '';
+  async function onResetUploader() {
+    _resetImage();
   }
 
-  async function onLoadCallback(_event: SyntheticEvent<HTMLImageElement>, imageSource: string) {
+  async function onSelectFileUploader(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    setImageMetadata({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+      webkitRelativePath: file.webkitRelativePath,
+    });
+  }
+
+  async function onLoadUploader(_event: SyntheticEvent<HTMLImageElement>, imageSource: string) {
     setImageSource(imageSource);
     originalImageRef.current = imageSource;
   }
 
+  async function onChangeHiddenImage(event: ChangeEvent<HTMLInputElement>): Promise<void> {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.addEventListener('load', () => setHiddenImageSource(reader.result?.toString() || ''));
+    reader.readAsDataURL(file);
+  }
+
+  function _resetImage() {
+    originalImageRef.current = '';
+    setImageSource('');
+    setImageMetadata(null);
+    encode.reset();
+  }
+
   return (
-    <div className='border-4 border-slate-800 flex flex-col min-w-96 p-2'>
-      <DragAndDropUploader onLoadCallback={onLoadCallback} onResetCallback={onResetCallback} />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2'>
+        <DndUploader
+          onLoad={onLoadUploader}
+          onReset={onResetUploader}
+          onSelectFile={onSelectFileUploader}
+        />
 
-      <EditorDialog
-        image={imageSource}
-        originalImage={originalImageRef.current}
-        onConfirmEdit={onConfirmEdit}
-      />
+        <EditorDialog
+          image={imageSource}
+          originalImage={originalImageRef.current}
+          onConfirmEdit={onConfirmEditor}
+        />
 
-      {/* secret message */}
-      <div className='grid w-full max-w-sm items-center gap-1.5'>
-        <Label htmlFor='picture'>Secret Message</Label>
-        <Input id='picture' type='text' placeholder='Jot down a message to hide' />
-      </div>
+        <FormField
+          control={form.control}
+          name='secretMessage'
+          render={({ field }) => (
+            <FormItem className='mt-4'>
+              <FormLabel>Secret Message</FormLabel>
+              <FormControl>
+                <Input placeholder='Jot down a message to hide' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {/* an image to be hidden in the main image */}
-      <div className='grid w-full max-w-sm items-center gap-1.5'>
-        <Label htmlFor='picture' className='text-slate-500'>
-          Hide another picture
-        </Label>
-        <Input id='picture' type='file' />
-      </div>
+        {/* an additional image to be hidden in the container image */}
+        <div className='grid w-full max-w-sm items-center gap-1.5'>
+          <Label htmlFor='hiddenImage' className='text-slate-700'>
+            Hide another picture
+          </Label>
+          <Input id='hiddenImage' type='file' onChange={onChangeHiddenImage} multiple={false} />
+        </div>
 
-      <Button className='w-full' onClick={onClickHideMessage} disabled={encode.isPending}>
-        Go hide!
-      </Button>
-    </div>
+        <Button type='submit' className='w-full' disabled={encode.isPending}>
+          Go hide!
+        </Button>
+      </form>
+    </Form>
   );
 };
-
-// --------------------------------
-// --------------------------------
-// --------------------------------
-// --------------------------------
-
-function DragAndDropUploader({
-  onLoadCallback,
-  onResetCallback,
-}: {
-  onLoadCallback: (event: SyntheticEvent<HTMLImageElement>, image: string) => void;
-  onResetCallback: () => void;
-}) {
-  const imageRef = useRef<HTMLImageElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const [imageSource, setImageSource] = useState(''); // original image
-
-  function onClickCancel() {
-    formRef.current?.reset();
-    setImageSource('');
-    onResetCallback();
-  }
-
-  function onSelectFile(event: ChangeEvent<HTMLInputElement>): void {
-    if (event.target.files && event.target.files.length > 0) {
-      const reader = new FileReader();
-      reader.addEventListener('load', () => setImageSource(reader.result?.toString() || ''));
-      reader.readAsDataURL(event.target.files[0]);
-    } else {
-      setImageSource('');
-      onResetCallback();
-    }
-  }
-
-  function onLoad(event: SyntheticEvent<HTMLImageElement>): void {
-    onLoadCallback(event, imageSource);
-  }
-
-  return (
-    <div>
-      {!imageSource && (
-        <label
-          htmlFor='uploadButton'
-          className={cn(
-            'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
-            'w-[24rem]',
-            'h-[24rem]',
-            'min-w-[24rem]',
-            'min-h-[24rem]',
-          )}
-        >
-          <form
-            name='form1234'
-            ref={formRef}
-            className={cn(
-              'cursor-pointer flex justify-center items-center w-full h-full border-2 border-dashed border-slate-700 m-auto',
-            )}
-          >
-            <input
-              id='uploadButton'
-              className='hidden'
-              type='file'
-              accept='image/*'
-              onChange={onSelectFile}
-            />
-            <div className='flex flex-col flex-nowrap justify-center items-center'>
-              <span className='text-center select-none text-slate-600 overflow-hidden over'>
-                Click to upload image
-              </span>
-            </div>
-          </form>
-        </label>
-      )}
-
-      {imageSource && (
-        <div>
-          <div>
-            <img
-              draggable={false}
-              src={imageSource}
-              alt={'target image'}
-              ref={imageRef}
-              onLoad={onLoad}
-            />
-          </div>
-          <div className='flex justify-center items-center mt-4'>
-            <Button className='w-full' variant={'outline'} onClick={onClickCancel}>
-              Cancel
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}

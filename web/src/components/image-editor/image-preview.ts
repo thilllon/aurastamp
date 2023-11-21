@@ -10,6 +10,7 @@ function toBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
 }
 
 /**
+ * @deprecated
  * Returns an image source you should set to state and pass
  * @usage
  * <img alt="Crop preview" src={previewSrc} />

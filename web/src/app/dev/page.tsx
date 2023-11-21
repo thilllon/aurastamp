@@ -29,8 +29,8 @@ import { Button } from '../../components/ui/button';
 import { db } from '../firebase';
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
+  itemName: z.string().min(2, {
+    message: 'item name must be at least 2 characters.',
   }),
 });
 
@@ -40,12 +40,12 @@ type Item = {
   price: number;
 };
 
-function ProfileForm() {
+function ItemSubmitForm() {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: '',
+      itemName: '',
     },
   });
 
@@ -61,7 +61,7 @@ function ProfileForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
           control={form.control}
-          name='username'
+          name='itemName'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
@@ -78,6 +78,9 @@ function ProfileForm() {
     </Form>
   );
 }
+
+// --------------------------------
+// --------------------------------
 
 export default function TestPage() {
   const [items, setItems] = useState<Item[]>([]);
@@ -129,24 +132,14 @@ export default function TestPage() {
   };
 
   const onClickLike = async (id: string) => {
-    // // Add a new document in collection "cities"
-    // await setDoc(doc(db, 'cities', 'LA'), {
-    //   name: 'Los Angeles',
-    //   state: 'CA',
-    //   like: 'USA',
-    // });
-    // 그러나 문서에 유의미한 ID를 두지 않고 Cloud Firestore에서 자동으로 ID를 생성하도록 하는 것이 편리한 때도 있습니다. 이렇게 하려면 다음과 같은 언어별 add() 메서드를 호출하면 됩니다.
-    // const docRef = await addDoc(collection(db, 'cities'), {
-    //   name: 'Tokyo',
-    //   country: 'Japan',
-    // });
-
     await updateDoc(doc(db, 'items', id), {
       like: increment(1),
     });
   };
-  const onClickDislike = async () => {
-    //
+  const onClickDislike = async (id: string) => {
+    await updateDoc(doc(db, 'items', id), {
+      like: increment(-1),
+    });
   };
 
   const addEncodingCounter = async (id: string) => {
@@ -159,7 +152,7 @@ export default function TestPage() {
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
       {/* <WaitDemo /> */}
 
-      <ProfileForm />
+      <ItemSubmitForm />
 
       <div className='z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex'>
         <h1 className='font-medium text-4xl'>Expense tracker</h1>

@@ -1,9 +1,9 @@
-// 'use client';
+'use client';
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 
-// export const runtime = 'edge' // 'nodejs' (default) | 'edge'
+export const runtime = 'edge'; // 'nodejs' (default) | 'edge'
 
 function getBaseURL() {
   if (typeof window !== 'undefined') {
@@ -15,32 +15,18 @@ function getBaseURL() {
   return 'http://localhost:3000';
 }
 
-const baseUrl = getBaseURL();
-
-function useWaitQuery(props: { wait: number }) {
-  const query = useSuspenseQuery({
+export function useWaitQuery(props: { wait: number }) {
+  const query = useSuspenseQuery<string>({
     queryKey: ['wait', props.wait],
     queryFn: async () => {
       const path = `/api/wait?wait=${props.wait}`;
-      const url = baseUrl + path;
-
+      const url = getBaseURL() + path;
       console.log('fetching', url);
-      const res: string = await (
-        await fetch(url, {
-          cache: 'no-store',
-        })
-      ).json();
-      return res;
+      return (await fetch(url, { cache: 'no-store' })).json();
     },
   });
 
-  return [query.data as string, query] as const;
-}
-
-function MyComponent(props: { wait: number }) {
-  const [data] = useWaitQuery(props);
-
-  return <div>result: {data}</div>;
+  return [query.data, query] as const;
 }
 
 export function WaitDemo() {
@@ -88,4 +74,10 @@ export function WaitDemo() {
       </fieldset>
     </>
   );
+}
+
+function MyComponent(props: { wait: number }) {
+  const [data] = useWaitQuery(props);
+
+  return <div>result: {data}</div>;
 }

@@ -20,25 +20,19 @@ import { useDebounceEffect } from './use-debounce';
 
 const initialControls = { scale: 1, rotate: 0, aspect: undefined };
 
-export type OnConfirmEdit = (image: File | Blob) => void;
+export type OnConfirmEdit = (image: Blob) => void;
 
 /**
  * @see https://blog.logrocket.com/how-to-build-an-image-picker-using-react-native-image-crop-picker/
  */
-export function LogRocketCropper({
+export function ImageEditor({
   image,
   originalImage,
   onConfirmEdit,
-  controlScale = false,
-  controlRotate = false,
-  controlAspect = true,
 }: {
   image: string;
   originalImage: string;
   onConfirmEdit: OnConfirmEdit;
-  controlScale?: boolean;
-  controlRotate?: boolean;
-  controlAspect?: boolean;
 }) {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -84,8 +78,7 @@ export function LogRocketCropper({
   );
 
   function _destroyBlob() {
-    // remove previous image's blobUrlRef
-    // prevent memory leak
+    // prevent memory leak by remove previous image's blob reference
     if (blobUrlRef.current) {
       URL.revokeObjectURL(blobUrlRef.current);
     }
@@ -172,14 +165,13 @@ export function LogRocketCropper({
 
   async function onClickConfirmEdit(event: MouseEvent): Promise<void> {
     // await _downloadImage();
-
     // slightly different from "reset" handler
     // imageSourceRef.current = '';
     // _destroyBlob();
     // setCrop(undefined);
     // setCompletedCrop(undefined);
     // setControls(initialControls);
-    onConfirmEdit(new File([blobUrlRef.current!], 'image.png') as Blob);
+    onConfirmEdit(new Blob([blobUrlRef.current!]));
   }
 
   function onChangeCrop(crop: PixelCrop, percentCrop: PercentCrop): void {
@@ -204,7 +196,7 @@ export function LogRocketCropper({
 
   return (
     <div>
-      {controlScale && (
+      {/* {controlScale && (
         <ControlScale
           disabled={Boolean(imageSourceRef.current)}
           scale={controls.scale}
@@ -217,10 +209,20 @@ export function LogRocketCropper({
           rotate={controls.rotate}
           onChange={onChangeRotate}
         />
-      )}
-      {controlAspect && (
+      )} */}
+
+      <div>
         <ControlFixingAspect checked={Boolean(controls.aspect)} onChange={onChangeAspect} />
-      )}
+
+        <Button
+          className='w-full'
+          variant={'outline'}
+          disabled={!completedCrop}
+          onClick={onClickDownload}
+        >
+          Download
+        </Button>
+      </div>
 
       {Boolean(completedCrop) && (
         <a
@@ -262,15 +264,6 @@ export function LogRocketCropper({
       )}
 
       <div className='flex justify-center items-center gap-2 mt-4'>
-        <Button
-          className='w-full'
-          variant={'outline'}
-          disabled={!completedCrop}
-          onClick={onClickDownload}
-        >
-          Download
-        </Button>
-
         <Button
           className='w-full'
           variant={'outline'}
