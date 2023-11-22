@@ -119,8 +119,8 @@ export const ModalDecoder = ({
       formData.append('model_name', modelName);
       formData.append('hash_string', hashString);
       await client.post(url, formData);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -140,8 +140,8 @@ export const ModalDecoder = ({
       formData.append('hash_string', hashString);
 
       await client.post(url, formData);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 

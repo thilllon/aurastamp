@@ -57,7 +57,7 @@ export const Encoder = () => {
   }, [encode.isSuccess, encode.data]);
 
   function onEditorClickConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
-    console.log(dataUrl);
+    // console.log(dataUrl);
     setImageSource(dataUrl);
     // 여기서 리랜더되면서 다이얼로그 끌수없나?
     // event.stopPropagation();

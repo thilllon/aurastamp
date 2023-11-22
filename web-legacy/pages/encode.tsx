@@ -223,7 +223,7 @@ export default function EncodePage() {
             <Button
               sx={{ flex: 1 }}
               variant='contained'
-              onClick={onClickShare}
+              onClick={onClickShare} 
               // icon: 🔗
             >
               share

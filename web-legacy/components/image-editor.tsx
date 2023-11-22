@@ -114,8 +114,6 @@ const canvasPreview = async (
 };
 
 const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | null> => {
-  console.info('## canvasToBlob');
-
   return new Promise((resolve) => {
     return canvas.toBlob(resolve, 'image/png', 0.7);
   });

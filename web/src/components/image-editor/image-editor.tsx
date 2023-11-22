@@ -138,7 +138,7 @@ export function ImageEditor({
   }
 
   function onChangeAspect(event: FormEvent<HTMLButtonElement>) {
-    console.log(event);
+    // console.log(event);
 
     // if (controls.aspect) {
     //   setControls({ ...controls, aspect: undefined });

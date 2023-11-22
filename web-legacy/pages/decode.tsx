@@ -82,8 +82,8 @@ export default function DecodePage() {
       if (!res.data.error) {
         handleModalOpen();
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
