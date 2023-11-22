@@ -5,24 +5,28 @@
 import { useState } from 'react';
 
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
-import { Base64, cn } from '../lib/utils';
+import { cn } from '../lib/utils';
 import { Button } from './ui/button';
+
+type Base64DataUrl = string;
 
 /**
  * Drag & Drop Uploader
  */
 export function DndUploader({
+  imageSourceInput,
   onLoad: onLoadCallback,
   onReset: onResetCallback,
   onSelectFile: onSelectFileCallback,
 }: {
+  imageSourceInput?: string;
   onLoad: (event: SyntheticEvent<HTMLImageElement>, image: string) => void;
   onReset: () => void;
   onSelectFile: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
   const imageRef = useRef<HTMLImageElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const [imageSource, setImageSource] = useState<Base64>('');
+  const [imageSource, setImageSource] = useState<Base64DataUrl>(imageSourceInput ?? '');
 
   function onClickCancel() {
     if (imageInputRef.current?.value) {

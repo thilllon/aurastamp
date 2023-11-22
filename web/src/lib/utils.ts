@@ -1,20 +1,20 @@
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { clsx, type ClassValue } from 'clsx';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { twMerge } from 'tailwind-merge';
-
+import { addDoc, collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { ref, uploadString } from 'firebase/storage';
+import { twMerge } from 'tailwind-merge';
+import { v4 as uuid } from 'uuid';
 import { db, storage } from '../app/firebase';
 
-export type Base64 = string;
+export type Base64DataUrl = string;
 
 type ArrayBufferString = string;
 
 type EncodeImageInput = {
   imageSource: string;
   message: string;
-  hiddenImageSource?: Base64;
+  hiddenImageSource?: Base64DataUrl;
   metadata: ImageMetadata;
 };
 
@@ -25,11 +25,8 @@ const IMAGE_COLLECTION = 'images';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-process.env.MODEL_API_URL = 'https://aurastamp.up.railway.app';
 
-const client = axios.create({
-  baseURL: process.env.MODEL_API_URL ?? 'http://localhost:8000',
-});
+const client = axios.create({ baseURL: process.env.MODEL_API_URL });
 
 export const useEncodeImage = () => {
   return useMutation<EncodeImageOutput, AxiosError, EncodeImageInput>({
@@ -89,18 +86,18 @@ type FirestoreInput = {
   message: string;
   imageSha: string;
   hiddenImageSha?: string;
-  filename: string;
-  type: string;
-  size: number;
-  fileLastModified: number;
-};
+} & ImageMetadata;
 
 export type ImageMetadata = {
   name: string;
   size: number;
   type: string;
   lastModified: number;
-  webkitRelativePath: string;
+  webkitRelativePath?: string;
+};
+
+const getBucketPath = (...path: string[]) => {
+  return ['aurastamp', ...path].join('/');
 };
 
 export async function hideSecretMessage({
@@ -109,21 +106,28 @@ export async function hideSecretMessage({
   hiddenImageSource,
   metadata,
 }: EncodeImageInput) {
+  const hiddenImageSha = hiddenImageSource ? await sha1(hiddenImageSource) : null;
+
+  const storagePath = uuid();
   const promises = [
     addDoc(collection(db, IMAGE_COLLECTION), {
+      ...metadata,
       message,
+      storagePath: storagePath,
       imageSha: await sha1(imageSource),
-      hiddenImageSha: hiddenImageSource ? await sha1(hiddenImageSource) : null,
-      filename: metadata.name,
-      fileLastModified: metadata.lastModified,
-      type: metadata.type,
-      size: metadata.size,
+      hiddenImageSha,
       createdAt: serverTimestamp(),
     } as FirestoreInput),
-    uploadString(ref(storage, metadata.name), imageSource, 'data_url'),
+    uploadString(ref(storage, getBucketPath(storagePath, metadata.name)), imageSource, 'data_url'),
   ];
-  if (hiddenImageSource) {
-    promises.push(uploadString(ref(storage, metadata.name), hiddenImageSource, 'data_url'));
+  if (hiddenImageSource && hiddenImageSha) {
+    promises.push(
+      uploadString(
+        ref(storage, getBucketPath(storagePath, 'hidden', hiddenImageSha)),
+        hiddenImageSource,
+        'data_url',
+      ),
+    );
   }
   const result = await Promise.allSettled(promises);
 
@@ -133,9 +137,21 @@ export async function hideSecretMessage({
   }
 
   const length7Message = (result[0].value as any)?.id?.slice(0, 7);
-  if (length7Message.length > 7) {
-    throw new Error(`Failed to hide message. ${length7Message}`);
+  if (!length7Message) {
+    throw new Error(`Failed to get message id. ${result[0].value}`);
   }
   const blob = await dataUrlToBlob(imageSource);
   return { file: blob, message: length7Message };
+}
+
+export function blobToDataUrl(
+  blob: Blob,
+  callback: (dataUrl: string | ArrayBuffer | null) => void,
+) {
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onloadend = function () {
+    const base64data = reader.result;
+    callback(base64data);
+  };
 }

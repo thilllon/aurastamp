@@ -15,12 +15,14 @@ import {
 import ReactCrop, { Crop, PercentCrop, PixelCrop } from 'react-image-crop';
 import { Button } from '../ui/button';
 import { canvasPreview } from './canvas-preview';
-import { ControlFixingAspect, ControlRotate, ControlScale, centerAspectCrop } from './controls';
+import { centerAspectCrop } from './controls';
 import { useDebounceEffect } from './use-debounce';
+import { blobToDataUrl, cn } from '../../lib/utils';
 
 const initialControls = { scale: 1, rotate: 0, aspect: undefined };
 
-export type OnConfirmEdit = (image: Blob) => void;
+type Base64DataUrl = string; // data:image/png;base64,xxxx
+type BlobDataUrl = string; // blob:http://localhost:3000/xxxx
 
 /**
  * @see https://blog.logrocket.com/how-to-build-an-image-picker-using-react-native-image-crop-picker/
@@ -28,25 +30,27 @@ export type OnConfirmEdit = (image: Blob) => void;
 export function ImageEditor({
   image,
   originalImage,
-  onConfirmEdit,
+  onConfirm,
+  onCrop,
 }: {
-  image: string;
-  originalImage: string;
-  onConfirmEdit: OnConfirmEdit;
+  image: Base64DataUrl;
+  originalImage: Base64DataUrl;
+  onConfirm: (event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) => void;
+  onCrop: (event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) => void;
 }) {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const blobUrlRef = useRef<string>('');
+  const imageSourceRef = useRef<Base64DataUrl>(image);
+  const blobUrlRef = useRef<BlobDataUrl>(''); // 다운받을때만 쓰고 항상 비워진채로 유지하기
   const hiddenAnchorRef = useRef<HTMLAnchorElement>(null);
-  const originalImageRef = useRef<string>(originalImage);
-  const imageSourceRef = useRef<string>(image);
+  const originalImageRef = useRef<Base64DataUrl>(originalImage);
 
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [controls, setControls] = useState<{
     scale: number;
     rotate: number;
-    aspect: number | undefined; // width/height
+    aspect: number | undefined; // aspect=width/height
   }>(initialControls);
 
   useEffect(() => {
@@ -127,10 +131,10 @@ export function ImageEditor({
     );
     // You might want { type: "image/jpeg", quality: <0 to 1> } to reduce image size
     const blob = await offscreen.convertToBlob({ type: 'image/png' });
-    _destroyBlob();
     blobUrlRef.current = URL.createObjectURL(blob);
     hiddenAnchorRef.current!.href = blobUrlRef.current;
     hiddenAnchorRef.current!.click();
+    _destroyBlob();
   }
 
   function onChangeAspect(event: FormEvent<HTMLButtonElement>) {
@@ -163,7 +167,7 @@ export function ImageEditor({
     });
   }
 
-  async function onClickConfirmEdit(event: MouseEvent): Promise<void> {
+  async function onClickConfirm(event: MouseEvent<HTMLButtonElement>): Promise<void> {
     // await _downloadImage();
     // slightly different from "reset" handler
     // imageSourceRef.current = '';
@@ -171,7 +175,8 @@ export function ImageEditor({
     // setCrop(undefined);
     // setCompletedCrop(undefined);
     // setControls(initialControls);
-    onConfirmEdit(new Blob([blobUrlRef.current!]));
+
+    onConfirm(event, imageSourceRef.current);
   }
 
   function onChangeCrop(crop: PixelCrop, percentCrop: PercentCrop): void {
@@ -194,6 +199,61 @@ export function ImageEditor({
     setControls(initialControls);
   }
 
+  async function onClickCrop(event: MouseEvent<HTMLButtonElement>) {
+    imageSourceRef;
+    const image = imageRef.current;
+    const previewCanvas = previewCanvasRef.current;
+    if (!image || !previewCanvas || !completedCrop) {
+      throw new Error('Crop canvas does not exist');
+    }
+
+    // This will size relative to the uploaded image
+    // size. If you want to size according to what they
+    // are looking at on screen, remove scaleX + scaleY
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    const offscreen = new OffscreenCanvas(
+      completedCrop.width * scaleX,
+      completedCrop.height * scaleY,
+    );
+    const context = offscreen.getContext('2d');
+    if (!context) {
+      throw new Error('No 2d context');
+    }
+
+    context.drawImage(
+      previewCanvas,
+      0,
+      0,
+      previewCanvas.width,
+      previewCanvas.height,
+      0,
+      0,
+      offscreen.width,
+      offscreen.height,
+    );
+
+    // You might want { type: "image/jpeg", quality: <0 to 1> } to reduce image size
+    const blob = await offscreen.convertToBlob({ type: 'image/png', quality: 1 });
+    blobToDataUrl(blob, (dataUrl) => {
+      imageSourceRef.current = String(dataUrl);
+      // onCrop(event, blobUrlRef.current);
+      _destroyBlob();
+
+      // imageSourceRef 가 업뎃될때는 다시한번 그려줘야하니까 useState로 바꿔야하나?
+      // 근데 그러면 초기로딩할때 한번깜빡일거같은데
+      // 이렇게 처리하자
+      // setX((x) => x * -1);
+      setCrop(undefined);
+
+      // blobUrlRef.current = URL.createObjectURL(blob);
+      // // hiddenAnchorRef.current!.href = blobUrlRef.current;
+      // // hiddenAnchorRef.current!.click();
+      // console.log(blobUrlRef.current);
+    });
+  }
+
   return (
     <div>
       {/* {controlScale && (
@@ -212,16 +272,16 @@ export function ImageEditor({
       )} */}
 
       <div>
-        <ControlFixingAspect checked={Boolean(controls.aspect)} onChange={onChangeAspect} />
+        {/* <ControlFixingAspect checked={Boolean(controls.aspect)} onChange={onChangeAspect} /> */}
 
-        <Button
+        {/* <Button
           className='w-full'
           variant={'outline'}
           disabled={!completedCrop}
           onClick={onClickDownload}
         >
           Download
-        </Button>
+        </Button> */}
       </div>
 
       {Boolean(completedCrop) && (
@@ -240,7 +300,7 @@ export function ImageEditor({
             onChange={onChangeCrop}
             onComplete={onCompleteCrop}
             aspect={controls.aspect}
-            keepSelection={true}
+            keepSelection={false}
           >
             <img
               draggable={false}
@@ -265,21 +325,40 @@ export function ImageEditor({
 
       <div className='flex justify-center items-center gap-2 mt-4'>
         <Button
-          className='w-full'
+          className={cn('w-full')}
           variant={'outline'}
           disabled={!completedCrop}
           onClick={onClickResetEdit}
         >
-          되돌리기
+          Reset
         </Button>
 
+        {/* 이건 ui로 해결해야할듯. 그냥 외부 누르면 크롭 꺼지도록 */}
+        {/* keepSelection={false} 이걸로 해결 */}
+        {/* <Button
+          className={cn('w-full')}
+          variant={'outline'}
+          disabled={!completedCrop}
+          // onClick={onClickResetEdit}
+        >
+          크롭 취소
+        </Button> */}
+
         <Button
-          className='w-full'
+          className={cn('w-full', crop ? 'hidden' : null)}
           variant={'default'}
           disabled={!completedCrop}
-          onClick={onClickConfirmEdit}
+          onClick={onClickConfirm}
         >
           Confirm
+        </Button>
+        <Button
+          className={cn('w-full', crop ? null : 'hidden')}
+          disabled={false}
+          variant={'outline'}
+          onClick={onClickCrop}
+        >
+          Crop
         </Button>
       </div>
     </div>

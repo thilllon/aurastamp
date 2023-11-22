@@ -1,6 +1,14 @@
 'use client';
 
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
   Form,
   FormControl,
   FormField,
@@ -10,16 +18,16 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-
-import { Label } from '@radix-ui/react-label';
-import { ChangeEvent, SyntheticEvent, useRef } from 'react';
-import { Base64, ImageMetadata, downloadByteArray, useEncodeImage } from '../lib/utils';
-import { DndUploader } from './dnd-uploader';
-import { EditorDialog } from './editor-dialog';
+import { ImageEditor } from './image-editor/image-editor';
 import { Button } from './ui/button';
+
+import { ChangeEvent, SyntheticEvent, useRef } from 'react';
+import { Base64DataUrl, ImageMetadata, downloadByteArray, useEncodeImage } from '../lib/utils';
+import { DndUploader } from './dnd-uploader';
+import { debug } from 'console';
 
 const formSchema = z.object({
   secretMessage: z
@@ -29,9 +37,9 @@ const formSchema = z.object({
 });
 
 export const Encoder = () => {
-  const originalImageRef = useRef<Base64>('');
-  const [imageSource, setImageSource] = useState<Base64>('');
-  const [hiddenImageSource, setHiddenImageSource] = useState<Base64>('');
+  const originalImageRef = useRef<Base64DataUrl>('');
+  const [imageSource, setImageSource] = useState<Base64DataUrl>('');
+  const [hiddenImageSource, setHiddenImageSource] = useState<Base64DataUrl>('');
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
   const [encodedImage, setEncodedImage] = useState(null);
   const encode = useEncodeImage();
@@ -48,8 +56,18 @@ export const Encoder = () => {
     }
   }, [encode.isSuccess, encode.data]);
 
-  function onConfirmEditor(transformedImage: File | Blob) {
-    // TODO: 자동으로 에디터 닫히게 하기
+  function onEditorClickConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
+    console.log(dataUrl);
+    setImageSource(dataUrl);
+    // 여기서 리랜더되면서 다이얼로그 끌수없나?
+    // event.stopPropagation();
+  }
+
+  function onEditorClickCrop() {}
+
+  function onClickCancel() {
+    _resetImage();
+    // upload 내부의 동작까지 트리거할수는 없음
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -108,23 +126,51 @@ export const Encoder = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2'>
         <DndUploader
+          imageSourceInput={imageSource}
           onLoad={onLoadUploader}
           onReset={onResetUploader}
           onSelectFile={onSelectFileUploader}
         />
 
-        <EditorDialog
-          image={imageSource}
-          originalImage={originalImageRef.current}
-          onConfirmEdit={onConfirmEditor}
-        />
+        <Dialog>
+          {Boolean(imageSource) && (
+            <div className='flex flex-row justify-center items-center gap-4'>
+              <DialogTrigger asChild>
+                <Button variant='outline' className='w-full mt-4'>
+                  Edit!
+                </Button>
+              </DialogTrigger>
+            </div>
+          )}
+          <DialogContent className='sm:max-w-[425px]'>
+            <DialogHeader>
+              <DialogTitle>Edit Image</DialogTitle>
+              <DialogDescription>
+                {`Make changes to your picture here. Click confirm when you're done.`}
+              </DialogDescription>
+            </DialogHeader>
+
+            {Boolean(imageSource) && (
+              <ImageEditor
+                onConfirm={onEditorClickConfirm}
+                onCrop={onEditorClickCrop}
+                image={imageSource}
+                originalImage={originalImageRef.current}
+              />
+            )}
+
+            {/* <DialogFooter>
+          <Button type='submit'>Save changes</Button>
+        </DialogFooter> */}
+          </DialogContent>
+        </Dialog>
 
         <FormField
           control={form.control}
           name='secretMessage'
           render={({ field }) => (
             <FormItem className='mt-4'>
-              <FormLabel>Secret Message</FormLabel>
+              <FormLabel>Secret message</FormLabel>
               <FormControl>
                 <Input placeholder='Jot down a message to hide' {...field} />
               </FormControl>
@@ -134,14 +180,12 @@ export const Encoder = () => {
         />
 
         {/* an additional image to be hidden in the container image */}
-        <div className='grid w-full max-w-sm items-center gap-1.5'>
-          <Label htmlFor='hiddenImage' className='text-slate-700'>
-            Hide another picture
-          </Label>
+        <div className='w-full justify-center items-center mt-4'>
+          <FormLabel htmlFor='hiddenImage'>Hide another picture</FormLabel>
           <Input id='hiddenImage' type='file' onChange={onChangeHiddenImage} multiple={false} />
         </div>
 
-        <Button type='submit' className='w-full' disabled={encode.isPending}>
+        <Button type='submit' className='w-full mt-4' disabled={encode.isPending}>
           Go hide!
         </Button>
       </form>
