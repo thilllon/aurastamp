@@ -8,17 +8,15 @@ import { v4 as uuid } from 'uuid';
 import { db, storage } from '../app/firebase';
 
 export type Base64DataUrl = string;
-
 type ArrayBufferString = string;
+type EncodeImageOutput = ArrayBufferString;
 
 type EncodeImageInput = {
-  imageSource: string;
-  message: string;
+  imageSource: Base64DataUrl;
   hiddenImageSource?: Base64DataUrl;
+  message: string;
   metadata: ImageMetadata;
 };
-
-type EncodeImageOutput = ArrayBufferString;
 
 const IMAGE_COLLECTION = 'images';
 const MODEL_API_URL = process.env.NEXT_PUBLIC_MODEL_API_URL ?? 'https://aurastamp.up.railway.app';

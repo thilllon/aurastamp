@@ -31,10 +31,25 @@ docker build -t aurastamp .
 
 # run docker container
 # --rm flag means that clean all artifacts up when container is down
+# Must run with port forward, or set environment variable `PORT` as `8000`
 docker run -it --rm -p 8000:8000 aurastamp
+# if no port forwarding, can't reach to uvicorn from host machine
 ```
 
-### Encoding process
+## set up a local development environment in VSCode
+
+1. open `main.py` file and run this file in debug mode by press `F5` and select `"Python File(Debug the currently active Python File)"`
+2. command which looks similar as following will be executed automatically in terminal
+
+```sh
+# example
+cd <path_to_main_entry_file(main.py)>
+
+/usr/bin/env ${path_to_python_file_in_venv} /Users/john/.vscode/extensions/ms-python.python-2023.14.0/pythonFiles/lib/python/debugpy/launcher 49154 -- -m uvicorn app.main:app --reload
+# 49154 is a process number, so it will be changed
+```
+
+## Encoding process
 
 ```mermaid
 sequenceDiagram
