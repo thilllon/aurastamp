@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { cn } from '../lib/utils';
@@ -27,6 +27,12 @@ export function DndUploader({
   const imageRef = useRef<HTMLImageElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [imageSource, setImageSource] = useState<Base64DataUrl>(imageSourceInput ?? '');
+
+  useEffect(() => {
+    if (imageSourceInput) {
+      setImageSource(imageSourceInput);
+    }
+  }, [imageSourceInput]);
 
   function onClickCancel() {
     if (imageInputRef.current?.value) {

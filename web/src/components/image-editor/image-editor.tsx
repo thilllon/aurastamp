@@ -139,12 +139,10 @@ export function ImageEditor({
 
   function onChangeAspect(event: FormEvent<HTMLButtonElement>) {
     // console.log(event);
-
     // if (controls.aspect) {
     //   setControls({ ...controls, aspect: undefined });
     //   return;
     // }
-
     // if (imageRef.current) {
     //   const { width, height } = imageRef.current;
     //   // TODO: 이전에 crop이 있었으면 그것을 기준으로 aspect를 잡아야 한다.
@@ -191,7 +189,7 @@ export function ImageEditor({
     await _downloadImage();
   }
 
-  function onClickResetEdit() {
+  function onClickCancelEdit() {
     imageSourceRef.current = originalImageRef.current;
     _destroyBlob();
     setCrop(undefined);
@@ -328,9 +326,9 @@ export function ImageEditor({
           className={cn('w-full')}
           variant={'outline'}
           disabled={!completedCrop}
-          onClick={onClickResetEdit}
+          onClick={onClickCancelEdit}
         >
-          Reset
+          Cancel
         </Button>
 
         {/* 이건 ui로 해결해야할듯. 그냥 외부 누르면 크롭 꺼지도록 */}

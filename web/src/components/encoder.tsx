@@ -43,6 +43,8 @@ export const Encoder = () => {
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
   const [encodedImage, setEncodedImage] = useState(null);
   const encode = useEncodeImage();
+  const [openDialog, setOpenDialog] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,10 +59,8 @@ export const Encoder = () => {
   }, [encode.isSuccess, encode.data]);
 
   function onEditorClickConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
-    // console.log(dataUrl);
     setImageSource(dataUrl);
-    // 여기서 리랜더되면서 다이얼로그 끌수없나?
-    // event.stopPropagation();
+    setOpenDialog(() => false);
   }
 
   function onEditorClickCrop() {}
@@ -91,17 +91,17 @@ export const Encoder = () => {
     if (!file) {
       return;
     }
-    setImageMetadata({
+    setImageMetadata(() => ({
       name: file.name,
       size: file.size,
       type: file.type,
       lastModified: file.lastModified,
       webkitRelativePath: file.webkitRelativePath,
-    });
+    }));
   }
 
   async function onLoadUploader(_event: SyntheticEvent<HTMLImageElement>, imageSource: string) {
-    setImageSource(imageSource);
+    setImageSource(() => imageSource);
     originalImageRef.current = imageSource;
   }
 
@@ -117,8 +117,8 @@ export const Encoder = () => {
 
   function _resetImage() {
     originalImageRef.current = '';
-    setImageSource('');
-    setImageMetadata(null);
+    setImageSource(() => '');
+    setImageMetadata(() => null);
     encode.reset();
   }
 
@@ -132,7 +132,7 @@ export const Encoder = () => {
           onSelectFile={onSelectFileUploader}
         />
 
-        <Dialog>
+        <Dialog open={openDialog} onOpenChange={(state) => setOpenDialog(() => state)}>
           {Boolean(imageSource) && (
             <div className='flex flex-row justify-center items-center gap-4'>
               <DialogTrigger asChild>

@@ -26,7 +26,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const client = axios.create({ baseURL: process.env.MODEL_API_URL });
+const client = axios.create({ baseURL: process.env.NEXT_PUBLIC_MODEL_API_URL });
 
 export const useEncodeImage = () => {
   return useMutation<EncodeImageOutput, AxiosError, EncodeImageInput>({
