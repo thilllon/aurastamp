@@ -51,15 +51,13 @@ def get_encoded_image(
             status_code=422, detail="should have less than or equal to 7 characters"
         )
 
+    length7_string = " " * (7 - len(message)) + message
     encoded_image = api.encode_image(
-        binary_image=file,
-        len_7_string=message,
-        embed_into_full_img=True,
+        binary_image=file, message=length7_string, embed_into_full_image=True
     )
     bytes_io = io.BytesIO()
     encoded_image.save(bytes_io, format="PNG")
-
-    return Response(bytes=bytes_io.getvalue(), media_type="image/png")
+    return Response(bytes_io.getvalue(), media_type="image/png")
 
 
 @app.post("/decode")

@@ -14,15 +14,11 @@ from libs.utils import get_model
 encoder = get_model("encoder")
 
 
-# NOTE: len_7_sring은 반드시 7자리 스트링
-def encode_image(binary_image, len_7_string: str, embed_into_full_img: bool) -> Image:
-    image_encoder = ImageEncoder(encoder, embed_into_full_img)
-    return Image.fromarray(
-        image_encoder(
-            bytearray(" " * (7 - len(len_7_string)) + len_7_string, "utf-8"),
-            binary_image,
-        )
-    )
+# NOTE: 반드시 7자리보다 짧은 스트링만 encoding 가능
+def encode_image(binary_image, message: str, embed_into_full_image: bool) -> Image:
+    byteString = bytearray(message, "utf-8")
+    image_encoder = ImageEncoder(encoder, embed_into_full_image)
+    return Image.fromarray(image_encoder(byteString, binary_image))
 
 
 def test_encode() -> None:

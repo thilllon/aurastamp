@@ -20,6 +20,21 @@ class ImageEncoder:
         self.embed_into_full_img = embed_into_full_img
         self.is_high_reso = None
 
+    def __call__(self, message, image) -> np.ndarray:
+        message = self._convert_message_to_tensor(message)
+        image, raw_image = self._convert_image_to_tensor(image)
+
+        residual = self.encoder((message, image))
+        container = image + residual
+        container = torch.clamp(container, 0, 1)
+        container = container.cpu().detach()
+        container = np.array(container.squeeze(0) * 255, dtype=np.uint8).transpose(
+            (1, 2, 0)
+        )
+
+        embed_image = self._wrap_image(raw_image, container)
+        return embed_image
+
     def _convert_message_to_tensor(self, data) -> torch.Tensor:
         bch = bchlib.BCH(self.BCH_BITS, self.BCH_POLYNOMIAL)
         ecc = bch.encode(data)
@@ -120,18 +135,3 @@ class ImageEncoder:
                 final = np.concatenate((concat, raw_image[end:, :, :]), axis=0)
 
         return final
-
-    def __call__(self, message, image) -> np.ndarray:
-        message = self._convert_message_to_tensor(message)
-        image, raw_image = self._convert_image_to_tensor(image)
-
-        residual = self.encoder((message, image))
-        container = image + residual
-        container = torch.clamp(container, 0, 1)
-        container = container.cpu().detach()
-        container = np.array(container.squeeze(0) * 255, dtype=np.uint8).transpose(
-            (1, 2, 0)
-        )
-
-        embed_image = self._wrap_image(raw_image, container)
-        return embed_image
