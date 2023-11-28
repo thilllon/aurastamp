@@ -5,5 +5,6 @@ export default function IndexPage() {
   useEffect(() => {
     redirect('/encode');
   }, []);
+
   return <div></div>;
 }
