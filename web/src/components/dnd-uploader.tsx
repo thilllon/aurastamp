@@ -66,10 +66,8 @@ export function DndUploader({
           htmlFor='uploadButton'
           className={cn(
             'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
-            'w-[24rem]',
-            'h-[24rem]',
-            'min-w-[24rem]',
-            'min-h-[24rem]',
+            'h-[10rem] min-h-[20rem]',
+            'sm:w-[20rem] sm:h-[20rem] sm:min-w-[20rem] sm:min-h-[20rem]',
           )}
         >
           <div

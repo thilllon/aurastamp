@@ -25,9 +25,13 @@ import { ImageEditor } from './image-editor/image-editor';
 import { Button } from './ui/button';
 
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
-import { Base64DataUrl, ImageMetadata, downloadByteArray, useEncodeImage } from '../lib/utils';
+import {
+  Base64DataUrl,
+  ImageMetadata,
+  downloadByteArrayBuffer,
+  useEncodeImage,
+} from '../lib/utils';
 import { DndUploader } from './dnd-uploader';
-import { debug } from 'console';
 
 const formSchema = z.object({
   secretMessage: z
@@ -44,7 +48,6 @@ export const Encoder = () => {
   const [encodedImage, setEncodedImage] = useState(null);
   const encode = useEncodeImage();
   const [openDialog, setOpenDialog] = useState(false);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,21 +57,16 @@ export const Encoder = () => {
 
   useEffect(() => {
     if (encode.isSuccess) {
-      downloadByteArray(encode.data, `aurastamp_${Date.now()}.png`);
+      downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
     }
   }, [encode.isSuccess, encode.data]);
 
-  function onEditorClickConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
+  function editor__onConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
     setImageSource(dataUrl);
     setOpenDialog(() => false);
   }
 
-  function onEditorClickCrop() {}
-
-  function onClickCancel() {
-    _resetImage();
-    // upload 내부의 동작까지 트리거할수는 없음
-  }
+  function editor__onCrop() {}
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!imageMetadata || !imageSource) {
@@ -82,11 +80,7 @@ export const Encoder = () => {
     });
   }
 
-  async function onResetUploader() {
-    _resetImage();
-  }
-
-  async function onSelectFileUploader(event: ChangeEvent<HTMLInputElement>) {
+  async function uploader__onSelectFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) {
       return;
@@ -100,12 +94,16 @@ export const Encoder = () => {
     }));
   }
 
-  async function onLoadUploader(_event: SyntheticEvent<HTMLImageElement>, imageSource: string) {
+  async function uploader__onLoad(_event: SyntheticEvent<HTMLImageElement>, imageSource: string) {
     setImageSource(() => imageSource);
     originalImageRef.current = imageSource;
   }
 
-  async function onChangeHiddenImage(event: ChangeEvent<HTMLInputElement>): Promise<void> {
+  async function uploader__onReset() {
+    _resetImage();
+  }
+
+  async function hiddenImage__onChange(event: ChangeEvent<HTMLInputElement>): Promise<void> {
     const file = event.target.files?.[0];
     if (!file) {
       return;
@@ -123,72 +121,70 @@ export const Encoder = () => {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2'>
-        <DndUploader
-          imageSourceInput={imageSource}
-          onLoad={onLoadUploader}
-          onReset={onResetUploader}
-          onSelectFile={onSelectFileUploader}
-        />
+    <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4'>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2 w-full max-w-xs'>
+          <DndUploader
+            imageSourceInput={imageSource}
+            onSelectFile={uploader__onSelectFile}
+            onLoad={uploader__onLoad}
+            onReset={uploader__onReset}
+          />
 
-        <Dialog open={openDialog} onOpenChange={(state) => setOpenDialog(() => state)}>
-          {Boolean(imageSource) && (
-            <div className='flex flex-row justify-center items-center gap-4'>
-              <DialogTrigger asChild>
-                <Button variant='outline' className='w-full mt-4'>
-                  Edit!
-                </Button>
-              </DialogTrigger>
-            </div>
-          )}
-          <DialogContent className='sm:max-w-[425px]'>
-            <DialogHeader>
-              <DialogTitle>Edit Image</DialogTitle>
-              <DialogDescription>
-                {`Make changes to your picture here. Click confirm when you're done.`}
-              </DialogDescription>
-            </DialogHeader>
-
+          <Dialog open={openDialog} onOpenChange={(state) => setOpenDialog(() => state)}>
             {Boolean(imageSource) && (
-              <ImageEditor
-                onConfirm={onEditorClickConfirm}
-                onCrop={onEditorClickCrop}
-                image={imageSource}
-                originalImage={originalImageRef.current}
-              />
+              <div className='flex flex-row justify-center items-center gap-4'>
+                <DialogTrigger asChild>
+                  <Button variant='outline' className='w-full mt-4'>
+                    Edit!
+                  </Button>
+                </DialogTrigger>
+              </div>
             )}
+            <DialogContent className='sm:max-w-[425px]'>
+              <DialogHeader>
+                <DialogTitle>Edit Image</DialogTitle>
+                <DialogDescription>
+                  {`Make changes to your picture here. Click confirm when you're done.`}
+                </DialogDescription>
+              </DialogHeader>
 
-            {/* <DialogFooter>
-          <Button type='submit'>Save changes</Button>
-        </DialogFooter> */}
-          </DialogContent>
-        </Dialog>
+              {Boolean(imageSource) && (
+                <ImageEditor
+                  onConfirm={editor__onConfirm}
+                  onCrop={editor__onCrop}
+                  image={imageSource}
+                  originalImage={originalImageRef.current}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
 
-        <FormField
-          control={form.control}
-          name='secretMessage'
-          render={({ field }) => (
-            <FormItem className='mt-4'>
-              <FormLabel>Secret message</FormLabel>
-              <FormControl>
-                <Input placeholder='Jot down a message to hide' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name='secretMessage'
+            render={({ field }) => (
+              <FormItem className='mt-4'>
+                <FormLabel>Secret message</FormLabel>
+                <FormControl>
+                  <Input placeholder='Jot down a message to hide' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* an additional image to be hidden in the container image */}
-        <div className='w-full justify-center items-center mt-4'>
-          <FormLabel htmlFor='hiddenImage'>Hide another picture</FormLabel>
-          <Input id='hiddenImage' type='file' onChange={onChangeHiddenImage} multiple={false} />
-        </div>
+          {/* an additional image to be hidden in the container image */}
+          <div className='w-full justify-center items-center mt-4'>
+            <FormLabel htmlFor='hiddenImage'>Hide another picture</FormLabel>
+            <Input id='hiddenImage' type='file' onChange={hiddenImage__onChange} multiple={false} />
+          </div>
 
-        <Button type='submit' className='w-full mt-4' disabled={encode.isPending}>
-          Go hide!
-        </Button>
-      </form>
-    </Form>
+          <Button type='submit' className='w-full mt-4' disabled={encode.isPending}>
+            Go hide!
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };

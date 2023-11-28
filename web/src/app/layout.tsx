@@ -18,7 +18,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={cn('min-h-screen bg-background font-sans antialiased', inter.variable)}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className='flex min-h-screen flex-col items-center justify-center w-full'>
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

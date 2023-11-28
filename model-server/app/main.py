@@ -18,10 +18,13 @@ app = FastAPI(
 
 
 origins = ["*"]
+# origins = [
+#     "http://localhost.tiangolo.com",
+#     "https://localhost.tiangolo.com",
+#     "http://localhost",
+#     "http://localhost:8080",
+# ]
 
-origins_specific = [
-    "http://localhost:8000",
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -58,8 +61,8 @@ def get_encoded_image(
     encoded_image.save(bytes_io, format="PNG")
     bytes = bytes_io.getvalue()
 
-    if return_type == "base64":
-        return Response(base64.b64encode(bytes), media_type="image/png")
+    # if return_type == "base64":
+    #     return Response(base64.b64encode(bytes), media_type="image/png")
 
     return Response(bytes, media_type="image/png")
 
