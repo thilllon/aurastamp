@@ -17,9 +17,12 @@ encoder = get_model("encoder")
 # NOTE: len_7_sring은 반드시 7자리 스트링
 def encode_image(binary_image, len_7_string: str, embed_into_full_img: bool) -> Image:
     image_encoder = ImageEncoder(encoder, embed_into_full_img)
-    img =  Image.fromarray(image_encoder(bytearray(' ' * (7 - len(len_7_string)) +  len_7_string, "utf-8"), binary_image)) 
-
-    return img
+    return Image.fromarray(
+        image_encoder(
+            bytearray(" " * (7 - len(len_7_string)) + len_7_string, "utf-8"),
+            binary_image,
+        )
+    )
 
 
 def test_encode() -> None:
@@ -90,10 +93,14 @@ def test_encode() -> None:
                 if args.cuda:
                     residual = residual.cpu()
                     encoded = encoded.cpu()
-                encoded = np.array(encoded.squeeze(0) * 255, dtype=np.uint8).transpose((1, 2, 0))
+                encoded = np.array(encoded.squeeze(0) * 255, dtype=np.uint8).transpose(
+                    (1, 2, 0)
+                )
 
                 residual = residual[0] + 0.5
-                residual = np.array(residual.squeeze(0) * 255, dtype=np.uint8).transpose((1, 2, 0))
+                residual = np.array(
+                    residual.squeeze(0) * 255, dtype=np.uint8
+                ).transpose((1, 2, 0))
 
                 save_name = os.path.basename(filename).split(".")[0]
 

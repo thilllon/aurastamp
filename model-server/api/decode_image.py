@@ -48,7 +48,9 @@ def decode_image(
     secret = np.round(secret)
 
     packet_binary = "".join([str(int(bit)) for bit in secret[:96]])
-    packet = bytes(int(packet_binary[i : i + 8], 2) for i in range(0, len(packet_binary), 8))
+    packet = bytes(
+        int(packet_binary[i : i + 8], 2) for i in range(0, len(packet_binary), 8)
+    )
     packet = bytearray(packet)
 
     bch = bchlib.BCH(BCH_BITS, BCH_POLYNOMIAL)
@@ -109,7 +111,8 @@ def test_decode_image():
 
             packet_binary = "".join([str(int(bit)) for bit in secret[:96]])
             packet = bytes(
-                int(packet_binary[i : i + 8], 2) for i in range(0, len(packet_binary), 8)
+                int(packet_binary[i : i + 8], 2)
+                for i in range(0, len(packet_binary), 8)
             )
             packet = bytearray(packet)
 

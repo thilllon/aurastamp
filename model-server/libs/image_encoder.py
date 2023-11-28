@@ -48,7 +48,11 @@ class ImageEncoder:
         raw_image_size = raw_image.size
         raw_width = raw_image_size[0]
         raw_height = raw_image_size[1]
-        self.raw_image_size, self.raw_width, self.raw_height = raw_image_size, raw_width, raw_height
+        self.raw_image_size, self.raw_width, self.raw_height = (
+            raw_image_size,
+            raw_width,
+            raw_height,
+        )
         self.is_high_reso = raw_width > 400 and raw_height > 400
 
         if self.is_high_reso:
@@ -57,7 +61,9 @@ class ImageEncoder:
             self.start_h, self.start_w = start_h, start_w
 
             raw_image = np.asarray(raw_image)
-            image = raw_image[start_h : start_h + self.height, start_w : start_w + self.width, :]
+            image = raw_image[
+                start_h : start_h + self.height, start_w : start_w + self.width, :
+            ]
         else:
             image = ImageOps.fit(raw_image, self.size)
             raw_image = np.asarray(raw_image)
@@ -78,16 +84,26 @@ class ImageEncoder:
                 (raw_image[:start_h, start_w : start_w + width, :], container), axis=0
             )
             attach_down = np.concatenate(
-                (attach_up, raw_image[start_h + height :, start_w : start_w + width, :]), axis=0
+                (
+                    attach_up,
+                    raw_image[start_h + height :, start_w : start_w + width, :],
+                ),
+                axis=0,
             )
-            attach_left = np.concatenate((raw_image[:, :start_w, :], attach_down), axis=1)
-            final = np.concatenate((attach_left, raw_image[:, start_w + width :, :]), axis=1)
+            attach_left = np.concatenate(
+                (raw_image[:, :start_w, :], attach_down), axis=1
+            )
+            final = np.concatenate(
+                (attach_left, raw_image[:, start_w + width :, :]), axis=1
+            )
         else:
             if raw_width > raw_height:
                 start = raw_width // 2 - raw_height // 2
                 end = raw_width // 2 + raw_height // 2
                 container = cv2.resize(
-                    container, dsize=(raw_height, raw_height), interpolation=cv2.INTER_CUBIC
+                    container,
+                    dsize=(raw_height, raw_height),
+                    interpolation=cv2.INTER_CUBIC,
                 )
                 concat = np.concatenate((raw_image[:, :start, :], container), axis=1)
                 final = np.concatenate((concat, raw_image[:, end:, :]), axis=1)
@@ -96,7 +112,9 @@ class ImageEncoder:
                 start = raw_height // 2 - raw_width // 2
                 end = raw_height // 2 + raw_width // 2
                 container = cv2.resize(
-                    container, dsize=(raw_width, raw_width), interpolation=cv2.INTER_CUBIC
+                    container,
+                    dsize=(raw_width, raw_width),
+                    interpolation=cv2.INTER_CUBIC,
                 )
                 concat = np.concatenate((raw_image[:start, :, :], container), axis=0)
                 final = np.concatenate((concat, raw_image[end:, :, :]), axis=0)
@@ -111,7 +129,9 @@ class ImageEncoder:
         container = image + residual
         container = torch.clamp(container, 0, 1)
         container = container.cpu().detach()
-        container = np.array(container.squeeze(0) * 255, dtype=np.uint8).transpose((1, 2, 0))
+        container = np.array(container.squeeze(0) * 255, dtype=np.uint8).transpose(
+            (1, 2, 0)
+        )
 
         embed_image = self._wrap_image(raw_image, container)
         return embed_image

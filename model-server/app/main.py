@@ -1,4 +1,3 @@
-import base64
 import io
 import os
 import sys
@@ -59,12 +58,8 @@ def get_encoded_image(
     )
     bytes_io = io.BytesIO()
     encoded_image.save(bytes_io, format="PNG")
-    bytes = bytes_io.getvalue()
 
-    # if return_type == "base64":
-    #     return Response(base64.b64encode(bytes), media_type="image/png")
-
-    return Response(bytes, media_type="image/png")
+    return Response(bytes=bytes_io.getvalue(), media_type="image/png")
 
 
 @app.post("/decode")

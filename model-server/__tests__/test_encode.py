@@ -11,9 +11,8 @@ from torchvision import transforms
 from libs.utils import get_model
 
 
-
 def test_encode() -> None:
-    encoder = get_model('encoder')
+    encoder = get_model("encoder")
     import argparse
 
     parser = argparse.ArgumentParser()
@@ -80,10 +79,14 @@ def test_encode() -> None:
                 if args.cuda:
                     residual = residual.cpu()
                     encoded = encoded.cpu()
-                encoded = np.array(encoded.squeeze(0) * 255, dtype=np.uint8).transpose((1, 2, 0))
+                encoded = np.array(encoded.squeeze(0) * 255, dtype=np.uint8).transpose(
+                    (1, 2, 0)
+                )
 
                 residual = residual[0] + 0.5
-                residual = np.array(residual.squeeze(0) * 255, dtype=np.uint8).transpose((1, 2, 0))
+                residual = np.array(
+                    residual.squeeze(0) * 255, dtype=np.uint8
+                ).transpose((1, 2, 0))
 
                 save_name = os.path.basename(filename).split(".")[0]
 
@@ -93,6 +96,7 @@ def test_encode() -> None:
                 im = Image.fromarray(residual)
                 im.save(args.save_dir + "/" + save_name + "_residual.png")
 
+
 if __name__ == "__main__":
-    #python3 test_encode.py --image test.png --secret "Stega!!" 
+    # python3 test_encode.py --image test.png --secret "Stega!!"
     test_encode()

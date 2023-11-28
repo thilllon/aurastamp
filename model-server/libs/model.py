@@ -10,7 +10,11 @@ sys.path.append("PerceptualSimilarity\\")
 
 class Dense(nn.Module):
     def __init__(
-        self, in_features, out_features, activation="relu", kernel_initializer="he_normal"
+        self,
+        in_features,
+        out_features,
+        activation="relu",
+        kernel_initializer="he_normal",
     ):
         super(Dense, self).__init__()
         self.in_features = in_features
@@ -34,7 +38,9 @@ class Dense(nn.Module):
 
 
 class Conv2D(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=3, activation="relu", strides=1):
+    def __init__(
+        self, in_channels, out_channels, kernel_size=3, activation="relu", strides=1
+    ):
         super(Conv2D, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -76,7 +82,9 @@ class PicStegaStampEncoder(nn.Module):
             )
 
         else:
-            self.secret_dense = Dense(100, 7500, activation="relu", kernel_initializer="he_normal")
+            self.secret_dense = Dense(
+                100, 7500, activation="relu", kernel_initializer="he_normal"
+            )
 
         self.pre_conv = Conv2D(4, 8, 3, activation="relu")
         self.conv1 = Conv2D(8, 32, 3, activation="relu")
@@ -136,7 +144,9 @@ class StegaStampEncoder(nn.Module):
             )
 
         else:
-            self.secret_dense = Dense(100, 7500, activation="relu", kernel_initializer="he_normal")
+            self.secret_dense = Dense(
+                100, 7500, activation="relu", kernel_initializer="he_normal"
+            )
 
         self.conv1 = Conv2D(6, 32, 3, activation="relu")
         self.conv2 = Conv2D(32, 32, 3, activation="relu", strides=2)

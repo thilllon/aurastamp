@@ -12,9 +12,10 @@ from libs.utils import get_model
 
 
 def test_decode():
-    decoder = get_model('decoder')
+    decoder = get_model("decoder")
 
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--image", type=str, default=None)
     parser.add_argument("--images_dir", type=str, default=None)
@@ -60,7 +61,8 @@ def test_decode():
 
             packet_binary = "".join([str(int(bit)) for bit in secret[:96]])
             packet = bytes(
-                int(packet_binary[i : i + 8], 2) for i in range(0, len(packet_binary), 8)
+                int(packet_binary[i : i + 8], 2)
+                for i in range(0, len(packet_binary), 8)
             )
             packet = bytearray(packet)
 
@@ -76,6 +78,7 @@ def test_decode():
                 except:
                     continue
             print(filename, "Failed to decode")
+
 
 if __name__ == "__main__":
     # python test_decode.py --image .images/test_hidden.png
