@@ -63,7 +63,7 @@ export function DndUploader({
     <div>
       {!imageSource && (
         <label
-          htmlFor='uploadButton'
+          htmlFor='uploader'
           className={cn(
             'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
             'h-[10rem] min-h-[20rem]',
@@ -76,7 +76,7 @@ export function DndUploader({
             )}
           >
             <input
-              id='uploadButton'
+              id='uploader'
               className='hidden'
               type='file'
               accept='image/*'

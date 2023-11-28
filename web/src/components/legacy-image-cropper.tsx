@@ -12,23 +12,14 @@ import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 import { canvasPreview } from './image-editor/canvas-preview';
 
-const TO_RADIANS = Math.PI / 180;
-const uploadButtonSize = 200;
 const debounceDelayMs = 200;
 
 type CropperProps = {
-  /**
-   *
-   */
-  guideMessage?: string;
   /**
    * default aspect ratio
    * @default 1
    */
   defaultAspectRatio?: number;
-  /**
-   *
-   */
   hidePreview?: boolean;
   hideImageSpec?: boolean;
   showScaleController?: boolean;
@@ -40,23 +31,6 @@ type CropperProps = {
   onConfirmCrop?: (crop: PixelCrop | undefined, blob: Blob) => void;
   onUnload?: () => void;
 };
-
-// const base64ToBlob = (base64String: string, contentType = '', sliceSize = 512) => {
-//   const byteCharacters = atob(base64String);
-//   // const byteCharacters = Buffer.from(b64Data, 'base64');
-//   const byteArrays = [];
-//   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-//     const slice = byteCharacters.slice(offset, offset + sliceSize);
-//     const byteNumbers = new Array(slice.length);
-//     for (let i = 0; i < slice.length; i++) {
-//       byteNumbers[i] = slice.charCodeAt(i);
-//     }
-//     const byteArray = new Uint8Array(byteNumbers);
-//     byteArrays.push(byteArray);
-//   }
-//   const blob = new Blob(byteArrays, { type: contentType });
-//   return blob;
-// };
 
 const canvasToBlob = async (canvas: HTMLCanvasElement): Promise<Blob | null> => {
   return new Promise((resolve) => {
@@ -85,7 +59,6 @@ const toReadableSize = (bytes: number, decimalPlace = 1) => {
 };
 
 export const LegacyImageCropper = ({
-  guideMessage,
   defaultAspectRatio: defaultAspect = 1,
   hideImageSpec = false,
   hidePreview: hidePreviewCanvas = false,
@@ -248,18 +221,13 @@ export const LegacyImageCropper = ({
 
       {!sourceImageBase64 && (
         <label
-          htmlFor='uploadbutton'
+          htmlFor='uploader'
           className='flex flex-col flex-nowrap justify-center items-center rounded-lg border-2 border-solid border-blue-500 p-1'
-          style={{
-            width: uploadButtonSize,
-            height: uploadButtonSize,
-            maxWidth: uploadButtonSize,
-            maxHeight: uploadButtonSize,
-          }}
+          style={{ width: 160, height: 160, maxWidth: 160, maxHeight: 160 }}
         >
           <div className='cursor-pointer flex justify-center items-center w-full h-full rounded-lg border-2 border-dashed border-gray-400 hover:border-gray-500 hover:bg-gray-100 active:bg-gray-200'>
             <Input
-              id='uploadbutton'
+              id='uploader'
               type='file'
               className='hidden'
               // inputProps={{ accept: 'image/*' }} // 설정시 android에서 동작안함
@@ -267,14 +235,6 @@ export const LegacyImageCropper = ({
             />
             <div className='flex flex-col flex-nowrap justify-center items-center'>
               <UploadIcon />
-              {guideMessage && (
-                <span
-                  className='select-none text-center text-gray-400 overflow-hidden max-h-10'
-                  style={{ textOverflow: 'hidden' }}
-                >
-                  {guideMessage}
-                </span>
-              )}
             </div>
           </div>
         </label>
