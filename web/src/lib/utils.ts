@@ -17,8 +17,7 @@ import { db, storage } from '../app/firebase';
 
 export type Base64DataUrl = string;
 type ArrayBufferString = string;
-type 
- = ArrayBufferString;
+type EncodeImageOutput = ArrayBufferString;
 type EncodeImageInput = {
   imageSource: Base64DataUrl;
   hiddenImageSource?: Base64DataUrl;
@@ -37,8 +36,7 @@ export function cn(...inputs: ClassValue[]) {
 const client = axios.create({ baseURL: MODEL_API_URL });
 
 export const useEncodeImage = () => {
-  return useMutation<
-  , AxiosError, EncodeImageInput>({
+  return useMutation<EncodeImageOutput, AxiosError, EncodeImageInput>({
     mutationFn: async (data) => {
       const { message } = await preprocessOnFirebase(data);
       const formData = new FormData();
