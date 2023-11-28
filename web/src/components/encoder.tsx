@@ -126,7 +126,7 @@ export const Encoder = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2 w-full max-w-xs'>
           <DndUploader
             imageSourceInput={imageSource}
-            onSelectFile={uploader__onSelectFile}
+            onChange={uploader__onSelectFile}
             onLoad={uploader__onLoad}
             onReset={uploader__onReset}
           />

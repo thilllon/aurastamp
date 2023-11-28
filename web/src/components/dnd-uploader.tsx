@@ -17,12 +17,12 @@ export function DndUploader({
   imageSourceInput,
   onLoad: onLoadCallback,
   onReset: onResetCallback,
-  onSelectFile: onSelectFileCallback,
+  onChange: onChangeCallback,
 }: {
   imageSourceInput?: string;
   onLoad: (event: SyntheticEvent<HTMLImageElement>, image: string) => void;
   onReset: () => void;
-  onSelectFile: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
   const imageRef = useRef<HTMLImageElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -42,17 +42,24 @@ export function DndUploader({
     onResetCallback();
   }
 
-  function onSelectFile(event: ChangeEvent<HTMLInputElement>): void {
+  function onChangeInput(event: ChangeEvent<HTMLInputElement>): void {
     const file = event.target.files?.[0];
     if (!file) {
       onResetCallback();
       return;
     }
     const reader = new FileReader();
-    reader.addEventListener('load', () => setImageSource(reader.result?.toString() || ''));
+    reader.addEventListener('load', () => {
+      const newImageSource = reader.result?.toString() ?? '';
+      if (!newImageSource) {
+        // 이미 파일이 올라가있는 상태에서 파일선택창을 열었다가 파일 선택없이 창을 닫은 경우
+        return;
+      }
+      setImageSource(newImageSource);
+    });
     reader.readAsDataURL(file);
 
-    onSelectFileCallback(event);
+    onChangeCallback(event);
   }
 
   function onLoad(event: SyntheticEvent<HTMLImageElement>): void {
@@ -80,7 +87,7 @@ export function DndUploader({
               className='hidden'
               type='file'
               accept='image/*'
-              onChange={onSelectFile}
+              onChange={onChangeInput}
               ref={imageInputRef}
               multiple={false}
             />
