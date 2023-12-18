@@ -1,32 +1,23 @@
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { clsx, type ClassValue } from 'clsx';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  increment,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore';
+import { DocumentData, DocumentReference, runTransaction } from 'firebase/firestore';
+
+import { doc, getDoc, increment, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { twMerge } from 'tailwind-merge';
-import { v4 as uuid } from 'uuid';
 import { db, storage } from '../app/firebase';
+import {
+  ArrayBufferString,
+  DecodeImageInput,
+  DecodeImageOutput,
+  EncodeImageInput,
+  EncodeImageOutput,
+  FirestoreInput,
+} from './types';
 
-export type Base64DataUrl = string;
-type ArrayBufferString = string;
-type EncodeImageOutput = ArrayBufferString;
-type EncodeImageInput = {
-  imageSource: Base64DataUrl;
-  hiddenImageSource?: Base64DataUrl;
-  message: string;
-  metadata: ImageMetadata;
-};
-
-const IMAGE_COLLECTION = 'images';
-const HIDDEN_IMAGE_DIR = 'hidden';
+// const imageCollection = 'images';
+const hiddenImageSegment = 'hidden';
 const MODEL_API_URL = process.env.NEXT_PUBLIC_MODEL_API_URL ?? 'https://aurastamp.up.railway.app';
 
 export function cn(...inputs: ClassValue[]) {
@@ -38,12 +29,11 @@ const client = axios.create({ baseURL: MODEL_API_URL });
 export const useEncodeImage = () => {
   return useMutation<EncodeImageOutput, AxiosError, EncodeImageInput>({
     mutationFn: async (data) => {
-      const { message } = await preprocessOnFirebase(data);
+      const { hiddenMessage: message } = await saveImageAndGetId(data);
       const formData = new FormData();
       formData.append('file', await dataUrlToBlob(data.imageSource), data.metadata.name);
       formData.append('message', message);
       formData.append('model_name', 'the');
-      // formData.append('return_type', 'base64');
       return client
         .post<EncodeImageOutput>('/encode', formData, {
           responseType: 'arraybuffer',
@@ -53,41 +43,35 @@ export const useEncodeImage = () => {
   });
 };
 
-type DecodeImageOutput = {
-  message: ArrayBufferString;
-  downloadUrl: string;
-};
-type DecodeImageInput = {
-  imageSource: Base64DataUrl;
-  metadata: ImageMetadata;
-};
-
 export const useDecodeImage = () => {
   return useMutation({
     mutationFn: async (data: DecodeImageInput): Promise<DecodeImageOutput> => {
       // FIXME: decode counter, decoded at, decoded by 기록.
       // 그냥 유저 액션기록. ip, action, timestamp
-
       const formData = new FormData();
       formData.append('file', dataUrlToBlob(data.imageSource));
       formData.append('model_name', 'the');
       // formData.append('return_type', 'base64');
-      const id = await client.post<EncodeImageOutput>('/decode', formData).then(({ data }) => data);
-      console.debug(id);
-      console.debug(id);
-      const docSnap = await getDoc(doc(db, IMAGE_COLLECTION, id));
-      if (!docSnap.exists()) {
-        throw new Error('No such document!');
+      const { data: hash } = await client.post<EncodeImageOutput>('/decode', formData);
+      const imageId = parseInt(hash.trim()).toString();
+      const imageRef = doc(db, 'aurastamp_images', imageId);
+      const imageDoc = await getDoc(imageRef);
+      if (!imageDoc.exists()) {
+        throw new Error(`image not found. hash: ${hash}`);
       }
-      const docData = docSnap.data() as FirestoreInput;
+      const docData = imageDoc.data() as FirestoreInput | undefined;
       if (!docData) {
-        throw new Error('No data!');
+        throw new Error(`not found. id: ${imageId}`);
       }
 
-      await updateDoc(doc(db, IMAGE_COLLECTION, id), {
+      await updateDoc(imageRef, {
         view: increment(1),
       });
-      const downloadUrl = await getDownloadURL(ref(storage, getBucketPath(data.metadata.name)));
+      const downloadUrl = await getDownloadURL(
+        ref(storage, `aurastamp/${imageDoc.id}/${docData.name}`),
+      );
+
+      console.warn(docData);
 
       return {
         message: docData.message,
@@ -100,14 +84,14 @@ export const useDecodeImage = () => {
 export const useReactToItem = () => {
   return useMutation({
     mutationFn: async (data: { id: string; reaction: 'LIKE' }) => {
-      await updateDoc(doc(db, IMAGE_COLLECTION, data.id), {
+      await updateDoc(doc(db, 'aurastamp_images', data.id), {
         like: data.reaction === 'LIKE' ? increment(1) : increment(0),
       });
     },
   });
 };
 
-export async function sha1(str: string) {
+async function getSha1(str: string) {
   const hash = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(hash))
     .map((v) => v.toString(16).padStart(2, '0'))
@@ -116,64 +100,67 @@ export async function sha1(str: string) {
 
 // https://firebase.google.com/docs/storage/web/upload-files?hl=ko#web-modular-api
 
-type FirestoreInput = {
-  message: string;
-  imageSha: string;
-  hiddenImageSha?: string;
-} & ImageMetadata;
+// const getPath = (...path: string[]) => {
+//   return ['aurastamp', ...path].join('/');
+// };
 
-export type ImageMetadata = {
-  name: string;
-  size: number;
-  type: string;
-  lastModified: number;
-  webkitRelativePath?: string;
-};
-
-const getBucketPath = (...path: string[]) => {
-  return ['aurastamp', ...path].join('/');
-};
-
-export async function preprocessOnFirebase({
+async function saveImageAndGetId({
   message,
   imageSource,
   hiddenImageSource,
   metadata,
-}: Pick<EncodeImageInput, 'message' | 'hiddenImageSource' | 'imageSource' | 'metadata'>) {
-  const hiddenImageSha = hiddenImageSource ? await sha1(hiddenImageSource) : null;
-  const storagePath = uuid();
-  const promises = [
-    addDoc(collection(db, IMAGE_COLLECTION), {
+}: Pick<EncodeImageInput, 'message' | 'hiddenImageSource' | 'imageSource' | 'metadata'>): Promise<{
+  hiddenMessage: string;
+}> {
+  console.warn('호출 ', new Date().toISOString());
+  const metadataRef = doc(db, 'aurastamp', 'metadata');
+  return runTransaction(db, async (transaction) => {
+    let newImageRef: DocumentReference<DocumentData, DocumentData>;
+    let newImageId: number;
+    const metadataDoc = await transaction.get(metadataRef);
+
+    while (true) {
+      const lastImageId = metadataDoc.data()?.lastId;
+      if (lastImageId == null) {
+        throw new Error('last image ID is undefined');
+      }
+
+      newImageId = Number(lastImageId) + 1;
+      if (isNaN(newImageId)) {
+        throw new Error(`failed to generate new image ID. lastImageId: ${lastImageId}`);
+      }
+      newImageRef = doc(db, 'aurastamp_images', String(newImageId));
+      if ((await transaction.get(newImageRef)).exists()) {
+        console.warn(`duplicated ID. id: ${newImageId}`);
+        continue;
+      }
+      break;
+    }
+
+    const hiddenImageSha = hiddenImageSource ? await getSha1(hiddenImageSource) : null;
+    const storagePath = `aurastamp/${newImageRef.id}/${metadata.name}`;
+    await transaction.set(newImageRef, {
       ...metadata,
       message,
       storagePath,
-      imageSha: await sha1(imageSource),
+      imageSha: await getSha1(imageSource),
       hiddenImageSha,
       createdAt: serverTimestamp(),
-    } as FirestoreInput),
-    uploadString(ref(storage, getBucketPath(storagePath, metadata.name)), imageSource, 'data_url'),
-  ];
-  if (hiddenImageSource && hiddenImageSha) {
-    promises.push(
-      uploadString(
-        ref(storage, getBucketPath(storagePath, HIDDEN_IMAGE_DIR, hiddenImageSha)),
+    } as FirestoreInput);
+    await uploadString(ref(storage, storagePath), imageSource, 'data_url');
+    if (hiddenImageSource && hiddenImageSha) {
+      await uploadString(
+        ref(storage, `aurastamp/${newImageRef.id}/${hiddenImageSegment}/${hiddenImageSha}`),
         hiddenImageSource,
         'data_url',
-      ),
-    );
-  }
-  const result = await Promise.allSettled(promises);
-
-  // TODO: 하나라도 실패시 롤백처리 해야함
-  if (result[0].status === 'rejected') {
-    throw new Error();
-  }
-
-  const length7Message = (result[0].value as any)?.id?.slice(0, 7);
-  if (!length7Message) {
-    throw new Error(`Failed to get message id. ${result[0].value}`);
-  }
-  return { message: length7Message };
+      );
+    }
+    if (!newImageId) {
+      throw new Error(`failed to hide message. image id: ${newImageId}`);
+    }
+    await transaction.update(metadataRef, { lastId: String(newImageId) });
+    return { hiddenMessage: String(newImageId) };
+  });
 }
 
 /**

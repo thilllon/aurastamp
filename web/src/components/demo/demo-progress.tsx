@@ -1,10 +1,10 @@
 import * as Progress from '@radix-ui/react-progress';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const ProgressDemo = () => {
-  const [progress, setProgress] = React.useState(13);
+  const [progress, setProgress] = useState(13);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setProgress(66), 500);
     return () => clearTimeout(timer);
   }, []);

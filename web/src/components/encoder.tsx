@@ -59,7 +59,10 @@ export const Encoder = () => {
     if (encode.isSuccess) {
       downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
     }
-  }, [encode.isSuccess, encode.data]);
+    if (encode.isError) {
+      console.error(encode.error);
+    }
+  }, [encode]);
 
   function editor__onConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
     setImageSource(dataUrl);
@@ -69,7 +72,12 @@ export const Encoder = () => {
   function editor__onCrop() {}
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!imageMetadata || !imageSource) {
+    if (!imageMetadata) {
+      console.warn('image metadata is empty');
+      return;
+    }
+    if (!imageSource) {
+      console.warn('image source is empty');
       return;
     }
     encode.mutate({
@@ -122,6 +130,37 @@ export const Encoder = () => {
 
   return (
     <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4'>
+      {/* <Button
+        onClick={async () => {
+          // await set(ref(rdb, 'aurastamp/users/' + 1234), {
+          //   username: 'asdf',
+          //   email: 'asdfasdf@asdfa.com',
+          //   profile_picture: 'asdfasdfasdfas',
+          // });
+
+          // Create a reference to the SF doc.
+          const uid = 'asdfasdf';
+          const ref = doc(db, 'images', uid);
+
+          try {
+            await runTransaction(db, async (transaction) => {
+              const doc = await transaction.get(ref);
+              if (!doc.exists()) {
+                throw new Error('Document does not exist!');
+              }
+
+              const newPopulation = (doc.data().population ?? 0) + 1;
+              transaction.update(ref, { population: newPopulation });
+            });
+            console.log('Transaction successfully committed!');
+          } catch (e) {
+            console.log('Transaction failed: ', e);
+          }
+        }}
+      >
+        ggggggggg
+      </Button> */}
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2 w-full max-w-xs'>
           <DndUploader

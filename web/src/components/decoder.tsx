@@ -9,16 +9,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { ImageEditor } from './image-editor/image-editor';
 import { Button } from './ui/button';
 
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
-import { Base64DataUrl, ImageMetadata, useDecodeImage } from '../lib/utils';
+import { Base64DataUrl, ImageMetadata } from '../lib/types';
+import { useDecodeImage } from '../lib/utils';
 import { DndUploader } from './dnd-uploader';
+import { DownloadIcon, Text } from 'lucide-react';
 
 export const Decoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');
@@ -31,16 +31,6 @@ export const Decoder = () => {
   const decode = useDecodeImage();
   const [openDialog, setOpenDialog] = useState(false);
   const form = useForm({});
-
-  useEffect(() => {
-    if (decode.isSuccess) {
-      setDecoded(() => ({
-        message: decode.data.message,
-        downloadUrl: decode.data.downloadUrl,
-      }));
-      console.log(decode.data);
-    }
-  }, [decode.isSuccess, decode.data]);
 
   function editor__onConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
     setImageSource(dataUrl);
@@ -91,6 +81,11 @@ export const Decoder = () => {
     decode.reset();
   }
 
+  if (decode.error) {
+    console.error(decode.error.message);
+    console.error(decode.error.name);
+  }
+
   return (
     <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4'>
       <Form {...form}>
@@ -107,7 +102,7 @@ export const Decoder = () => {
               <div className='flex flex-row justify-center items-center gap-4'>
                 <DialogTrigger asChild>
                   <Button variant='outline' className='w-full mt-4'>
-                    Edit!
+                    Edit
                   </Button>
                 </DialogTrigger>
               </div>
@@ -130,6 +125,23 @@ export const Decoder = () => {
               )}
             </DialogContent>
           </Dialog>
+
+          {decode.isSuccess && decode.data && (
+            <div className='mt-4 flex justify-center items-center flex-col'>
+              <div>{`hidden message: ${decode.data.message}`}</div>
+              <Button variant={'link'} className='gap-1'>
+                <DownloadIcon size={20} />
+                <a href={decode.data.downloadUrl} download={true} target='_blank'>
+                  {'Download image'}
+                </a>
+              </Button>
+            </div>
+          )}
+          {decode.error && (
+            <div>
+              <Text>{decode.error.message ?? null}</Text>
+            </div>
+          )}
 
           <Button type='submit' className='w-full mt-4' disabled={decode.isPending}>
             Unveil the message!
