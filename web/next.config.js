@@ -5,6 +5,7 @@ const nextConfig = {
   compiler: {
     removeConsole: isProduction,
   },
+  env: {},
   experimental: {
     webpackBuildWorker: true,
   },
