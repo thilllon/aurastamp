@@ -25,9 +25,8 @@ import { ImageEditor } from './image-editor/image-editor';
 import { Button } from './ui/button';
 
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
+import { Base64DataUrl, ImageMetadata } from '../lib/types';
 import {
-  Base64DataUrl,
-  ImageMetadata,
   downloadByteArrayBuffer,
   useEncodeImage,
 } from '../lib/utils';
