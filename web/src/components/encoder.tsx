@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import {
@@ -26,25 +27,31 @@ import { Button } from './ui/button';
 
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { Base64DataUrl, ImageMetadata } from '../lib/types';
-import {
-  downloadByteArrayBuffer,
-  useEncodeImage,
-} from '../lib/utils';
+import { downloadByteArrayBuffer, useEncodeImage } from '../lib/utils';
 import { DndUploader } from './dnd-uploader';
+
+const policy = {
+  messageMinLength: 1,
+  messageMaxLength: 1000,
+};
 
 const formSchema = z.object({
   secretMessage: z
     .string()
-    .min(1, { message: 'Secret message must be at least 1 characters.' })
-    .max(1000, { message: 'Secret message must be at most 1000 characters.' }),
+    .min(policy.messageMinLength, {
+      message: `Secret message must be at least ${policy.messageMinLength} characters.`,
+    })
+    .max(policy.messageMaxLength, {
+      message: `Secret message must be at most ${policy.messageMaxLength} characters.`,
+    }),
 });
 
 export const Encoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');
+  const encodedImageHtmlRef = useRef<HTMLImageElement | null>(null);
   const [imageSource, setImageSource] = useState<Base64DataUrl>('');
   const [hiddenImageSource, setHiddenImageSource] = useState<Base64DataUrl>('');
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
-  const [encodedImage, setEncodedImage] = useState(null);
   const encode = useEncodeImage();
   const [openDialog, setOpenDialog] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,7 +63,15 @@ export const Encoder = () => {
 
   useEffect(() => {
     if (encode.isSuccess) {
-      downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
+      // FIXME: 즉시 받지말고, 클릭해서 받도록 수정
+      // downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
+
+      // setState 사용하면 무한랜더링이므로 useRef 사용
+      if (encodedImageHtmlRef.current) {
+        encodedImageHtmlRef.current.src = (window.URL || window.webkitURL).createObjectURL(
+          new Blob([encode.data]),
+        );
+      }
     }
     if (encode.isError) {
       console.error(encode.error);
@@ -129,40 +144,10 @@ export const Encoder = () => {
 
   return (
     <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4'>
-      {/* <Button
-        onClick={async () => {
-          // await set(ref(rdb, 'aurastamp/users/' + 1234), {
-          //   username: 'asdf',
-          //   email: 'asdfasdf@asdfa.com',
-          //   profile_picture: 'asdfasdfasdfas',
-          // });
-
-          // Create a reference to the SF doc.
-          const uid = 'asdfasdf';
-          const ref = doc(db, 'images', uid);
-
-          try {
-            await runTransaction(db, async (transaction) => {
-              const doc = await transaction.get(ref);
-              if (!doc.exists()) {
-                throw new Error('Document does not exist!');
-              }
-
-              const newPopulation = (doc.data().population ?? 0) + 1;
-              transaction.update(ref, { population: newPopulation });
-            });
-            console.log('Transaction successfully committed!');
-          } catch (e) {
-            console.log('Transaction failed: ', e);
-          }
-        }}
-      >
-        ggggggggg
-      </Button> */}
-
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2 w-full max-w-xs'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full max-w-xs'>
           <DndUploader
+            disabled={encode.isPending}
             imageSourceInput={imageSource}
             onChange={uploader__onSelectFile}
             onLoad={uploader__onLoad}
@@ -173,7 +158,7 @@ export const Encoder = () => {
             {Boolean(imageSource) && (
               <div className='flex flex-row justify-center items-center gap-4'>
                 <DialogTrigger asChild>
-                  <Button variant='outline' className='w-full mt-4'>
+                  <Button variant='outline' className='w-full mt-4' disabled={encode.isPending}>
                     Edit!
                   </Button>
                 </DialogTrigger>
@@ -205,7 +190,11 @@ export const Encoder = () => {
               <FormItem className='mt-4'>
                 <FormLabel>Secret message</FormLabel>
                 <FormControl>
-                  <Input placeholder='Jot down a message to hide' {...field} />
+                  <Input
+                    placeholder='Jot down a message to hide'
+                    {...field}
+                    disabled={encode.isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -215,7 +204,13 @@ export const Encoder = () => {
           {/* an additional image to be hidden in the container image */}
           <div className='w-full justify-center items-center mt-4'>
             <FormLabel htmlFor='hiddenImage'>Hide another picture</FormLabel>
-            <Input id='hiddenImage' type='file' onChange={hiddenImage__onChange} multiple={false} />
+            <Input
+              id='hiddenImage'
+              type='file'
+              onChange={hiddenImage__onChange}
+              multiple={false}
+              disabled={encode.isPending}
+            />
           </div>
 
           <Button type='submit' className='w-full mt-4' disabled={encode.isPending}>
@@ -223,6 +218,29 @@ export const Encoder = () => {
           </Button>
         </form>
       </Form>
+
+      {encode.isSuccess && (
+        <div>
+          <Button
+            className='w-full'
+            onClick={() => {
+              downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
+            }}
+          >
+            Save to device
+            {/* <a href={encodedImage} download={true} target='_blank'>
+              Download
+            </a> */}
+          </Button>
+          <img
+            ref={encodedImageHtmlRef}
+            draggable={false}
+            // src={encodedImageRef.current}
+            alt={'encoded image'}
+            // ref={imageRef}
+          />
+        </div>
+      )}
     </div>
   );
 };

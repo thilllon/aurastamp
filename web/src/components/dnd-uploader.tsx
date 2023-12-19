@@ -14,11 +14,13 @@ type Base64DataUrl = string;
  * Drag & Drop Uploader
  */
 export function DndUploader({
+  disabled,
   imageSourceInput,
   onLoad: onLoadCallback,
   onReset: onResetCallback,
   onChange: onChangeCallback,
 }: {
+  disabled?: boolean;
   imageSourceInput?: string;
   onLoad: (event: SyntheticEvent<HTMLImageElement>, image: string) => void;
   onReset: () => void;
@@ -90,6 +92,7 @@ export function DndUploader({
               onChange={onChangeInput}
               ref={imageInputRef}
               multiple={false}
+              disabled={disabled}
             />
             <div className='flex flex-col flex-nowrap justify-center items-center'>
               <span className='text-center select-none text-slate-600 overflow-hidden over'>
@@ -112,7 +115,13 @@ export function DndUploader({
             />
           </div>
           <div className='flex justify-center items-center mt-4'>
-            <Button type='button' className='w-full' variant={'outline'} onClick={onClickCancel}>
+            <Button
+              type='button'
+              className='w-full'
+              variant={'outline'}
+              onClick={onClickCancel}
+              disabled={disabled}
+            >
               Cancel
             </Button>
           </div>
