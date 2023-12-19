@@ -1,6 +1,6 @@
 # Aurastamp Model API
 
-## Setup
+## Setup a local development environment
 
 ```sh
 # Mac OS

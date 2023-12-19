@@ -13,6 +13,10 @@ RUN pip3 install --requirement requirements.txt
 
 # download predefined models
 # ARG ENCODER_URL https://drive.google.com/uc?id=1IDihrN8OwRp7YV-pHDOz82oA7b3tpMKj
+# ARG DECODER_URL https://drive.google.com/uc?id=1gKIYa9Xj-N-fbINHdUXe0tEof7fwe2x8
+# RUN gdown $ENCODER_URL
+# RUN gdown $DECODER_URL
+
 RUN gdown https://drive.google.com/uc?id=1IDihrN8OwRp7YV-pHDOz82oA7b3tpMKj
 RUN gdown https://drive.google.com/uc?id=1gKIYa9Xj-N-fbINHdUXe0tEof7fwe2x8
 RUN mkdir predefined_models
