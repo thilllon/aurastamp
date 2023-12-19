@@ -138,7 +138,7 @@ export const Decoder = () => {
               <Button variant={'link'} className='gap-1'>
                 <DownloadIcon size={20} />
                 <a href={decode.data.downloadUrl} download={true} target='_blank'>
-                  {'Download image'}
+                  {'Download original image'} 
                 </a>
               </Button>
             </div>
