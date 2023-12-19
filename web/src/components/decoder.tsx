@@ -16,7 +16,7 @@ import { Button } from './ui/button';
 
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { Base64DataUrl, ImageMetadata } from '../lib/types';
-import { useDecodeImage } from '../lib/utils';
+import { hyperlinkify, useDecodeImage } from '../lib/utils';
 import { DndUploader } from './dnd-uploader';
 import { DownloadIcon, Text } from 'lucide-react';
 
@@ -107,6 +107,7 @@ export const Decoder = () => {
                 </DialogTrigger>
               </div>
             )}
+
             <DialogContent className='sm:max-w-[425px]'>
               <DialogHeader>
                 <DialogTitle>Edit Image</DialogTitle>
@@ -128,7 +129,12 @@ export const Decoder = () => {
 
           {decode.isSuccess && decode.data && (
             <div className='mt-4 flex justify-center items-center flex-col'>
-              <div>{`hidden message: ${decode.data.message}`}</div>
+              <div>{'hidden message'}</div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: hyperlinkify(decode.data.message),
+                }}
+              />
               <Button variant={'link'} className='gap-1'>
                 <DownloadIcon size={20} />
                 <a href={decode.data.downloadUrl} download={true} target='_blank'>

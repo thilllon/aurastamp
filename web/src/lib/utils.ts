@@ -15,6 +15,8 @@ import {
   EncodeImageOutput,
   FirestoreInput,
 } from './types';
+import { z } from 'zod';
+import { Regex } from 'lucide-react';
 
 // const imageCollection = 'images';
 const hiddenImageSegment = 'hidden';
@@ -209,3 +211,11 @@ export function downloadByteArrayBuffer(arrayBufferString: ArrayBufferString, fi
   URL.revokeObjectURL(a.href);
   document.body.removeChild(a);
 }
+
+export const hyperlinkify = (text: string) => {
+  // FIXME: https://stackoverflow.com/questions/1500260/detect-urls-in-text-with-javascript
+  const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+  return text.replace(urlRegex, function (url) {
+    return `<a style="text-decoration-line: underline; font-weight: bold;" href="${url}">${url}</a>`;
+  });
+};
