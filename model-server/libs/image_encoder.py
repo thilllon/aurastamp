@@ -7,13 +7,18 @@ import torch
 from PIL import Image, ImageOps
 from torchvision import transforms
 
+WIDTH = 400
+HEIGHT = 400
+BCH_POLYNOMIAL = 137
+BCH_BITS = 5
+
 
 class ImageEncoder:
     def __init__(self, encoder, embed_into_full_img=True) -> None:
-        self.width = 400
-        self.height = 400
-        self.BCH_POLYNOMIAL = 137
-        self.BCH_BITS = 5
+        self.width = WIDTH
+        self.height = HEIGHT
+        self.BCH_POLYNOMIAL = BCH_POLYNOMIAL
+        self.BCH_BITS = BCH_BITS
 
         self.encoder = encoder
         self.size = (self.width, self.height)

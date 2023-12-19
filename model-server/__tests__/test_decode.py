@@ -11,6 +11,12 @@ from torchvision import transforms
 from libs.utils import get_model
 
 
+BCH_POLYNOMIAL = 137
+BCH_BITS = 5
+WIDTH = 400
+HEIGHT = 400
+
+
 def test_decode():
     decoder = get_model("decoder")
 
@@ -36,12 +42,7 @@ def test_decode():
     # if args.cuda:
     #     decoder = decoder.cuda()
 
-    BCH_POLYNOMIAL = 137
-    BCH_BITS = 5
-    width = 400
-    height = 400
-
-    size = (width, height)
+    size = (WIDTH, HEIGHT)
     to_tensor = transforms.ToTensor()
     bch = bchlib.BCH(BCH_BITS, BCH_POLYNOMIAL)
 

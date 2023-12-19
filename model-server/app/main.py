@@ -9,6 +9,9 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 import api
 
+
+MAX_MESSAGE_LENGTH = 7
+
 app = FastAPI(
     title="Aurastamp API",
     description="""Visit this URL at port $PORT for the streamlit interface.""",
@@ -17,12 +20,6 @@ app = FastAPI(
 
 
 origins = ["*"]
-# origins = [
-#     "http://localhost.tiangolo.com",
-#     "https://localhost.tiangolo.com",
-#     "http://localhost",
-#     "http://localhost:8080",
-# ]
 
 
 app.add_middleware(
@@ -46,12 +43,12 @@ def get_encoded_image(
     file: UploadFile = File(...),
     return_type: str = Form("base64"),
 ):
-    if len(message) > 7:
+    if len(message) > MAX_MESSAGE_LENGTH:
         raise HTTPException(
             status_code=422, detail="should have less than or equal to 7 characters"
         )
 
-    length7_string = " " * (7 - len(message)) + message
+    length7_string = " " * (MAX_MESSAGE_LENGTH - len(message)) + message
     encoded_image = api.encode_image(
         binary_image=file, message=length7_string, embed_into_full_image=True
     )

@@ -11,6 +11,13 @@ from torchvision import transforms
 from libs.utils import get_model
 
 
+BCH_POLYNOMIAL = 137
+BCH_BITS = 5
+width = 400
+height = 400
+MAX_MESSAGE_LENGTH = 7
+
+
 def test_encode() -> None:
     encoder = get_model("encoder")
     import argparse
@@ -32,11 +39,6 @@ def test_encode() -> None:
         print("Missing input image")
         return
 
-    BCH_POLYNOMIAL = 137
-    BCH_BITS = 5
-    width = 400
-    height = 400
-
     # encoder = torch.load(args.model)
     # encoder.eval()
     # if args.cuda:
@@ -46,7 +48,9 @@ def test_encode() -> None:
         print("Error: Can only encode 56bits (7 characters) with ECC")
         return
 
-    data = bytearray(args.secret + " " * (7 - len(args.secret)), "utf-8")
+    data = bytearray(
+        args.secret + " " * (MAX_MESSAGE_LENGTH - len(args.secret)), "utf-8"
+    )
     bch = bchlib.BCH(BCH_BITS, BCH_POLYNOMIAL)
     ecc = bch.encode(data)
     packet = data + ecc
