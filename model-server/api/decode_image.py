@@ -1,9 +1,7 @@
-import glob
 import io
 
 import bchlib
 import numpy as np
-import torch
 from fastapi import UploadFile
 from PIL import Image, ImageOps
 from torchvision import transforms
