@@ -3,6 +3,8 @@
 
 import 'react-image-crop/dist/ReactCrop.css';
 
+import { Cross1Icon } from '@radix-ui/react-icons';
+import { CropIcon } from 'lucide-react';
 import {
   ChangeEvent,
   FormEvent,
@@ -13,11 +15,11 @@ import {
   useState,
 } from 'react';
 import ReactCrop, { Crop, PercentCrop, PixelCrop } from 'react-image-crop';
+import { blobToDataUrl, cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { canvasPreview } from './canvas-preview';
 import { centerAspectCrop } from './controls';
 import { useDebounceEffect } from './use-debounce';
-import { blobToDataUrl, cn } from '../../lib/utils';
 
 const initialControls = { scale: 1, rotate: 0, aspect: undefined };
 
@@ -323,12 +325,13 @@ export function ImageEditor({
 
       <div className='flex justify-center items-center gap-2 mt-4'>
         <Button
-          className={cn('w-full')}
+          className={cn('w-full gap-2')}
           variant={'outline'}
           disabled={!completedCrop}
           onClick={onClickCancelEdit}
         >
           Cancel
+          <Cross1Icon />
         </Button>
 
         {/* 이건 ui로 해결해야할듯. 그냥 외부 누르면 크롭 꺼지도록 */}
@@ -350,13 +353,15 @@ export function ImageEditor({
         >
           Confirm
         </Button>
+
         <Button
-          className={cn('w-full', crop ? null : 'hidden')}
+          className={cn('w-full gap-2', crop ? null : 'hidden')}
           disabled={false}
           variant={'outline'}
           onClick={onClickCrop}
         >
           Crop
+          <CropIcon />
         </Button>
       </div>
     </div>

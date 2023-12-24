@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
+import { CrossIcon } from 'lucide-react';
+import { ResetIcon } from '@radix-ui/react-icons';
 
 type Base64DataUrl = string;
 
@@ -76,7 +78,6 @@ export function DndUploader({
           className={cn(
             'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
             'w-[16rem] h-[16rem]',
-            'max-w-[24rem] max-h-[24rem]',
           )}
         >
           <div
@@ -104,7 +105,7 @@ export function DndUploader({
       )}
 
       {imageSource && (
-        <div>
+        <div className='w-full'>
           <div className='flex justify-center items-center'>
             <img
               draggable={false}
@@ -117,12 +118,13 @@ export function DndUploader({
           <div className='flex justify-center items-center mt-4'>
             <Button
               type='button'
-              className='w-full'
+              className='w-full gap-2'
               variant={'outline'}
               onClick={onClickCancel}
               disabled={disabled}
             >
-              Cancel
+              Reset
+              <ResetIcon />
             </Button>
           </div>
         </div>

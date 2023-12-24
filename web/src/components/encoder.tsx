@@ -29,6 +29,7 @@ import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { Base64DataUrl, ImageMetadata } from '../lib/types';
 import { downloadByteArrayBuffer, useEncodeImage } from '../lib/utils';
 import { DndUploader } from './dnd-uploader';
+import { DownloadCloudIcon, DownloadIcon } from 'lucide-react';
 
 const policy = {
   messageMinLength: 1,
@@ -142,10 +143,44 @@ export const Encoder = () => {
     encode.reset();
   }
 
+  if (encode.isError) {
+    console.error(encode.error);
+  }
+
   return (
-    <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4'>
+    <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4 max-w-sm'>
+      {encode.isSuccess && (
+        <>
+          {/* preview before download */}
+
+          <div className='gap-2 mb-8 flex flex-nowrap flex-col'>
+            <img
+              ref={encodedImageHtmlRef}
+              draggable={false}
+              // src={encodedImageRef.current}
+              alt={'encoded image'}
+              // ref={imageRef}
+            />
+
+            <Button
+              className='w-full gap-2'
+              onClick={() => {
+                downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
+              }}
+            >
+              <DownloadIcon size={20} />
+              Save to device
+            </Button>
+          </div>
+        </>
+      )}
+
+      {encode.isError && (
+        <p className='text-red-400 text-center mt-4'>{'Failed to hide a message'}</p>
+      )}
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full max-w-xs'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full'>
           <DndUploader
             disabled={encode.isPending}
             imageSourceInput={imageSource}
@@ -218,29 +253,6 @@ export const Encoder = () => {
           </Button>
         </form>
       </Form>
-
-      {encode.isSuccess && (
-        <div>
-          <Button
-            className='w-full'
-            onClick={() => {
-              downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
-            }}
-          >
-            Save to device
-            {/* <a href={encodedImage} download={true} target='_blank'>
-              Download
-            </a> */}
-          </Button>
-          <img
-            ref={encodedImageHtmlRef}
-            draggable={false}
-            // src={encodedImageRef.current}
-            alt={'encoded image'}
-            // ref={imageRef}
-          />
-        </div>
-      )}
     </div>
   );
 };
