@@ -34,3 +34,8 @@ export type FirestoreInput = {
   imageSha: string;
   hiddenImageSha?: string;
 } & ImageMetadata;
+
+export enum Reaction {
+  LIKE = 'LIKE',
+  DISLIKE = 'DISLIKE',
+}
