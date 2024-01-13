@@ -19,17 +19,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { MouseEvent, useEffect, useState } from 'react';
+import { DownloadIcon } from 'lucide-react';
+import { ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { ImageEditor } from './image-editor/image-editor';
-import { Button } from './ui/button';
-
-import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { Base64DataUrl, ImageMetadata } from '../lib/types';
 import { downloadByteArrayBuffer, useEncodeImage } from '../lib/utils';
 import { DndUploader } from './dnd-uploader';
-import { DownloadCloudIcon, DownloadIcon } from 'lucide-react';
+import { ImageEditor } from './image-editor/image-editor';
+import { Button } from './ui/button';
 
 const policy = {
   messageMinLength: 1,
@@ -84,7 +82,9 @@ export const Encoder = () => {
     setOpenDialog(() => false);
   }
 
-  function editor__onCrop() {}
+  async function editor__onCrop() {
+    // FIXME: TBD
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!imageMetadata) {
