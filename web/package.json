@@ -7,7 +7,7 @@
     "build": "next build --debug",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier -w -l ."
+    "format": "prettier --write --list-different ."
   },
   "dependencies": {
     "@faker-js/faker": "^8.2.0",
