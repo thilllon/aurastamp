@@ -3,13 +3,10 @@
 
 import { ResetIcon } from '@radix-ui/react-icons';
 import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { Base64DataUrl } from '../libs/types';
 import { cn } from '../libs/utils';
 import { Button } from './ui/button';
-import { Base64DataUrl } from '../libs/types';
 
-/**
- * Drag & Drop Uploader
- */
 export function DragAndDropUploader({
   disabled,
   imageSourceInput,
@@ -92,7 +89,7 @@ export function DragAndDropUploader({
             />
             <div className='flex flex-col flex-nowrap justify-center items-center'>
               <span className='text-center select-none text-slate-600 overflow-hidden over'>
-                Click to upload image
+                {'Click to upload image'}
               </span>
             </div>
           </div>
@@ -118,7 +115,7 @@ export function DragAndDropUploader({
               onClick={onClickCancel}
               disabled={disabled}
             >
-              Reset
+              {'Reset'}
               <ResetIcon />
             </Button>
           </div>

@@ -1,9 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { clsx, type ClassValue } from 'clsx';
-import { DocumentData, DocumentReference, runTransaction } from 'firebase/firestore';
-
-import { doc, getDoc, increment, serverTimestamp, updateDoc } from 'firebase/firestore';
+import {
+  DocumentData,
+  DocumentReference,
+  doc,
+  getDoc,
+  increment,
+  runTransaction,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { twMerge } from 'tailwind-merge';
 import { db, storage } from './firebase';
@@ -81,12 +88,15 @@ export const useDecodeImage = () => {
   });
 };
 
+// allow multiple likes/dislikes
 export const useReactToItem = () => {
   return useMutation({
     mutationFn: async (data: { id: string; reaction: Reaction.LIKE }) => {
-      await updateDoc(doc(db, imageCollection, data.id), {
-        like: data.reaction === Reaction.LIKE ? increment(1) : increment(0),
-      });
+      if (data.reaction === Reaction.LIKE) {
+        await updateDoc(doc(db, imageCollection, data.id), {
+          like: increment(1),
+        });
+      }
     },
   });
 };

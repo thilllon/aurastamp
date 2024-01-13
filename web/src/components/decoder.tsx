@@ -9,25 +9,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import { MouseEvent, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { ImageEditor } from './image-editor/image-editor';
-import { Button } from './ui/button';
-
 import { DownloadIcon, ScissorsIcon } from 'lucide-react';
-import { ChangeEvent, SyntheticEvent, useRef } from 'react';
+import { ChangeEvent, MouseEvent, SyntheticEvent, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Base64DataUrl, ImageMetadata } from '../libs/types';
 import { hyperlinkify, useDecodeImage } from '../libs/utils';
 import { DragAndDropUploader } from './drag-and-drop-uploader';
+import { ImageEditor } from './image-editor/image-editor';
+import { Button } from './ui/button';
 
 export const Decoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');
   const [imageSource, setImageSource] = useState<Base64DataUrl>('');
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
-  const [decoded, setDecoded] = useState<{
-    message: string;
-    downloadUrl: string;
-  } | null>(null);
+  const [decoded, setDecoded] = useState<{ message: string; downloadUrl: string } | null>(null);
   const decode = useDecodeImage();
   const [openDialog, setOpenDialog] = useState(false);
   const form = useForm({});
@@ -101,7 +96,7 @@ export const Decoder = () => {
               <div className='flex flex-row justify-center items-center gap-4'>
                 <DialogTrigger asChild>
                   <Button variant='outline' className='w-full mt-4 gap-2'>
-                    Edit
+                    {'Edit'}
                     <ScissorsIcon size={16} />
                   </Button>
                 </DialogTrigger>
@@ -110,7 +105,7 @@ export const Decoder = () => {
 
             <DialogContent className='sm:max-w-[425px]'>
               <DialogHeader>
-                <DialogTitle>Edit Image</DialogTitle>
+                <DialogTitle>{'Edit Image'}</DialogTitle>
                 <DialogDescription>
                   {`Make changes to your picture here. Click confirm when you're done.`}
                 </DialogDescription>
@@ -149,7 +144,7 @@ export const Decoder = () => {
           )}
 
           <Button type='submit' className='w-full mt-4' disabled={decode.isPending}>
-            Unveil the message!
+            {'Unveil the message!'}
           </Button>
         </form>
       </Form>

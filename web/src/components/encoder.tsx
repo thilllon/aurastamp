@@ -148,6 +148,8 @@ export const Encoder = () => {
     console.error(encode.error);
   }
 
+  const filename = `aurastamp_${Date.now()}.png`;
+
   return (
     <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4 max-w-sm'>
       {encode.isSuccess && (
@@ -165,7 +167,7 @@ export const Encoder = () => {
             <Button
               className='w-full gap-2'
               onClick={() => {
-                downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
+                downloadByteArrayBuffer(encode.data, filename);
               }}
             >
               <DownloadIcon size={20} />

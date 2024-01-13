@@ -1,4 +1,4 @@
-import { ChangeEventHandler, FormEventHandler, MouseEventHandler } from 'react';
+import { ChangeEventHandler, FormEventHandler } from 'react';
 import { centerCrop, makeAspectCrop } from 'react-image-crop';
 import { Checkbox } from '../ui/checkbox';
 
