@@ -25,13 +25,14 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Base64DataUrl, ImageMetadata } from '../lib/types';
 import { downloadByteArrayBuffer, useEncodeImage } from '../lib/utils';
-import { DndUploader } from './dnd-uploader';
+import { DragAndDropUploader } from './drag-and-drop-uploader';
 import { ImageEditor } from './image-editor/image-editor';
 import { Button } from './ui/button';
 
 const policy = {
   messageMinLength: 1,
   messageMaxLength: 1000,
+  defaultSecretMessage: '',
 };
 
 const formSchema = z.object({
@@ -56,7 +57,7 @@ export const Encoder = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      secretMessage: '',
+      secretMessage: policy.defaultSecretMessage,
     },
   });
 
@@ -152,7 +153,6 @@ export const Encoder = () => {
       {encode.isSuccess && (
         <>
           {/* preview before download */}
-
           <div className='gap-2 mb-8 flex flex-nowrap flex-col'>
             <img
               ref={encodedImageHtmlRef}
@@ -169,7 +169,7 @@ export const Encoder = () => {
               }}
             >
               <DownloadIcon size={20} />
-              Save to device
+              {'Save to device'}
             </Button>
           </div>
         </>
@@ -181,7 +181,7 @@ export const Encoder = () => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full'>
-          <DndUploader
+          <DragAndDropUploader
             disabled={encode.isPending}
             imageSourceInput={imageSource}
             onChange={uploader__onSelectFile}
@@ -194,7 +194,7 @@ export const Encoder = () => {
               <div className='flex flex-row justify-center items-center gap-4'>
                 <DialogTrigger asChild>
                   <Button variant='outline' className='w-full mt-4' disabled={encode.isPending}>
-                    Edit!
+                    {'Edit!'}
                   </Button>
                 </DialogTrigger>
               </div>
@@ -238,7 +238,7 @@ export const Encoder = () => {
 
           {/* an additional image to be hidden in the container image */}
           <div className='w-full justify-center items-center mt-4'>
-            <FormLabel htmlFor='hiddenImage'>Hide another picture</FormLabel>
+            <FormLabel htmlFor='hiddenImage'>{'Hide another picture'}</FormLabel>
             <Input
               id='hiddenImage'
               type='file'
@@ -249,7 +249,7 @@ export const Encoder = () => {
           </div>
 
           <Button type='submit' className='w-full mt-4' disabled={encode.isPending}>
-            Go hide!
+            {'Go hide!'}
           </Button>
         </form>
       </Form>

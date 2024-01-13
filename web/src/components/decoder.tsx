@@ -18,7 +18,7 @@ import { DownloadIcon, ScissorsIcon } from 'lucide-react';
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
 import { Base64DataUrl, ImageMetadata } from '../lib/types';
 import { hyperlinkify, useDecodeImage } from '../lib/utils';
-import { DndUploader } from './dnd-uploader';
+import { DragAndDropUploader } from './drag-and-drop-uploader';
 
 export const Decoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');
@@ -89,7 +89,7 @@ export const Decoder = () => {
     <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4 max-w-sm'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2 w-full'>
-          <DndUploader
+          <DragAndDropUploader
             disabled={decode.isPending}
             imageSourceInput={imageSource}
             onChange={uploader__onSelectFile}

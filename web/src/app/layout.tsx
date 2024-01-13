@@ -11,7 +11,7 @@ const inter = Inter({
 
 export const metadata = {
   title: 'Aurastamp',
-  description: `Let's see where you're hiding!`,
+  description: `Let's see what you hide!`,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,21 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
-
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import { ChangeEvent, SyntheticEvent, useRef } from 'react';
+import { ResetIcon } from '@radix-ui/react-icons';
+import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
-import { CrossIcon } from 'lucide-react';
-import { ResetIcon } from '@radix-ui/react-icons';
-
-type Base64DataUrl = string;
+import { Base64DataUrl } from '../lib/types';
 
 /**
  * Drag & Drop Uploader
  */
-export function DndUploader({
+export function DragAndDropUploader({
   disabled,
   imageSourceInput,
   onLoad: onLoadCallback,
