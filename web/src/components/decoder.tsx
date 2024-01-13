@@ -16,8 +16,8 @@ import { Button } from './ui/button';
 
 import { DownloadIcon, ScissorsIcon } from 'lucide-react';
 import { ChangeEvent, SyntheticEvent, useRef } from 'react';
-import { Base64DataUrl, ImageMetadata } from '../lib/types';
-import { hyperlinkify, useDecodeImage } from '../lib/utils';
+import { Base64DataUrl, ImageMetadata } from '../libs/types';
+import { hyperlinkify, useDecodeImage } from '../libs/utils';
 import { DragAndDropUploader } from './drag-and-drop-uploader';
 
 export const Decoder = () => {

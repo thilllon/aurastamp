@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react';
 import ReactCrop, { Crop, PercentCrop, PixelCrop } from 'react-image-crop';
-import { blobToDataUrl, cn } from '../../lib/utils';
+import { blobToDataUrl, cn } from '../../libs/utils';
 import { Button } from '../ui/button';
 import { canvasPreview } from './canvas-preview';
 import { centerAspectCrop } from './controls';

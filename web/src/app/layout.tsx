@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 
 import { Inter } from 'next/font/google';
-import { cn } from '../lib/utils';
+import { cn } from '../libs/utils';
 import { Providers } from './providers';
 
 const inter = Inter({

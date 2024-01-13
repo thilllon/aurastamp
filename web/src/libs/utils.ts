@@ -6,7 +6,7 @@ import { DocumentData, DocumentReference, runTransaction } from 'firebase/firest
 import { doc, getDoc, increment, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import { twMerge } from 'tailwind-merge';
-import { db, storage } from '../app/firebase';
+import { db, storage } from './firebase';
 import {
   ArrayBufferString,
   DecodeImageInput,

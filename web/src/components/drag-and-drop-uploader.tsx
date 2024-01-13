@@ -3,9 +3,9 @@
 
 import { ResetIcon } from '@radix-ui/react-icons';
 import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { cn } from '../lib/utils';
+import { cn } from '../libs/utils';
 import { Button } from './ui/button';
-import { Base64DataUrl } from '../lib/types';
+import { Base64DataUrl } from '../libs/types';
 
 /**
  * Drag & Drop Uploader

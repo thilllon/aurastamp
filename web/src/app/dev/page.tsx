@@ -26,7 +26,7 @@ import { FormEventHandler, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '../../components/ui/button';
-import { db } from '../firebase';
+import { db } from '../../libs/firebase';
 
 const formSchema = z.object({
   itemName: z.string().min(2, {
