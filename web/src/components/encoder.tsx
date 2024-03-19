@@ -1,6 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { DragAndDropUploader } from '@/components/drag-and-drop-uploader';
+import { ImageEditor } from '@/components/image-editor';
+import { Spinner } from '@/components/spinner';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -18,17 +22,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { ImageMetadata } from '@/libs/types';
+import { downloadByteArrayBuffer, useEncodeImage } from '@/libs/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DownloadIcon, ScissorsIcon } from 'lucide-react';
 import { ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Base64DataUrl, ImageMetadata } from '../libs/types';
-import { downloadByteArrayBuffer, useEncodeImage } from '../libs/utils';
-import { DragAndDropUploader } from './drag-and-drop-uploader';
-import { ImageEditor } from './image-editor/image-editor';
-import { Spinner } from './spinner';
-import { Button } from './ui/button';
 
 const policy = {
   messageMinLength: 2,
@@ -46,6 +46,8 @@ const formSchema = z.object({
       message: `Secret message must be at most ${policy.messageMaxLength} characters.`,
     }),
 });
+
+type Base64DataUrl = string;
 
 export const Encoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');

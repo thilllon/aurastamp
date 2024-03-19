@@ -3,6 +3,8 @@
 
 import 'react-image-crop/dist/ReactCrop.css';
 
+import { Button } from '@/components/ui/button';
+import { blobToDataUrl, cn } from '@/libs/utils';
 import { CropIcon } from 'lucide-react';
 import {
   ChangeEvent,
@@ -14,8 +16,6 @@ import {
   useState,
 } from 'react';
 import ReactCrop, { Crop, PercentCrop, PixelCrop } from 'react-image-crop';
-import { blobToDataUrl, cn } from '../../libs/utils';
-import { Button } from '../ui/button';
 import { canvasPreview } from './canvas-preview';
 import { centerAspectCrop } from './controls';
 import { useDebounceEffect } from './use-debounce';

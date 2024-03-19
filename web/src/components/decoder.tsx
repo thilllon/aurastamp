@@ -1,5 +1,7 @@
 'use client';
 
+import { Spinner } from '@/components/spinner';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,15 +11,15 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
+import { ImageMetadata } from '@/libs/types';
+import { hyperlinkify, useDecodeImage } from '@/libs/utils';
 import { DownloadIcon, ScissorsIcon } from 'lucide-react';
 import { ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Base64DataUrl, ImageMetadata } from '../libs/types';
-import { hyperlinkify, useDecodeImage } from '../libs/utils';
 import { DragAndDropUploader } from './drag-and-drop-uploader';
 import { ImageEditor } from './image-editor/image-editor';
-import { Spinner } from './spinner';
-import { Button } from './ui/button';
+
+type Base64DataUrl = string;
 
 export const Decoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');

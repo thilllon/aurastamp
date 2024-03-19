@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { ResetIcon } from '@radix-ui/react-icons';
 import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { cn } from '../libs/utils';
-import { Button } from './ui/button';
 
 type Base64DataUrl = string;
 
@@ -71,13 +70,11 @@ export function DragAndDropUploader({
       {!imageSource && (
         <label
           htmlFor='uploader'
-          className={cn(
-            'flex h-[16rem] w-[16rem] items-center justify-center rounded-md border-2 border-slate-900 p-1 hover:bg-slate-100',
-          )}
+          className='flex h-[16rem] w-[16rem] items-center justify-center rounded-md border-2 border-slate-900 p-1 hover:bg-slate-100'
         >
           <div
             className={
-              'm-auto flex   h-full w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-slate-700'
+              'm-auto flex h-full w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-slate-700'
             }
           >
             <input

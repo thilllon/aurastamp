@@ -1,4 +1,4 @@
-export type Base64DataUrl = string;
+type Base64DataUrl = string;
 
 export type ArrayBufferString = string;
 

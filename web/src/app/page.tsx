@@ -1,19 +1,9 @@
 'use client';
 
+import { Decoder } from '@/components/decoder';
 import { Encoder } from '@/components/encoder';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRightIcon } from 'lucide-react';
-import { Decoder } from '../components/decoder';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 enum Mode {
   Encoder = 'encoder',
@@ -21,10 +11,6 @@ enum Mode {
 }
 
 export default function HomePage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const mode = searchParams.get('mode');
-
   return (
     <Tabs defaultValue={Mode.Encoder} className='w-[400px]'>
       <TabsList className='grid w-full grid-cols-2'>

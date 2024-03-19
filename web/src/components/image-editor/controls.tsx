@@ -1,6 +1,6 @@
+import { Checkbox } from '@/components/ui/checkbox';
 import { ChangeEventHandler, FormEventHandler } from 'react';
 import { centerCrop, makeAspectCrop } from 'react-image-crop';
-import { Checkbox } from '../ui/checkbox';
 
 export function ControlRotate({
   disabled,
