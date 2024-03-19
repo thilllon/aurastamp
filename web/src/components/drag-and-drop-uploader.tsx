@@ -118,8 +118,8 @@ export function DragAndDropUploader({
               onClick={onClickCancel}
               disabled={disabled}
             >
-              {'Reset'}
               <ResetIcon />
+              {'Reset'}
             </Button>
           </div>
         </div>

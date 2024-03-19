@@ -152,7 +152,7 @@ export const Encoder = () => {
   const filename = `aurastamp_${Date.now()}.png`;
 
   return (
-    <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4 max-w-sm'>
+    <div className='flex flex-col flex-nowrap justify-center items-center w-full  max-w-sm'>
       {encode.isSuccess && (
         <>
           {/* preview before download */}

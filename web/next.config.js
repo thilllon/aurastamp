@@ -14,6 +14,20 @@ const nextConfig = {
    * https://stackoverflow.com/a/72186766/11091456
    */
   reactStrictMode: false,
+  redirects: async () => {
+    return [
+      {
+        source: '/encode',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/decode',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
   webpack: (config) => {
     if (config.name === 'server') {
       config.optimization.concatenateModules = false;

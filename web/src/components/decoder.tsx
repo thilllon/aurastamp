@@ -82,9 +82,9 @@ export const Decoder = () => {
   }
 
   return (
-    <div className='flex flex-col flex-nowrap justify-center items-center w-full m-4 max-w-sm'>
+    <div className='flex flex-col flex-nowrap justify-center items-center w-full  max-w-sm'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col p-2 w-full'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full'>
           <DragAndDropUploader
             disabled={decode.isPending}
             imageSourceInput={imageSource}

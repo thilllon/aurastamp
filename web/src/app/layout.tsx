@@ -1,8 +1,8 @@
 import '@/styles/globals.css';
 
+import { Providers } from '@/app/providers';
+import { cn } from '@/libs/utils';
 import { Inter } from 'next/font/google';
-import { cn } from '../libs/utils';
-import { Providers } from './providers';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -11,7 +11,7 @@ const inter = Inter({
 
 export const metadata = {
   title: 'Aurastamp',
-  description: `Let's see what you hide!`,
+  description: `Let's see what you wanna hide`,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en' suppressHydrationWarning>
       <body className={cn('min-h-screen bg-background font-sans antialiased', inter.variable)}>
         <Providers>
-          <main className='flex min-h-screen flex-col items-center justify-center w-full mb-12'>
+          <main className='flex py-4 flex-col items-center justify-center w-full mb-12'>
             {children}
           </main>
         </Providers>
