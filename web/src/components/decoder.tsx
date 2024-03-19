@@ -10,23 +10,29 @@ import {
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { DownloadIcon, ScissorsIcon } from 'lucide-react';
-import { ChangeEvent, MouseEvent, SyntheticEvent, useRef, useState } from 'react';
+import { ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Base64DataUrl, ImageMetadata } from '../libs/types';
 import { hyperlinkify, useDecodeImage } from '../libs/utils';
 import { DragAndDropUploader } from './drag-and-drop-uploader';
 import { ImageEditor } from './image-editor/image-editor';
-import { Button } from './ui/button';
 import { Spinner } from './spinner';
+import { Button } from './ui/button';
 
 export const Decoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');
   const [imageSource, setImageSource] = useState<Base64DataUrl>('');
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
-  const [decoded, setDecoded] = useState<{ message: string; downloadUrl: string } | null>(null);
   const decode = useDecodeImage();
   const [openDialog, setOpenDialog] = useState(false);
   const form = useForm({});
+
+  useEffect(() => {
+    if (decode.isSuccess) {
+      // scroll to the bottom
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+  }, [decode.isSuccess]);
 
   function editor__onConfirm(event: MouseEvent<HTMLButtonElement>, dataUrl: Base64DataUrl) {
     setImageSource(dataUrl);

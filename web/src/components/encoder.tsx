@@ -27,8 +27,8 @@ import { Base64DataUrl, ImageMetadata } from '../libs/types';
 import { downloadByteArrayBuffer, useEncodeImage } from '../libs/utils';
 import { DragAndDropUploader } from './drag-and-drop-uploader';
 import { ImageEditor } from './image-editor/image-editor';
-import { Button } from './ui/button';
 import { Spinner } from './spinner';
+import { Button } from './ui/button';
 
 const policy = {
   messageMinLength: 1,
@@ -64,6 +64,9 @@ export const Encoder = () => {
 
   useEffect(() => {
     if (encode.isSuccess) {
+      // scroll to the top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
       // FIXME: 즉시 받지말고, 클릭해서 받도록 수정
       // downloadByteArrayBuffer(encode.data, `aurastamp_${Date.now()}.png`);
 
@@ -160,11 +163,10 @@ export const Encoder = () => {
             <img
               ref={encodedImageHtmlRef}
               draggable={false}
-              // src={encodedImageRef.current}
               alt={'encoded image'}
+              // src={encodedImageRef.current}
               // ref={imageRef}
             />
-
             <Button
               className='w-full gap-2'
               onClick={() => {
