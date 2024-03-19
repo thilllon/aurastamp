@@ -330,8 +330,7 @@ export function ImageEditor({
           disabled={!completedCrop}
           onClick={onClickCancelEdit}
         >
-          Cancel
-          <Cross1Icon />
+          {'Cancel'}
         </Button>
 
         {/* 이건 ui로 해결해야할듯. 그냥 외부 누르면 크롭 꺼지도록 */}

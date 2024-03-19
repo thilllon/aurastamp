@@ -14,7 +14,6 @@ MAX_MESSAGE_LENGTH = 7
 
 app = FastAPI(
     title="Aurastamp API",
-    description="""Visit this URL at port $PORT for the streamlit interface.""",
     version="0.0.0",
 )
 

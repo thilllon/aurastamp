@@ -17,6 +17,7 @@ import { hyperlinkify, useDecodeImage } from '../libs/utils';
 import { DragAndDropUploader } from './drag-and-drop-uploader';
 import { ImageEditor } from './image-editor/image-editor';
 import { Button } from './ui/button';
+import { Spinner } from './spinner';
 
 export const Decoder = () => {
   const originalImageRef = useRef<Base64DataUrl>('');
@@ -95,9 +96,13 @@ export const Decoder = () => {
             {Boolean(imageSource) && (
               <div className='flex flex-row justify-center items-center gap-4'>
                 <DialogTrigger asChild>
-                  <Button variant='outline' className='w-full mt-4 gap-2'>
-                    {'Edit'}
+                  <Button
+                    disabled={decode.isPending}
+                    variant='outline'
+                    className='w-full mt-4 gap-2'
+                  >
                     <ScissorsIcon size={16} />
+                    {'Edit'}
                   </Button>
                 </DialogTrigger>
               </div>
@@ -124,16 +129,18 @@ export const Decoder = () => {
 
           {decode.isSuccess && decode.data && (
             <div className='mt-4 flex justify-center items-center flex-col'>
-              <div>{'hidden message'}</div>
+              <div>
+                <b>{'Hidden message'}</b>
+              </div>
               <div
-                dangerouslySetInnerHTML={{
-                  __html: hyperlinkify(decode.data.message),
-                }}
+                className='p-2   border-2  w-full rounded-md break-all mt-2 bg-gray-100 break-normal'
+                style={{ lineBreak: 'anywhere' }}
+                dangerouslySetInnerHTML={{ __html: hyperlinkify(decode.data.message) }}
               />
               <Button variant={'link'} className='gap-1'>
                 <DownloadIcon size={20} />
                 <a href={decode.data.downloadUrl} download={true} target='_blank'>
-                  {'Download original image'}
+                  {'Download the original image'}
                 </a>
               </Button>
             </div>
@@ -143,8 +150,9 @@ export const Decoder = () => {
             <p className='text-red-400 text-center mt-4'>{'Message is not found'}</p>
           )}
 
-          <Button type='submit' className='w-full mt-4' disabled={decode.isPending}>
-            {'Unveil the message!'}
+          <Button type='submit' className='w-full mt-4 gap-1' disabled={decode.isPending}>
+            {'Unveil the message'}
+            <Spinner size='small' className='text-secondary' show={decode.isPending} />
           </Button>
         </form>
       </Form>

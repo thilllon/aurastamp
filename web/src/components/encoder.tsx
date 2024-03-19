@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DownloadIcon } from 'lucide-react';
+import { DownloadIcon, ScissorsIcon } from 'lucide-react';
 import { ChangeEvent, MouseEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -28,6 +28,7 @@ import { downloadByteArrayBuffer, useEncodeImage } from '../libs/utils';
 import { DragAndDropUploader } from './drag-and-drop-uploader';
 import { ImageEditor } from './image-editor/image-editor';
 import { Button } from './ui/button';
+import { Spinner } from './spinner';
 
 const policy = {
   messageMinLength: 1,
@@ -196,7 +197,8 @@ export const Encoder = () => {
               <div className='flex flex-row justify-center items-center gap-4'>
                 <DialogTrigger asChild>
                   <Button variant='outline' className='w-full mt-4' disabled={encode.isPending}>
-                    {'Edit!'}
+                    <ScissorsIcon size={16} />
+                    {'Edit'}
                   </Button>
                 </DialogTrigger>
               </div>
@@ -250,8 +252,9 @@ export const Encoder = () => {
             />
           </div>
 
-          <Button type='submit' className='w-full mt-4' disabled={encode.isPending}>
-            {'Go hide!'}
+          <Button type='submit' className='w-full mt-4 gap-1' disabled={encode.isPending}>
+            {'Go hide'}
+            <Spinner className='text-secondary' size='small' show={encode.isPending} />
           </Button>
         </form>
       </Form>

@@ -3,10 +3,14 @@
 
 import { ResetIcon } from '@radix-ui/react-icons';
 import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { Base64DataUrl } from '../libs/types';
 import { cn } from '../libs/utils';
 import { Button } from './ui/button';
 
+type Base64DataUrl = string;
+
+/**
+ * This component uses shadcn Button component.
+ */
 export function DragAndDropUploader({
   disabled,
   imageSourceInput,
@@ -68,14 +72,13 @@ export function DragAndDropUploader({
         <label
           htmlFor='uploader'
           className={cn(
-            'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100',
-            'w-[16rem] h-[16rem]',
+            'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100 rounded-md w-[16rem] h-[16rem]',
           )}
         >
           <div
-            className={cn(
-              'cursor-pointer flex justify-center items-center w-full h-full border-2 border-dashed border-slate-700 m-auto',
-            )}
+            className={
+              'flex cursor-pointer   justify-center items-center w-full h-full border-2 border-dashed border-slate-700 m-auto rounded-md'
+            }
           >
             <input
               id='uploader'
@@ -87,8 +90,8 @@ export function DragAndDropUploader({
               multiple={false}
               disabled={disabled}
             />
-            <div className='flex flex-col flex-nowrap justify-center items-center'>
-              <span className='text-center select-none text-slate-600 overflow-hidden over'>
+            <div className='flex flex-col flex-nowrap justify-center items-center '>
+              <span className='text-center select-none text-slate-600 overflow-hidden'>
                 {'Click to upload image'}
               </span>
             </div>

@@ -133,11 +133,14 @@ export function downloadByteArrayBuffer(arrayBufferString: ArrayBufferString, fi
   document.body.removeChild(a);
 }
 
+/**
+ * find URLs in text and make them hyperlinks
+ */
 export function hyperlinkify(text: string) {
   // FIXME: https://stackoverflow.com/questions/1500260/detect-urls-in-text-with-javascript
   const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
   return text.replace(urlRegex, function (url) {
-    return `<a style="text-decoration-line: underline; font-weight: bold;" href="${url}">${url}</a>`;
+    return `<a target="_blank" style="text-decoration-line: underline; font-weight: bold;" href="${url}">${url}</a>`;
   });
 }
 
