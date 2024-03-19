@@ -1,6 +1,6 @@
+import { cn } from '@/libs/utils';
 import { Loader2 } from 'lucide-react';
 import React from 'react';
-import { cn } from '../libs/utils';
 
 export type SpinnerProps = {
   size?: 'small' | 'medium' | 'large';

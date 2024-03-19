@@ -88,9 +88,9 @@ export const Decoder = () => {
   }
 
   return (
-    <div className='flex flex-col flex-nowrap justify-center items-center w-full  max-w-sm'>
+    <div className='flex w-full max-w-sm flex-col flex-nowrap items-center  justify-center'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex w-full flex-col'>
           <DragAndDropUploader
             disabled={decode.isPending}
             imageSourceInput={imageSource}
@@ -100,12 +100,12 @@ export const Decoder = () => {
           />
           <Dialog open={openDialog} onOpenChange={(state) => setOpenDialog(() => state)}>
             {Boolean(imageSource) && (
-              <div className='flex flex-row justify-center items-center gap-4'>
+              <div className='flex flex-row items-center justify-center gap-4'>
                 <DialogTrigger asChild>
                   <Button
                     disabled={decode.isPending}
                     variant='outline'
-                    className='w-full mt-4 gap-2'
+                    className='mt-4 w-full gap-2'
                   >
                     <ScissorsIcon size={16} />
                     {'Edit'}
@@ -134,17 +134,17 @@ export const Decoder = () => {
           </Dialog>
 
           {decode.isSuccess && decode.data && (
-            <div className='mt-4 flex justify-center items-center flex-col'>
+            <div className='mt-4 flex flex-col items-center justify-center'>
               <div>
                 <b>{'Hidden message'}</b>
               </div>
               <div
-                className='p-2   border-2  w-full rounded-md break-all mt-2 bg-gray-100 break-normal'
+                className='mt-2   w-full  break-normal break-all rounded-md border-2 bg-gray-100 p-2'
                 style={{ lineBreak: 'anywhere' }}
                 dangerouslySetInnerHTML={{ __html: hyperlinkify(decode.data.message) }}
               />
-              <Button variant={'link'} className='gap-1'>
-                <DownloadIcon size={20} />
+              <Button variant={'link'} className='mt-4 gap-1'>
+                <DownloadIcon size={16} />
                 <a href={decode.data.downloadUrl} download={true} target='_blank'>
                   {'Download the original image'}
                 </a>
@@ -153,10 +153,10 @@ export const Decoder = () => {
           )}
 
           {decode.isError && (
-            <p className='text-red-400 text-center mt-4'>{'Message is not found'}</p>
+            <p className='mt-4 text-center text-red-400'>{'Message is not found'}</p>
           )}
 
-          <Button type='submit' className='w-full mt-4 gap-1' disabled={decode.isPending}>
+          <Button type='submit' className='mt-4 w-full gap-1' disabled={decode.isPending}>
             {'Unveil the message'}
             <Spinner size='small' className='text-secondary' show={decode.isPending} />
           </Button>

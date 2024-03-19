@@ -155,11 +155,11 @@ export const Encoder = () => {
   const filename = `aurastamp_${Date.now()}.png`;
 
   return (
-    <div className='flex flex-col flex-nowrap justify-center items-center w-full  max-w-sm'>
+    <div className='flex w-full max-w-sm flex-col flex-nowrap items-center justify-center'>
       {encode.isSuccess && (
         <>
           {/* preview before download */}
-          <div className='gap-2 mb-8 flex flex-nowrap flex-col'>
+          <div className=' mb-8 flex flex-col flex-nowrap gap-2'>
             <img
               ref={encodedImageHtmlRef}
               draggable={false}
@@ -181,11 +181,11 @@ export const Encoder = () => {
       )}
 
       {encode.isError && (
-        <p className='text-red-400 text-center mt-4'>{'Failed to hide a message'}</p>
+        <p className='mt-4 text-center text-red-400'>{'Failed to hide a message'}</p>
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex w-full flex-col'>
           <DragAndDropUploader
             disabled={encode.isPending}
             imageSourceInput={imageSource}
@@ -196,9 +196,9 @@ export const Encoder = () => {
 
           <Dialog open={openDialog} onOpenChange={(state) => setOpenDialog(() => state)}>
             {Boolean(imageSource) && (
-              <div className='flex flex-row justify-center items-center gap-4'>
+              <div className='flex flex-row items-center justify-center gap-4'>
                 <DialogTrigger asChild>
-                  <Button variant='outline' className='w-full mt-4' disabled={encode.isPending}>
+                  <Button variant='outline' className='mt-4 w-full' disabled={encode.isPending}>
                     <ScissorsIcon size={16} />
                     {'Edit'}
                   </Button>
@@ -243,7 +243,7 @@ export const Encoder = () => {
           />
 
           {/* an additional image to be hidden in the container image */}
-          <div className='w-full justify-center items-center mt-4'>
+          <div className='mt-4 w-full items-center justify-center'>
             <FormLabel htmlFor='hiddenImage'>{'Hide another picture'}</FormLabel>
             <Input
               id='hiddenImage'
@@ -254,7 +254,7 @@ export const Encoder = () => {
             />
           </div>
 
-          <Button type='submit' className='w-full mt-4 gap-1' disabled={encode.isPending}>
+          <Button type='submit' className='mt-4 w-full gap-1' disabled={encode.isPending}>
             {'Go hide'}
             <Spinner className='text-secondary' size='small' show={encode.isPending} />
           </Button>

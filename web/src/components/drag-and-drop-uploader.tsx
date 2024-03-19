@@ -67,17 +67,17 @@ export function DragAndDropUploader({
   }
 
   return (
-    <div className='flex justify-center items-center'>
+    <div className='flex items-center justify-center'>
       {!imageSource && (
         <label
           htmlFor='uploader'
           className={cn(
-            'flex justify-center items-center border-2 border-slate-900 p-1 hover:bg-slate-100 rounded-md w-[16rem] h-[16rem]',
+            'flex h-[16rem] w-[16rem] items-center justify-center rounded-md border-2 border-slate-900 p-1 hover:bg-slate-100',
           )}
         >
           <div
             className={
-              'flex cursor-pointer   justify-center items-center w-full h-full border-2 border-dashed border-slate-700 m-auto rounded-md'
+              'm-auto flex   h-full w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-slate-700'
             }
           >
             <input
@@ -90,8 +90,8 @@ export function DragAndDropUploader({
               multiple={false}
               disabled={disabled}
             />
-            <div className='flex flex-col flex-nowrap justify-center items-center '>
-              <span className='text-center select-none text-slate-600 overflow-hidden'>
+            <div className='flex flex-col flex-nowrap items-center justify-center '>
+              <span className='select-none overflow-hidden text-center text-slate-600'>
                 {'Click to upload image'}
               </span>
             </div>
@@ -101,7 +101,7 @@ export function DragAndDropUploader({
 
       {imageSource && (
         <div className='w-full'>
-          <div className='flex justify-center items-center'>
+          <div className='flex items-center justify-center'>
             <img
               draggable={false}
               src={imageSource}
@@ -110,7 +110,7 @@ export function DragAndDropUploader({
               onLoad={onLoad}
             />
           </div>
-          <div className='flex justify-center items-center mt-4'>
+          <div className='mt-4 flex items-center justify-center'>
             <Button
               type='button'
               className='w-full gap-2'

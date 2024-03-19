@@ -3,7 +3,6 @@
 
 import 'react-image-crop/dist/ReactCrop.css';
 
-import { Cross1Icon } from '@radix-ui/react-icons';
 import { CropIcon } from 'lucide-react';
 import {
   ChangeEvent,
@@ -289,12 +288,12 @@ export function ImageEditor({
           download
           href='#hidden'
           ref={hiddenAnchorRef}
-          className='hidden absolute -top-96 -left-96'
+          className='absolute -left-96 -top-96 hidden'
         />
       )}
 
       {Boolean(imageSourceRef.current) && (
-        <div className='object-contain flex justify-center items-center'>
+        <div className='flex items-center justify-center object-contain'>
           <ReactCrop
             crop={crop}
             onChange={onChangeCrop}
@@ -318,12 +317,12 @@ export function ImageEditor({
       {Boolean(completedCrop) && (
         <canvas
           ref={previewCanvasRef}
-          className='object-contain hidden'
+          className='hidden object-contain'
           style={{ width: completedCrop?.width, height: completedCrop?.height }}
         />
       )}
 
-      <div className='flex justify-center items-center gap-2 mt-4'>
+      <div className='mt-4 flex items-center justify-center gap-2'>
         <Button
           className={cn('w-full gap-2')}
           variant={'outline'}

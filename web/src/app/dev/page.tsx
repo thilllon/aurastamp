@@ -155,11 +155,11 @@ export default function TestPage() {
       <ItemSubmitForm />
 
       <div className='z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex'>
-        <h1 className='font-medium text-4xl'>Expense tracker</h1>
+        <h1 className='text-4xl font-medium'>Expense tracker</h1>
 
-        <div className='p-4 rounded-lg'>
+        <div className='rounded-lg p-4'>
           {items.length > 0 && (
-            <div className='my-4 w-full flex justify-between p-4'>
+            <div className='my-4 flex w-full justify-between p-4'>
               <span>total</span>
               <span>${total.toLocaleString()}</span>
             </div>
@@ -169,14 +169,14 @@ export default function TestPage() {
             <input
               onChange={(event) => setNewItem({ ...newItem, name: event.target.value })}
               value={newItem.name}
-              className='col-span-3 p-3 border mx-3'
+              className='col-span-3 mx-3 border p-3'
               type='text'
               placeholder='enter item'
             />
             <input
               onChange={(event) => setNewItem({ ...newItem, price: Number(event.target.value) })}
               value={newItem.price}
-              className='col-span-2 p-3 border mx-3'
+              className='col-span-2 mx-3 border p-3'
               type='number'
               placeholder='enter $'
             />
@@ -185,8 +185,8 @@ export default function TestPage() {
           <ul>
             {items.map((item, id) => {
               return (
-                <li key={id} className='my-4 w-full flex justify-between'>
-                  <div className='p-4 w-full flex justify-between'>
+                <li key={id} className='my-4 flex w-full justify-between'>
+                  <div className='flex w-full justify-between p-4'>
                     <span className='capitalize'>{item.name}</span>
                     <span>{item.price}</span>
                   </div>
