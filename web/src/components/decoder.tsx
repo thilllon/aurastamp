@@ -139,7 +139,7 @@ export const Decoder = () => {
                 <b>{'Hidden message'}</b>
               </div>
               <div
-                className='mt-2   w-full  break-normal break-all rounded-md border-2 bg-gray-100 p-2'
+                className='mt-2 w-full  break-normal break-all rounded-md border-2 bg-gray-100 p-2'
                 style={{ lineBreak: 'anywhere' }}
                 dangerouslySetInnerHTML={{ __html: hyperlinkify(decode.data.message) }}
               />

@@ -31,7 +31,7 @@ import { Spinner } from './spinner';
 import { Button } from './ui/button';
 
 const policy = {
-  messageMinLength: 1,
+  messageMinLength: 2,
   messageMaxLength: 1000,
   defaultSecretMessage: '',
 };
