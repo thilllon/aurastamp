@@ -8,7 +8,7 @@ import { ChangeEvent, SyntheticEvent, useEffect, useRef, useState } from 'react'
 type Base64DataUrl = string;
 
 /**
- * This component uses shadcn Button component.
+ * This component uses shadcn's Button component.
  */
 export function DragAndDropUploader({
   disabled,
@@ -51,13 +51,12 @@ export function DragAndDropUploader({
     reader.addEventListener('load', () => {
       const newImageSource = reader.result?.toString() ?? '';
       if (!newImageSource) {
-        // 이미 파일이 올라가있는 상태에서 파일선택창을 열었다가 파일 선택없이 창을 닫은 경우
+        // when the file selection dialog is opened, close the dialog without selecting a file
         return;
       }
       setImageSource(newImageSource);
     });
     reader.readAsDataURL(file);
-
     onChangeCallback(event);
   }
 
@@ -81,7 +80,7 @@ export function DragAndDropUploader({
               id='uploader'
               className='hidden'
               type='file'
-              accept='image/*'
+              accept='image/jpeg,image/jpg,image/png'
               onChange={onChangeInput}
               ref={imageInputRef}
               multiple={false}
@@ -89,7 +88,7 @@ export function DragAndDropUploader({
             />
             <div className='flex flex-col flex-nowrap items-center justify-center '>
               <span className='select-none overflow-hidden text-center text-slate-600'>
-                {'Click to upload image'}
+                {'Click here to load an image'}
               </span>
             </div>
           </div>

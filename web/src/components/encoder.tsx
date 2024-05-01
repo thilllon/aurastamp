@@ -150,11 +150,17 @@ export const Encoder = () => {
     encode.reset();
   }
 
+  function onClickDownload() {
+    if (!encode.data) {
+      return;
+    }
+    const filename = `aurastamp_${Date.now()}.png`;
+    downloadByteArrayBuffer(encode.data, filename);
+  }
+
   if (encode.isError) {
     console.error(encode.error);
   }
-
-  const filename = `aurastamp_${Date.now()}.png`;
 
   return (
     <div className='flex w-full max-w-sm flex-col flex-nowrap items-center justify-center'>
@@ -169,12 +175,7 @@ export const Encoder = () => {
               // src={encodedImageRef.current}
               // ref={imageRef}
             />
-            <Button
-              className='w-full gap-2'
-              onClick={() => {
-                downloadByteArrayBuffer(encode.data, filename);
-              }}
-            >
+            <Button className='w-full gap-2' onClick={onClickDownload}>
               <DownloadIcon size={20} />
               {'Save to device'}
             </Button>

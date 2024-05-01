@@ -304,7 +304,7 @@ export function ImageEditor({
             <img
               draggable={false}
               src={imageSourceRef.current}
-              alt={'target image'}
+              alt={'editable image'}
               ref={imageRef}
               style={{ scale: controls.scale, rotate: `${controls.rotate}deg` }}
               onLoad={onLoadImage}
